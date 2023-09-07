@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:15:05 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/07 19:15:07 by icastell         ###   ########.fr       */
+/*   Updated: 2023/09/07 19:35:39 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@
 # include <map>
 
 // private functions, structures and constants by function
+# include "IRC_Structs.hpp"
+# include "IRC_Constants.hpp"
 # include "IRC_Colors.hpp"
 
 #endif
