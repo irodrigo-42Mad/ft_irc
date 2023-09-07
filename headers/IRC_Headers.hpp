@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:15:05 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/07 19:35:39 by icastell         ###   ########.fr       */
+/*   Updated: 2023/09/07 19:40:19 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <cerrno>
 # include <ctime>
 
-// common sockect structures and functions
+// common socket structures and functions
 # include <sys/types.h>
 # include <sys/socket.h>
 # include <netinet/in.h>
