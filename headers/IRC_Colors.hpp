@@ -1,6 +1,6 @@
 #pragma once
-#ifndef COLORS_HPP
-#define COLORS_HPP
+#ifndef IRC_COLORS_HPP
+#define IRC_COLORS_HPP
 
 # define RESET "\033[0m"
 

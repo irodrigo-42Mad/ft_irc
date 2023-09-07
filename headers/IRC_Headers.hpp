@@ -1,6 +1,6 @@
 #pragma once
-#ifndef COMMONHEADERS.HPP
-#define COMMONHEADERS.HPP
+#ifndef IRC_HEADERS_HPP
+#define IRC_HEADERS_HPP
 
 // common system headers
 # include <cstring>
@@ -18,12 +18,13 @@
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <netdb.h>
+# include <poll.h>
 
 // common STL structures needed
 # include <vector>
 # include <map>
 
 // private functions, structures and constants by function
-# include "Colors.hpp"
+# include "IRC_Colors.hpp"
 
 #endif
