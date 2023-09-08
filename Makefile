@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+         #
+#    By: icastell <icastell@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/12/23 11:31:25 by irodrigo          #+#    #+#              #
-#    Updated: 2023/06/30 14:23:27 by irodrigo         ###   ########.fr        #
+#    Updated: 2023/09/08 11:29:37 by icastell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,14 +27,14 @@
 #endif
 
 # FILE NAME #
-NAME 		= PmergeMe
+NAME 		= ircserv
 
 # PROYECT PATHS #
-INCLUDES	:= includes
-SRCPATH		:=
+INCLUDES	:= headers/
+SRCPATH		:= sources/
 
 # USER FILES DEFINITION #
-SRCFILES	:= main.cpp PmergeMe.cpp
+SRCFILES	:= server.cpp
 
 # SOURCES #
 SOURCES		:= $(addprefix $(SRCPATH), $(SRCFILES))
@@ -104,6 +104,6 @@ fclean: clean
 
 re : fclean all
 
-#-include	$(DEPS)
+-include	$(DEPS)
 
 .PHONY: all clean fclean re test

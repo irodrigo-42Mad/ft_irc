@@ -1,19 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IRC_Constants.hpp                                  :+:      :+:    :+:   */
+/*   IRC_Messages.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/07 19:22:13 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/08 11:23:40 by icastell         ###   ########.fr       */
+/*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
+/*   Updated: 2023/09/08 11:15:08 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// common socket constants
-#define SERV_ADDR "0.0.0.0"	//Local host
-#define SERV_PORT "4242"	//Port we are listening on
-#define BUF_SIZE 100		//Socket receive buffer size
-#define	BACKLOG 5			//Number of incoming connections that can be queued for acceptance
+#pragma once
+#ifndef IRC_MESSAGES_HPP
+#define IRC_MESSAGES_HPP
 
-#define _version "1.0.0"
+# include <string>
+
+
+
+#endif
