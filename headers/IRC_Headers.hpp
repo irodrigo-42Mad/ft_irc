@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:15:05 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/08 11:15:45 by icastell         ###   ########.fr       */
+/*   Updated: 2023/09/09 11:54:57 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@
 # include "IRC_Constants.hpp"
 # include "IRC_Colors.hpp"
 # include "IRC_Messages.hpp"
+# include "IRC_Errors.hpp"
 
 
 

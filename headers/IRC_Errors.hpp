@@ -1,20 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IRC_Constants.hpp                                  :+:      :+:    :+:   */
+/*   IRC_Errors.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/07 19:22:13 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/09 12:06:30 by icastell         ###   ########.fr       */
+/*   Created: 2023/09/09 11:38:07 by icastell          #+#    #+#             */
+/*   Updated: 2023/09/09 12:20:39 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// common socket constants
-#define SERV_ADDR "0.0.0.0"	//Local host
-#define SERV_PORT "4242"	//Port we are listening on
-#define BUF_SIZE 100		//Socket receive buffer size
-#define	BACKLOG 5			//Number of incoming connections that can be queued for acceptance
+#pragma once
+#ifndef IRC_ERRORS_HPP
+#define IRC_ERRORS_HPP
 
-#define _version "1.0.0"
+# include "IRC_Headers.hpp"
 
+// system error constants
+#define ERR_COMPLETELY_SCREWED 1
+#define ERR_STILL_SAVED 2
+#define ERR_CURA_SANA 3
+
+
+// system error definitions
+int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
+
+#endif
