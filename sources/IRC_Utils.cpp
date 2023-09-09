@@ -1,27 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IRC_Structs.hpp                                    :+:      :+:    :+:   */
+/*   IRC_Utils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/07 19:34:40 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/09 14:42:40 by icastell         ###   ########.fr       */
+/*   Created: 2023/09/09 14:51:12 by icastell          #+#    #+#             */
+/*   Updated: 2023/09/09 15:00:11 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-#ifndef IRC_STRUCTS_HPP
-#define IRC_STRUCTS_HPP
+# include "../headers/IRC_Utils.hpp"
 
-# include "IRC_Headers.hpp"
+bool	checkPort(std::string const &port)
+{
+	int aux_port = std::stoi(port);	//Ojo, esta función es de C11. Buscar solución a esto
+	
+	if ((aux_port <= 0) || (aux_port > 65536))
+		return (false);
+	return (true);
+}
 
-//server data structs and enums
-
-
-//channel data structs and enums
-
-
-//client data structs and enums
-
-#endif
+bool	checkPasswordNotEmpty(std::string const &password)
+{
+	if (password.length() == 0)
+		return (false);
+	return (true);
+}

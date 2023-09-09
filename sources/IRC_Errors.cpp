@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 11:41:49 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/09 12:22:02 by icastell         ###   ########.fr       */
+/*   Updated: 2023/09/09 14:40:04 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@
 int	ft_err_msg(std::string const &msg, int err_lvl, int err_n)
 {
 	if (err_lvl == ERR_COMPLETELY_SCREWED)
-		std::cerr << BOLD_RED << "Error: " << RESET << BOLD_WHITE << msg << "." << RESET << RED << " ¡Impossible continue!" << RESET << std::endl;
+		std::cerr << BOLD_RED << "Error: " << RESET << BOLD_WHITE << msg << "." << RESET << RED << " ¡Sayonara baby!" << RESET << std::endl;
 	else if (err_lvl == ERR_STILL_SAVED)
-		std::cerr << BOLD_YELLOW << "Error: " << RESET << BOLD_WHITE << msg << "." << RESET << YELLOW << " Will try to close and continue." << RESET << std::endl;
+		std::cerr << BOLD_YELLOW << "Error: " << RESET << BOLD_WHITE << msg << "." << RESET << YELLOW << " May the force be with you." << RESET << std::endl;
 	else if (err_lvl == ERR_CURA_SANA)
-		std::cerr << BOLD_PURPLE << "Error: " << RESET << BOLD_WHITE << msg << "." << RESET << PURPLE << " If not be repaired today will be repaired tomorrow." << RESET << std::endl;
+		std::cerr << BOLD_PURPLE << "Error: " << RESET << BOLD_WHITE << msg << "." << RESET << PURPLE << " If it is not repaired today it will be cured tomorrow." << RESET << std::endl;
 	return (err_n);
 }

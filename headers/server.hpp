@@ -1,27 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IRC_Structs.hpp                                    :+:      :+:    :+:   */
+/*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/07 19:34:40 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/09 14:42:40 by icastell         ###   ########.fr       */
+/*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
+/*   Updated: 2023/09/09 14:43:58 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#ifndef IRC_STRUCTS_HPP
-#define IRC_STRUCTS_HPP
+#ifndef SERVER_HPP
+#define SERVER_HPP
 
 # include "IRC_Headers.hpp"
 
-//server data structs and enums
+class server
+{
+private:
+	std::string	_port;
+	std::string	_password;
+	server();
+public:
+	server(const std::string &port, const std::string &password);
+	server (server const &cpy);
+	server &operator = (server const &cpy);
+	~server();
+	//getters y setters
+};
 
 
-//channel data structs and enums
-
-
-//client data structs and enums
 
 #endif
