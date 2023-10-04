@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Colors.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/07 19:14:55 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/08 11:05:38 by icastell         ###   ########.fr       */
+/*   Created: 2023/09/27 11:46:46 by irodrigo          #+#    #+#             */
+/*   Updated: 2023/09/27 13:07:09 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#ifndef IRC_COLORS_HPP
-#define IRC_COLORS_HPP
+#ifndef COLORS_HPP
+#define COLORS_HPP
 
 # define RESET "\033[0m"
 
