@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Errors.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/09 11:41:49 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/09 14:40:04 by icastell         ###   ########.fr       */
+/*   Created: 2023/09/27 13:01:17 by irodrigo          #+#    #+#             */
+/*   Updated: 2023/09/27 13:07:58 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../headers/IRC_Errors.hpp"
+#include "../headers/IRC_Headers.hpp"
 
 /* el nivel de error se distribuye de la siguiente forma*/
 /* 1 nivel SEJODIODELTO (ERR_COMPLETELY_SCREWED)

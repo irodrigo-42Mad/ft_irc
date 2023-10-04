@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:49:23 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/09 14:57:07 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/03 13:05:54 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,16 @@
 # include "IRC_Headers.hpp"
 
 // auxiliar functions
-bool	checkPort(std::string const &port);
-bool	checkPasswordNotEmpty(std::string const &password);
+bool		checkPort(char *port);
+bool		checkPasswordNotEmpty(std::string const &password);
+
+
+// string functions
+std::string	cStr(long num);
+void		lTrim(std::string& str);
+void		rTrim(std::string& str);
+std::string	strReplace(std::string str, std::string strFind, std::string strReplace);
+
+
 
 #endif

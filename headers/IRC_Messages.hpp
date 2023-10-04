@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Messages.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/09/08 11:15:08 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/03 13:52:37 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,12 @@
 
 # include <string>
 
+class IRC_Messages
+{
+	private:
 
+	public:
+	
+};
 
 #endif
