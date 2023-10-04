@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/03 13:55:15 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/10/04 11:39:31 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,30 +25,34 @@ class IRC_Messages;
 class IRC_Server
 {
 private:
+	
+
+	// common configuration variables.
 	std::string	_port;
 	std::string	_password;
 	std::string _servName;
 
-	
-	
+	// complient class methods not used.
 	IRC_Server();
 
 	
 	
 	
-	User		_UserMap;
-	Command		_CommandMap;
-	IRC_Channel	_ChannelMap;
+	// User		_UserMap;
+	// Command		_CommandMap;
+	// IRC_Channel	_ChannelMap;
 
+	
 
 public:
+	// server status notifications.
 	enum State
 	{
 		ALIVE,
 		RESTART,
 		DIE
 	};
-	
+
 	enum MyType
 	{
 		PING,
@@ -61,8 +65,10 @@ public:
 	~IRC_Server();
 	
 	//getters y setters
-	enum State 			getState();
-	void 				setState(enum State myst);
+	//enum State 			getState();
+
+	IRC_Server::State 	getState() const;
+	//void 				setState(enum State myst);
 	
 	// general irc functions
 	void				launch();

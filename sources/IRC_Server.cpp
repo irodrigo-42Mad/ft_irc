@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/03 13:00:06 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/10/04 11:35:56 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,17 @@ void IRC_Server::launch()
 
 }
 
-enum State	IRC_Server::getState()
+IRC_Server::State 	IRC_Server::getState() const
 {
-
+	return (State);
 }
 
-void 	IRC_Server::setState(State myst)
-{
+// IRC_Server::State	IRC_Server::getState()
+// {
+// 	return (this->srvState); // colocar el valor al devolver el estado
+// }
 
-
-}
+// void 	IRC_Server::setState(State myst)
+// {
+// 	this->srvState = myst;
+// }

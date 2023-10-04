@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 12:47:08 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/03 13:13:06 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/10/04 11:38:25 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ int	main(int argc, char *argv[])
 		return (ft_err_msg("password is empty!", ERR_COMPLETELY_SCREWED, 3));
 	
 	IRC_Server irc(argv[1], argv[2]);   // crearemos el servidor
-	IRC_Server::State state = IRC_Server::ALIVE;
+	IRC_Server::State srvState = IRC_Server::ALIVE;
 
-	while (state != IRC_Server::DIE)
+	while (srvState != IRC_Server::DIE)
 	{
 		try {
 			//irc.loadConfig(configFile.c_str());
-			irc.launch();    		 // lanzaremos el bucle del pool
-			state = irc.getState();  // comprobamos que no está caido en cada ejecución
+			irc.launch();    		 	// lanzaremos el bucle del pool
+			srvState = irc.getState();  // comprobamos que no está caido en cada ejecución
 		}
 		catch (std::exception &e) {
 			std::string rtdo;

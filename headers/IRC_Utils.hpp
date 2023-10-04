@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:49:23 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/03 13:05:54 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/10/04 12:44:11 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,12 @@ bool		checkPasswordNotEmpty(std::string const &password);
 
 
 // string functions
-std::string	cStr(long num);
-void		lTrim(std::string& str);
-void		rTrim(std::string& str);
+std::string	convertStr(long num);
+void		leftTrim(std::string& str);
+void		rightTrim(std::string& str);
 std::string	strReplace(std::string str, std::string strFind, std::string strReplace);
 
-
+std::string strXtractWord(std::string &str);
+std::string	maxBufferTrim(std::string &rawLine, int maxSize);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:51:12 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/03 13:05:52 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/10/04 12:56:42 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ bool	checkPasswordNotEmpty(std::string const &password)
 }
 
 // string threatment utils
-std::string	cStr(long num)
+std::string	convertStr(long num)
 {
 	std::ostringstream	ss;
 
@@ -38,7 +38,7 @@ std::string	cStr(long num)
 	return ss.str();
 }
 
-void	lTrim(std::string& str)
+void	leftTrim(std::string& str)
 {
 	size_t	i;
 
@@ -48,7 +48,7 @@ void	lTrim(std::string& str)
 	str.erase(0, i);
 }
 
-void	rTrim(std::string & str)
+void	rightTrim(std::string & str)
 {
 	size_t	i;
 	int 	elNum;
@@ -64,84 +64,52 @@ void	rTrim(std::string & str)
 	str.erase(i, elNum);
 }
 
-std::string	strReplace(std::string str, std::string strFind, std::string strReplace)
+std::string	strReplace(std::string str, std::string strFind, std::string strReplace) // posible & pendiente
 {
 	return str.replace(str.find(strFind), strFind.size(), strReplace);
 }
 
-std::string strTrunc(std::string str, int strSize)
+std::string	strXtractWord(std::string& str)
 {
-
-
-}
-
-
-
-std::string	extractWord(std::string& data)
-{
-	std::size_t	pos;
+	std::size_t	i;
 	std::string	newStr;
 
-	pos = data.find(' ');
-	if (pos != std::string::npos)
+	i = str.find(' ');
+	if (i != std::string::npos)
 	{
-		newStr = pos == 0 ? data.substr(0, 1) : data.substr(0, pos);
-		pos == 0 ? data.erase(0, 1) : data.erase(0, pos);
+		if (str.substr(0, 1) == "\0")
+			str.substr(0, 1);
+		else
+			str.substr(0, i);
+		
+		if (i == 0)
+			str.erase(0, 1);
+		else
+			str.erase(0, i);
 		return newStr;
 	}
-	newStr = data;
-	data.clear();
+	newStr = str;
+	str.clear();
 	return newStr;
 }
 
-std::string	maxLengthTrim(std::string& data, int maxlength)
+std::string	maxBufferTrim(std::string &rawLine, int maxSize)
 {
-	std::size_t	pos;
-	std::string	newStr;
-
-
-
-
-
-	pos = data.find(' ');
-	if (pos != std::string::npos)
-	{
-		newStr = pos == 0 ? data.substr(0, 1) : data.substr(0, pos);
-		pos == 0 ? data.erase(0, 1) : data.erase(0, pos);
-		return newStr;
-	}
-	newStr = data;
-	data.clear();
-	return newStr;
-}
-
-
-
-std::string	maxBuffer_trim(std::string &line, int maxBuffer)
-{
-	std::string	sortedLine;
-	std::string nextWord;
-	std::string	tmpLine = line;
+	std::string	srtLine;
+	std::string nxWord;
+	std::string	tmpLine = rawLine;
 
 	for (; !tmpLine.empty(); )
 	{
-		nextWord = extractWord(tmpLine);
-		if ((int)(sortedLine.size() + nextWord.size()) < maxBuffer)
+		nxWord = strXtractWord(tmpLine);
+		if ((int)(srtLine.size() + nxWord.size()) < maxSize)
 		{
-			extractWord(line);
-			sortedLine += nextWord;
+			strXtractWord(rawLine);
+			srtLine += nxWord;
 		}
 		else
-			return sortedLine;
+			return srtLine;
 	}
-	line.clear();
-	return sortedLine;
+	rawLine.clear();
+	return srtLine;
 }
-
-std::string	strReplace(std::string str, std::string strFind, std::string strReplace)
-{
-	return str.replace(str.find(strFind), strFind.size(), strReplace);
-}
-
-
-
