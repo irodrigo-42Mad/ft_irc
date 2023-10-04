@@ -1,0 +1,6 @@
+*.o
+*.d
+trash_*.*
+.vscode
+ircserv
+irc
