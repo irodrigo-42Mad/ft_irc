@@ -6,7 +6,7 @@
 #    By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/12/23 11:31:25 by irodrigo          #+#    #+#              #
-#    Updated: 2023/09/27 13:04:54 by irodrigo         ###   ########.fr        #
+#    Updated: 2023/10/04 12:37:42 by irodrigo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ INCLUDES	:= headers/
 SRCPATH		:= sources/
 
 # USER FILES DEFINITION #
-SRCFILES	:= main.cpp IRC_Errors.cpp IRC_Utils.cpp
+SRCFILES	:= main.cpp IRC_Errors.cpp IRC_Utils.cpp 
 
 # SOURCES #
 SOURCES		:= $(addprefix $(SRCPATH), $(SRCFILES))
