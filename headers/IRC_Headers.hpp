@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Headers.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 11:47:03 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/02 12:11:18 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/10/05 11:47:32 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 // common sockect structures and functions
 # include <sys/types.h>
 # include <sys/socket.h>
+# include <sys/poll.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <netdb.h>
@@ -37,12 +38,13 @@
 
 // private functions, structures and constants by function
 # include "IRC_Colors.hpp"
-# include "IRC_Messages.hpp"
+// # include "IRC_Messages.hpp"
 # include "IRC_Errors.hpp"
-# include "IRC_Constants.hpp"
+// # include "IRC_Constants.hpp"
+// # include "IRC_Structs.hpp"
 # include "IRC_Utils.hpp"
-# include "IRC_Server.hpp"
-# include "IRC_Users.hpp"
-# include "IRC_Channel.hpp"
+// # include "IRC_Users.hpp"
+// # include "IRC_Channel.hpp"
+//# include "IRC_Server.hpp"
 
 #endif

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+         #
+#    By: icastell <icastell@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/12/23 11:31:25 by irodrigo          #+#    #+#              #
-#    Updated: 2023/10/04 12:37:42 by irodrigo         ###   ########.fr        #
+#    Updated: 2023/10/05 10:46:16 by icastell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ INCLUDES	:= headers/
 SRCPATH		:= sources/
 
 # USER FILES DEFINITION #
-SRCFILES	:= main.cpp IRC_Errors.cpp IRC_Utils.cpp 
+SRCFILES	:= main.cpp IRC_Errors.cpp IRC_Utils.cpp IRC_Server.cpp
 
 # SOURCES #
 SOURCES		:= $(addprefix $(SRCPATH), $(SRCFILES))
@@ -64,7 +64,7 @@ WHITE	:= \033[0;37m
 RESET 	:= \033[0m
 
 OBJS = $(SOURCES:.cpp=.o)
-DEPS = $(OBJS:.o=.d)
+#DEPS = $(OBJS:.o=.d)
 
 .cpp.o:
 	@$(CXX) $(CXXFLAGS) -c $< -o $@

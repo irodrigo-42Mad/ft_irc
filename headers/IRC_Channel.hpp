@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Channel.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:04:15 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/03 11:12:46 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/10/05 10:49:55 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 #define IRC_CHANNEL_HPP
 
 #include "IRC_Headers.hpp"
+#include "IRC_Users.hpp"
+
+class IRC_Server;
 
 class IRC_Channel{
 	private:
