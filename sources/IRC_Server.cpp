@@ -6,11 +6,31 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/05 13:31:10 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/05 20:15:16 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/IRC_Server.hpp"
+
+// common constructor and destructor of class Server
+IRC_Server::IRC_Server(char *port, const std::string &password) : _port(port), _servName("ircserv")
+{
+	//debemos asignar el puerto y el pass para poder funcionar con el resto de elementos.
+	this->_srvFd = this->_myAddrinfo(this->_port);
+	if (this->_srvFd <= 0)
+	{
+		std::cout << "estamos jodidos" << std::endl;
+		return ;
+	}
+	
+	// crear los pollFDs para los clientes conectados.
+	this->_clients = this->_createPoll(this->_srvFd);
+	std::cout << "hola, este es el FD del servidor " << this->_srvFd << std::endl;
+	this->_password = password;
+}
+
+IRC_Server::~IRC_Server()
+{}
 
 // private funtions used to initialization
 
@@ -56,7 +76,7 @@ int IRC_Server::_myAddrinfo(char *servPort)
     return (listener);
 }
 
-struct pollfd * IRC_Server::_createPoll (int srvListener)
+struct pollfd * IRC_Server::_createPoll(int srvListener)
 {
 	struct pollfd *pfds = new pollfd[MAX_CLIENTS];
 	
@@ -64,43 +84,21 @@ struct pollfd * IRC_Server::_createPoll (int srvListener)
     pfds[0].fd = srvListener;
     pfds[0].events = POLLIN; // Ready to read on incoming connection
 
-    this->_clientsConnect = 1; // For the listener
+    this->_connectedClientsNum = 1; // For the listener
 	return (pfds);
 }
-
-// common constructor and destructor of class Server
-IRC_Server::IRC_Server(char *port, const std::string &password) : _port(port), _servName("ircserv")
-{
-	//debemos asignar el puerto y el pass para poder funcionar con el resto de elementos.
-	this->_srvFd = this->_myAddrinfo(this->_port);
-	if (this->_srvFd <= 0)
-	{
-		std::cout << "estamos jodidos" << std::endl;
-		return ;
-	}
-	
-	// crear los pollFDs para los clientes conectados.
-	this->_clients = this->_createPoll(this->_srvFd);
-	std::cout << "hola, este es el FD del servidor " << this->_srvFd << std::endl;
-	this->_password = password;
-}
-
-IRC_Server::~IRC_Server()
-{}
 
 // Public functions in server
 void IRC_Server::launch()
 {
-	int newFd;
-	int fdMaxSize;
-	char buf[256];
-
-	fdMaxSize = MAX_CLIENTS;
+	int     newFd;
+	int     fdMaxSize = MAX_CLIENTS;
+	char    buf[256];
 	
 	// Main loop
     while (42)
     {
-        int poll_count = poll(this->_clients, this->_clientsConnect, -1);
+        int poll_count = poll(this->_clients, this->_connectedClientsNum, -1);
         if (poll_count == -1)
         {
             perror("poll");
@@ -108,79 +106,62 @@ void IRC_Server::launch()
         }
 
         // Run through the existing connections looking for data to read
-        for (int i = 0; i < this->_clientsConnect; i++)
+        for (int i = 0; i < this->_connectedClientsNum; i++)
         {
             // Check if someone's ready to read
-            if (this->_clients[i].revents & POLLIN)
-            { // We got one!!
-
+            if (this->_clients[i].revents & POLLIN) // We got one!!
+            {
                 if (this->_clients[i].fd == this->_srvFd)
                 {
                     // If listener is ready to read, handle new connection
 
                     this->_addrlen = sizeof this->_remoteaddr; // falta revision
 					 // falta revision
-                    newFd = accept(this->_srvFd,
-                                   (struct sockaddr *)&this->_remoteaddr,
-                                   &this->_addrlen);
-
+                    newFd = accept(this->_srvFd, (struct sockaddr *)&this->_remoteaddr, &this->_addrlen);
                     if (newFd == -1)
-                    {
                         perror("accept");
-                    }
                     else
                     {
-                        addToPfds(&this->_clients, newFd, &this->_clientsConnect, &fdMaxSize);
-
-                        printf("pollserver: new connection from %s on "
-                               "socket %d\n",
- 
-							   inet_ntop(this->_remoteaddr.ss_family,
-                                         getInAddr((struct sockaddr *)&this->_remoteaddr),
-                                         this->_remoteIP, INET6_ADDRSTRLEN),
-                               newFd);
+                        //std::cout << "antes: " << this->_connectedClientsNum << std::endl;
+                        addToPfds(&this->_clients, newFd, &this->_connectedClientsNum, &fdMaxSize);
+                        //std::cout << "después: " << this->_connectedClientsNum << std::endl;
+                        std::cout << "pollserver: New connection from " << inet_ntop(this->_remoteaddr.ss_family,
+                            getInAddr((struct sockaddr *)&this->_remoteaddr),
+                            this->_remoteIP, INET6_ADDRSTRLEN) << " on socket " << newFd << std::endl;
                     }
                 }
                 else
                 {
+                    //int nbytes = recv(this->_clients[i].fd, buf, sizeof buf, 0);
+                    
                     // If not the listener, we're just a regular client
-                    int nbytes = recv(this->_clients[i].fd, buf, sizeof buf, 0);
-
-                    int sender_fd = this->_clients[i].fd;
-
+                    int senderFd = this->_clients[i].fd;
+                    int nbytes = recv(senderFd, buf, sizeof buf, 0);
                     if (nbytes <= 0)
                     {
                         // Got error or connection closed by client
                         if (nbytes == 0)
-                        {
                             // Connection closed
-                            printf("pollserver: socket %d hung up\n", sender_fd);
-                        }
+                            std::cout << "pollserver: Socket " << senderFd << " hung up" << std::endl;
                         else
-                        {
                             perror("recv");
-                        }
-
-                        close(this->_clients[i].fd); // Bye!
-
-                        delFromPfds(this->_clients, i, &this->_clientsConnect);
+                        //close(this->_clients[i].fd); // Bye!
+                        close(senderFd);
+                        delFromPfds(this->_clients, i, &this->_connectedClientsNum);
                     }
                     else
                     {
                         // We got some good data from a client
-
-                        for (int j = 0; j < this->_clientsConnect; j++)
+                        for (int j = 0; j < this->_connectedClientsNum; j++)
                         {
                             // Send to everyone!
-                            int dest_fd = this->_clients[j].fd;
+                            int destFd = this->_clients[j].fd;
 
                             // Except the listener and ourselves
-                            if (dest_fd != this->_srvFd && dest_fd != sender_fd)
+                            if (destFd != this->_srvFd && destFd != senderFd)
                             {
-                                if (send(dest_fd, buf, nbytes, 0) == -1)
-                                {
+                                if (send(destFd, buf, nbytes, 0) == -1)
                                     perror("send");
-                                }
                             }
                         }
                     }

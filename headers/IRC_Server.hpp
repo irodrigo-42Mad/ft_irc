@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/05 13:27:47 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/05 19:28:12 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,21 +32,22 @@ class IRC_Server
 		
 
 		// common configuration variables.
-		char *_port;
+		char 		*_port;
 		std::string	_password;
 		std::string _servName;
-		int _srvFd;
-		int _clientsConnect;
+		int			_srvFd;
+		int			_connectedClientsNum;
+		//int			_clientsConnect;
 		
-		struct pollfd *_clients;
+		struct pollfd			*_clients;
 		struct sockaddr_storage _remoteaddr; // Client address
-    	socklen_t _addrlen;
-		char _remoteIP[INET6_ADDRSTRLEN];
+    	socklen_t				_addrlen;
+		char					_remoteIP[INET6_ADDRSTRLEN];
 
 		// complient class methods not used.
 		IRC_Server();
 
-		int	_myAddrinfo(char *servPort);
+		int				_myAddrinfo(char *servPort);
 		struct pollfd * _createPoll(int srvFd);
 		
 		
