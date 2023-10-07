@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:22:13 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/05 11:15:16 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/07 11:41:04 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,9 @@
 
 // special character
 # define SPECIALCHAR 	"-[]\\`^{}"		//must try to control this characters in structures.
+
+// const to control messages
+# define FIRST			1				//used to set first message send to client
+# define NORMALMSG		0				//normal messages to clients
 
 # endif

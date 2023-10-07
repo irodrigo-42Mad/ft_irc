@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/05 19:28:12 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/07 12:49:58 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,9 @@ class IRC_Server
 		std::string _servName;
 		int			_srvFd;
 		int			_connectedClientsNum;
+		char		_MOTD[256];
+		std::tm 	_myTimeStamp;
+		//struct datetime _myTimeStamp;
 		//int			_clientsConnect;
 		
 		struct pollfd			*_clients;
@@ -83,6 +86,7 @@ class IRC_Server
 		//enum State 			getState();
 
 		IRC_Server::State 	getState() const;
+		std::string			getMOTD() const;
 		//void 				setState(enum State myst);
 		
 		// general irc functions
@@ -91,8 +95,11 @@ class IRC_Server
 		void 				addToPfds(pollfd *pfds[], int newfd, int *fd_count, int *fd_size);
 		void 				delFromPfds(pollfd pfds[], int i, int *fd_count);
 
-		// Server Display 
-		void				handleMessage(int fd);
+		// Server Display
+		// void                sendMSG(std::string message, int type);
+
+		int                 sendMOTDMsg(int newClient);
+		void				handleMessage(int fd); // de momento no usada
 		void				displayClient();
 
 		// Server Display
