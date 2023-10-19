@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/07 12:49:58 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/15 20:12:25 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ class IRC_Server
 		// common configuration variables.
 		char 		*_port;
 		std::string	_password;
-		std::string _servName;
-		int			_srvFd;
+		std::string _serverName;
+		int			_serverFd;
 		int			_connectedClientsNum;
-		char		_MOTD[256];
+		char		_MOTD[4096];
 		std::tm 	_myTimeStamp;
 		//struct datetime _myTimeStamp;
 		//int			_clientsConnect;
@@ -50,8 +50,8 @@ class IRC_Server
 		// complient class methods not used.
 		IRC_Server();
 
-		int				_myAddrinfo(char *servPort);
-		struct pollfd * _createPoll(int srvFd);
+		int				_myAddrinfo(char *serverPort);
+		struct pollfd * _createPoll(int serverFd);
 		
 		
 		// User		_UserMap;
@@ -98,6 +98,7 @@ class IRC_Server
 		// Server Display
 		// void                sendMSG(std::string message, int type);
 
+		bool				fillMOTDMsg(const char *filename);
 		int                 sendMOTDMsg(int newClient);
 		void				handleMessage(int fd); // de momento no usada
 		void				displayClient();
