@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Headers.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 11:47:03 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/05 11:47:32 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/15 19:46:39 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <string>
 # include <cerrno>
 # include <ctime>
+# include <fstream>
 
 // common sockect structures and functions
 # include <sys/types.h>
