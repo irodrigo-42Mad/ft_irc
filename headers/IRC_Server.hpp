@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/15 20:12:25 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/20 16:38:41 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,37 +29,30 @@ class IRC_Messages;
 class IRC_Server
 {
 	private:
-		
-
 		// common configuration variables.
 		char 		*_port;
 		std::string	_password;
 		std::string _serverName;
+		char		_MOTD[4096];
 		int			_serverFd;
 		int			_connectedClientsNum;
-		char		_MOTD[4096];
 		std::tm 	_myTimeStamp;
-		//struct datetime _myTimeStamp;
-		//int			_clientsConnect;
-		
+		struct addrinfo			_hints;
+		struct addrinfo			*_res;
 		struct pollfd			*_clients;
-		struct sockaddr_storage _remoteaddr; // Client address
+		struct sockaddr_storage _remoteaddr; // client address
     	socklen_t				_addrlen;
 		char					_remoteIP[INET6_ADDRSTRLEN];
 
-		// complient class methods not used.
-		IRC_Server();
-
+		IRC_Server();									// cannot be instantiated without a port and password
+		IRC_Server(IRC_Server const &cpy);				// cannot be instantiated by copy
+		IRC_Server &operator = (IRC_Server const &cpy);	// cannot be copied
 		int				_myAddrinfo(char *serverPort);
 		struct pollfd * _createPoll(int serverFd);
-		
 		
 		// User		_UserMap;
 		// Command		_CommandMap;
 		// IRC_Channel	_ChannelMap;
-
-		
-
 	public:
 		// server status notifications.
 		enum State
@@ -68,23 +61,16 @@ class IRC_Server
 			RESTART,
 			DIE
 		};
-
 		enum MyType
 		{
 			PING,
 			PONG
 		};
 
-		struct addrinfo _hints, *_res;
-
 		IRC_Server(char *port, const std::string &password);
-		IRC_Server(IRC_Server const &cpy);
-		IRC_Server &operator = (IRC_Server const &cpy);
 		~IRC_Server();
 		
-		//getters y setters
-		//enum State 			getState();
-
+		// getters and setters
 		IRC_Server::State 	getState() const;
 		std::string			getMOTD() const;
 		//void 				setState(enum State myst);
@@ -100,17 +86,17 @@ class IRC_Server
 
 		bool				fillMOTDMsg(const char *filename);
 		int                 sendMOTDMsg(int newClient);
-		void				handleMessage(int fd); // de momento no usada
+		void				handleMessage(int fd);
 		void				displayClient();
 
 		// Server Display
 		void				newClient();
 		void				eraseClient(int fd);
-		void				eraseClientChannel(IRC_Client &cl);
+		void				eraseClientChannel(IRC_Client &client);
 		void				clientDisconnect(int fd);
 
-		bool				is_in_channel(IRC_Client &cl);
-		bool				is_oper_in_channel(IRC_Client &cl);
+		bool				is_in_channel(IRC_Client &client);
+		bool				is_oper_in_channel(IRC_Client &client);
 
 		// Server command implementation
 			// IRC Commands
