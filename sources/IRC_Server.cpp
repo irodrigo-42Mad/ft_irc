@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/20 16:32:29 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/25 20:20:27 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,9 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
     _port(port), _password(password), _serverName("ircserv"),
     _MOTD(""), _connectedClientsNum(0)
 {
-    //debemos asignar el puerto y el pass para poder funcionar con el resto de elementos.
-	this->_serverFd = this->_myAddrinfo(this->_port);
-	if (this->_serverFd <= 0)
-	{
-		std::cout << "estamos jodidos" << std::endl;
-		return ;
-	}
     if (!fillMOTDMsg("./images/ascii-art5.txt"))
     {
-        std::cout << "fallo con la carga de MOTD" << std::endl;
+        std::strncat(this->_MOTD, "Bienvenido al IRC de irodrigo e icastell\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
         return ;
     }
     std::time_t now = std::time(nullptr);
@@ -35,19 +28,14 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
     
     std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec //solo de momento
               << std::endl;
-    
-	// crear los pollFDs para los clientes conectados. 
-	this->_clients = this->_createPoll(this->_serverFd);
-	std::cout << "hola, este es el FD del servidor: " << this->_serverFd << std::endl;
 }
 
 IRC_Server::~IRC_Server() {}
 
-// private funtions used to initialization
-
-int IRC_Server::_myAddrinfo(char *serverPort)
+int IRC_Server::_myAddrInfo(std::string const &port)
 {
-	int rv;									// Control error output messages
+	const char  *serverPort = port.c_str(); // Get char* pointer from the string std::string
+    int rv;									// Control error output messages
 	int listener;							// Listening socket descriptor
 	int yes = 1;							// For setsockopt() SO_REUSEADDR, below
 	struct addrinfo *p;						// auxiliar variable for check listener lists
@@ -88,19 +76,18 @@ int IRC_Server::_myAddrinfo(char *serverPort)
     return (listener);
 }
 
-struct pollfd * IRC_Server::_createPoll(int serverListener)
+struct pollfd * IRC_Server::createPoll(int serverListener)
 {
 	struct pollfd *pfds = new pollfd[MAX_CLIENTS];
 	
 	// Add the server listener to set
     pfds[0].fd = serverListener;
-    pfds[0].events = POLLIN; // Ready to read on incoming connection
+    pfds[0].events = POLLIN;        // Ready to read on incoming connection
 
     this->_connectedClientsNum = 1; // For the listener
 	return (pfds);
 }
 
-// Public functions in server
 void IRC_Server::launch()
 {
 	int     newFd;
@@ -126,7 +113,6 @@ void IRC_Server::launch()
                 if (this->_clients[i].fd == this->_serverFd)
                 {
                     // If listener is ready to read, handle new connection
-
                     this->_addrlen = sizeof(this->_remoteaddr);
                     newFd = accept(this->_serverFd, (struct sockaddr *)&this->_remoteaddr, &this->_addrlen);
                     if (newFd == -1)
@@ -139,50 +125,8 @@ void IRC_Server::launch()
                         std::cout << "pollserver: New connection from " << inet_ntop(this->_remoteaddr.ss_family,
                             getInAddr((struct sockaddr *)&this->_remoteaddr),
                             this->_remoteIP, INET6_ADDRSTRLEN) << " on socket " << newFd << std::endl;
-                        //sendMSG(this->_MOTD, FIRST);
-
-                        
-                        
-                        
-                        //// __________ ///////
-                        // int senderFd = this->_clients[0].fd;
-                        
-                        // int nbytes = recv(senderFd, this->_MOTD, sizeof (this->_MOTD), 0);
-                        // for (int j = 1; j < this->_connectedClientsNum; j++)
-                        // {
-                            // Send to everyone!
-                            //int destFd = this->_clients[j].fd;
-
-                            // Except the listener and ourselves
-                            if (sendMOTDMsg(newFd) < 0)
-                                return ;
-                            
-                            // if (send(newFd, this->_MOTD, sizeof(this->_MOTD), 0) == -1)
-                            //     perror("send");
-                     //   }
-
-
-
-                        //// __________ //////
-
-                        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        
+                        if (sendMOTDMsg(newFd) < 0)
+                            return ;
                     }
                 }
                 else
@@ -264,16 +208,42 @@ void    IRC_Server::delFromPfds(pollfd pfds[], int i, int *fd_count)
     (*fd_count)--;
 }
 
-IRC_Server::State 	IRC_Server::getState() const
+bool    IRC_Server::initializeSocket()
 {
-	return (ALIVE);
+    int srvFd = _myAddrInfo(this->_port);
+
+    if (srvFd < 0)
+        return (false);
+    else
+        this->_serverFd = srvFd;
+    return (true);
+}
+
+void    IRC_Server::setClients(struct pollfd *clients)
+{
+    this->_clients = clients;
+}
+
+int IRC_Server::getServerFd() const
+{
+    return (this->_serverFd);
+}
+
+void    IRC_Server::setServerFd(int serverSocket)
+{
+    this->_serverFd = serverSocket;
+}
+
+
+std::string IRC_Server::getPort() const
+{
+    return (this->_port);
 }
 
 std::string IRC_Server::getMOTD() const
 {
     return (this->_MOTD);
 }
-
 
 int IRC_Server::sendMOTDMsg(int newClient)
 {
@@ -294,16 +264,20 @@ bool    IRC_Server::fillMOTDMsg(const char *filename)
         file.read(this->_MOTD, sizeof(this->_MOTD));
         this->_MOTD[file.gcount()] = '\0';  //Make sure that the string ends with a null character
         file.close();
-        strncat(this->_MOTD, "Somos un equipo,\nvaliente y luchador,\n", sizeof(_MOTD) - strlen(_MOTD) - 1);
-        strncat(this->_MOTD, "que defiende su IRC,\ncon el corazón.\n", sizeof(_MOTD) - strlen(_MOTD) - 1);
-        strncat(this->_MOTD, "Los años pasando,\ny seguimos aquí,\n", sizeof(_MOTD) - strlen(_MOTD) - 1);
-        strncat(this->_MOTD, "porque somos los currelas,\ny esto nunca va a morir ...\n\n", sizeof(_MOTD) - strlen(_MOTD) - 1);
+        std::strncat(this->_MOTD, "Somos un equipo,\nvaliente y luchador,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        std::strncat(this->_MOTD, "que defiende su IRC,\ncon el corazón.\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        std::strncat(this->_MOTD, "Los años pasando,\ny seguimos aquí,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        std::strncat(this->_MOTD, "porque somos los currelas,\ny esto nunca va a morir ...\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
     }
     else
         return (false);
     return (true);
 }
 
+IRC_Server::State 	IRC_Server::getState() const
+{
+	return (ALIVE);
+}
 
 
 // void                IRC_Server::sendMSG(std::string message, int type)

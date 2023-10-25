@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/20 16:38:41 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/25 20:04:32 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ class IRC_Server
 {
 	private:
 		// common configuration variables.
-		char 		*_port;
+		std::string	_port;
 		std::string	_password;
 		std::string _serverName;
 		char		_MOTD[4096];
@@ -47,8 +47,8 @@ class IRC_Server
 		IRC_Server();									// cannot be instantiated without a port and password
 		IRC_Server(IRC_Server const &cpy);				// cannot be instantiated by copy
 		IRC_Server &operator = (IRC_Server const &cpy);	// cannot be copied
-		int				_myAddrinfo(char *serverPort);
-		struct pollfd * _createPoll(int serverFd);
+		
+		int	_myAddrInfo(std::string const &port);
 		
 		// User		_UserMap;
 		// Command		_CommandMap;
@@ -71,11 +71,17 @@ class IRC_Server
 		~IRC_Server();
 		
 		// getters and setters
-		IRC_Server::State 	getState() const;
+		int					getServerFd() const;
+		std::string			getPort() const;			
 		std::string			getMOTD() const;
+		IRC_Server::State 	getState() const;
+		void				setServerFd(int serverSocket);
+		void				setClients(struct pollfd *clients);
 		//void 				setState(enum State myst);
 		
 		// general irc functions
+		bool				initializeSocket();
+		struct pollfd		*createPoll(int serverFd);
 		void				launch();
 		void *				getInAddr(struct sockaddr *sa);
 		void 				addToPfds(pollfd *pfds[], int newfd, int *fd_count, int *fd_size);

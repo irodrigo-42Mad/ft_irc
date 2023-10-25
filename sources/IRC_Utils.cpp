@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:51:12 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/04 12:56:42 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/10/24 18:55:37 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	rightTrim(std::string & str)
 
 std::string	strReplace(std::string str, std::string strFind, std::string strReplace) // posible & pendiente
 {
-	return str.replace(str.find(strFind), strFind.size(), strReplace);
+	return (str.replace(str.find(strFind), strFind.size(), strReplace));
 }
 
 std::string	strXtractWord(std::string& str)
@@ -86,11 +86,11 @@ std::string	strXtractWord(std::string& str)
 			str.erase(0, 1);
 		else
 			str.erase(0, i);
-		return newStr;
+		return (newStr);
 	}
 	newStr = str;
 	str.clear();
-	return newStr;
+	return (newStr);
 }
 
 std::string	maxBufferTrim(std::string &rawLine, int maxSize)
@@ -108,8 +108,8 @@ std::string	maxBufferTrim(std::string &rawLine, int maxSize)
 			srtLine += nxWord;
 		}
 		else
-			return srtLine;
+			return (srtLine);
 	}
 	rawLine.clear();
-	return srtLine;
+	return (srtLine);
 }

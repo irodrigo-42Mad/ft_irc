@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 12:47:08 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/05 10:38:57 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/25 20:06:44 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,14 @@ int	main(int argc, char *argv[])
 		return (ft_err_msg("password is empty!", ERR_COMPLETELY_SCREWED, 3));
 	
 	IRC_Server irc(argv[1], argv[2]);   // crearemos el servidor
+	if (irc.initializeSocket())
+	{
+		//ahora hay que crear el array de clientes
+		irc.setClients(irc.createPoll(irc.getServerFd()));
+	}
+	else
+		return (EXIT_FAILURE);
+	
 	IRC_Server::State srvState = IRC_Server::ALIVE;
 
 	while (srvState != IRC_Server::DIE)
