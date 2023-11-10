@@ -54,6 +54,25 @@ To run this server you need to execute en bash or zsh next commands:
 ./ft_irc <port> <password>
 ```
 
+### Connect
+
+If you'd like to try the server without using a IRC client, you can connect to it using the following steps.
+
+- First open a new terminal and type:
+```bash
+nc -c <server host> <port>
+```
+- Once you are connected, you can register like a normal IRC server does.
+```bash
+PASS <password>
+```
+```bash
+NICK <nickname>
+```
+```bash
+USER <username> 0 * <realname>
+```
+
 
 ## Built With
 
