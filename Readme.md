@@ -50,7 +50,9 @@ Next commands compile this program in current OSX or Linux environments:
 ### Running and using this software
 
 To run this server you need to execute en bash or zsh next commands:
-
+```bash
+./ft_irc <port> <password>
+```
 
 
 ## Built With
