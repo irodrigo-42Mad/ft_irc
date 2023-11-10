@@ -1,6 +1,6 @@
 # 42 ft_irc
 
-This is a simple IRC server based on RFC's 2812 and 1459 totaly rewriten in C++ 98.
+This is a simple IRC server based on RFC's [2812](https://datatracker.ietf.org/doc/html/rfc2812) and [1459](https://www.rfc-es.org/rfc/rfc1459-es.txt) totaly rewriten in C++ 98.
 
 This server not support Server - Server comunication (not implemented yet) and it´s functional in any client that supports common 'endl' characters '\r \n' at send packets.
 
