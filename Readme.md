@@ -47,14 +47,20 @@ Next commands compile this program in current OSX or Linux environments:
 	$ make all
 ```
 
-### running and using this software
+### Running and using this software
 
-to run this server you need to execute en bash or zsh next commands:
+To run this server you need to execute en bash or zsh next commands:
+
+
 
 ## Built With
 
+* [GNU GCC](https://gcc.gnu.org) - The C Compiler used
+* [Xcode](https://developer.apple.com/xcode/) - IDE GUI Editor to deploy
 * [Visual Studio Code](https://code.visualstudio.com/docs/) - IDE GUI Editor to deploy
 * [VIM](https://www.vim.org/download.php) - Terminal Editor to deploy
+* [LLDB](https://lldb.llvm.org) - Debuger aplication
+
 
 ## Versioning
 
@@ -62,9 +68,9 @@ Version 1.0
 
 ## Authors
 
-* **Isaac Rodrigo** - *Initial work* - [irodrigo-42Mad](https://github.com/irodrigo-42Mad/docker_miracle)
+* **Isaac Rodrigo** - *Initial work* - [irodrigo-42Mad](https://github.com/irodrigo-42Mad/ft_irc) - Command adjustment.
 
-* **Idoya Castell** - *Initial work* - Server adjustment 
+* **Idoya Castell** - *Initial work* - [icastell1974](https://github.com/irodrigo-42Mad/ft_irc) - Server adjustment and modifications.
 
 ## Acknowledgments
 
