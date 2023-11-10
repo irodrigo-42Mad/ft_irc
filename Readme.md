@@ -62,7 +62,7 @@ If you'd like to try the server without using a IRC client, you can connect to i
 ```bash
 nc -c <server host> <port>
 ```
-- Once you are connected, you can register like a normal IRC server does.
+- Once you are connected, you can register as normal IRC server doing this procedure.
 ```bash
 PASS <password>
 ```
