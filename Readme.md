@@ -60,7 +60,7 @@ To run this server you need to execute en bash or zsh next commands:
 * [Visual Studio Code](https://code.visualstudio.com/docs/) - IDE GUI Editor to deploy
 * [VIM](https://www.vim.org/download.php) - Terminal Editor to deploy
 * [LLDB](https://lldb.llvm.org) - Debuger aplication
-* [leaks](https://lldb.llvm.org) - Check memory assigment and leak situations
+* [leaks]([https://lldb.llvm.org](https://developer.apple.com/forums/thread/680081)) - Check memory assigment and leak situations
 * [Valgrind](https://valgrind.org/) - Check memory assigment and leak situations
 * [Docker](https://www.docker.com/) - Container orchestrator
 
