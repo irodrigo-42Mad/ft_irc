@@ -72,7 +72,28 @@ NICK <nickname>
 ```bash
 USER <username> 0 * <realname>
 ```
+- Then the server will send you a PING and you shoud answer with a PONG for register succesfully.
+```bash
+PONG server
+```
+From this moment we can create channels, send private messages, and using normaly IRC clients.
 
+## Commands handle
+- PASS
+- NICK
+- USER
+- JOIN
+- PING
+- PONG
+- MOTD
+- NOTICE
+- PRIVMSG
+- LIST
+- NAMES
+- PART
+- OPER
+- DIE
+- QUIT
 
 ## Built With
 
