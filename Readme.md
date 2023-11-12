@@ -79,6 +79,8 @@ PONG server
 From this moment we can create channels, send private messages, and using normaly IRC clients.
 
 ## Commands handle
+
+```
 - PASS
 - NICK
 - USER
@@ -94,6 +96,7 @@ From this moment we can create channels, send private messages, and using normal
 - OPER
 - DIE
 - QUIT
+```
 
 ## Built With
 
