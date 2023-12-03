@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 12:47:08 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/25 20:06:44 by icastell         ###   ########.fr       */
+/*   Updated: 2023/11/02 19:31:12 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@ int	main(int argc, char *argv[])
 	
 	IRC_Server irc(argv[1], argv[2]);   // crearemos el servidor
 	if (irc.initializeSocket())
-	{
+	//{
 		//ahora hay que crear el array de clientes
 		irc.setClients(irc.createPoll(irc.getServerFd()));
-	}
+	//}
 	else
-		return (EXIT_FAILURE);
+		return (ft_err_msg("can not create a server", ERR_COMPLETELY_SCREWED, 1));
 	
 	IRC_Server::State srvState = IRC_Server::ALIVE;
 
@@ -43,7 +43,7 @@ int	main(int argc, char *argv[])
 		}
 		catch (std::exception &e) {
 			std::string rtdo;
-			return(ft_err_msg (e.what(), ERR_COMPLETELY_SCREWED, 5));
+			return(ft_err_msg(e.what(), ERR_COMPLETELY_SCREWED, 5));
 			//irc.log() << e.what() << std::endl;
 			//return (1);
 		}

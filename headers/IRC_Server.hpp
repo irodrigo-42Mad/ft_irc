@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/25 20:04:32 by icastell         ###   ########.fr       */
+/*   Updated: 2023/11/17 18:52:46 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,12 @@ class IRC_Server
 		~IRC_Server();
 		
 		// getters and setters
-		int					getServerFd() const;
-		std::string			getPort() const;			
+		std::string			getPort() const;
+		std::string			getPassword() const;
+		std::string			getServerName() const;			
 		std::string			getMOTD() const;
+		int					getServerFd() const;
+		int					getConnectedClientsNum() const;
 		IRC_Server::State 	getState() const;
 		void				setServerFd(int serverSocket);
 		void				setClients(struct pollfd *clients);
@@ -90,7 +93,7 @@ class IRC_Server
 		// Server Display
 		// void                sendMSG(std::string message, int type);
 
-		bool				fillMOTDMsg(const char *filename);
+		void				fillMOTDMsg(const char *filename);
 		int                 sendMOTDMsg(int newClient);
 		void				handleMessage(int fd);
 		void				displayClient();
@@ -109,8 +112,10 @@ class IRC_Server
 		void				cmdPass(IRC_Messages &message);
 		void				cmdNick(IRC_Messages &message);
 		void				cmdUser(IRC_Messages &message);
+		void				cmdPing(IRC_Messages &message);
+		void				cmdPong(IRC_Messages &message);
+		
 		void				cmdPrivMsg(IRC_Messages &message);
-		void				cmdPingPong(IRC_Messages &message, MyType tp);
 		void				cmdJoin(IRC_Messages &message);
 		void				cmdOper(IRC_Messages &message);
 		void				cmdQuit(IRC_Messages &message);
