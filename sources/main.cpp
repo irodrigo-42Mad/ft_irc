@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 12:47:08 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/11/02 19:31:12 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/04 16:07:57 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,16 @@ int	main(int argc, char *argv[])
 		return (ft_err_msg("invalid port", ERR_COMPLETELY_SCREWED, 3));
 	if (!checkPasswordNotEmpty(argv[2]))
 		return (ft_err_msg("password is empty!", ERR_COMPLETELY_SCREWED, 3));
+	
+	std::string	aux;
+	aux = channelName("#holame#llamoIdoyallllllllllllllllllllljhhhgfgdgfd0123456789");
+	//std::cout << "después de truncar: &" << aux << "&" << std::endl;
+	std::string host_name = "01234,5678901234567890123456%7890123456789012345678901234567890123456789";
+	if (checkHostName(host_name))//0123456789012345678901234567890123456"))
+		std::cout << "nombre Hostname correcto" << std::endl;
+	else
+		std::cout << "nombre Hostname incorrecto" << std::endl;
+	exit (0);
 	
 	IRC_Server irc(argv[1], argv[2]);   // crearemos el servidor
 	if (irc.initializeSocket())
@@ -40,6 +50,13 @@ int	main(int argc, char *argv[])
 			//irc.loadConfig(configFile.c_str());
 			irc.launch();    		 	// lanzaremos el bucle del pool
 			srvState = irc.getState();  // comprobamos que no está caido en cada ejecución
+
+
+			//estamos, estamos, estamos dando tumbos?????
+
+			
+
+			
 		}
 		catch (std::exception &e) {
 			std::string rtdo;

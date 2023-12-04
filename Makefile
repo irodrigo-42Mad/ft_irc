@@ -52,7 +52,7 @@ WHITE	:= \033[0;37m
 RESET 	:= \033[0m
 
 OBJS = $(SOURCES:.cpp=.o)
-#DEPS = $(OBJS:.o=.d)
+DEPS = $(OBJS:.o=.d)
 
 .cpp.o:
 	@$(CXX) $(CXXFLAGS) -c $< -o $@

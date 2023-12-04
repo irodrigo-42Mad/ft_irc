@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/11/10 17:21:54 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/03 19:38:52 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,10 +149,12 @@ void    IRC_Server::launch()
     while (42)
     {
         int poll_count = poll(this->_clients, this->_connectedClientsNum, -1);
-        if (poll_count == -1)
+        if (poll_count <= 0)
         {
-            ft_err_msg(std::strerror(errno), ERR_COMPLETELY_SCREWED, 1);
-            //perror("poll");
+            if (poll_count == -1)
+                ft_err_msg("fatal server error", ERR_COMPLETELY_SCREWED, 1);
+            else if (poll_count == 0)
+                ft_err_msg("timeout error", ERR_COMPLETELY_SCREWED, 1);
             exit(1);
         }
         
@@ -162,12 +164,12 @@ void    IRC_Server::launch()
         {
             if (this->_clients[i].revents & POLLIN)             // We got one!!
             {
-                if (this->_clients[i].fd == this->_serverFd)    // If listener is ready to read, handle new connection
+                if (this->_clients[i].fd == getServerFd())    // If listener is ready to read, handle new connection
                 {
                     this->_addrlen = sizeof(this->_remoteaddr);
                     newFd = accept(this->_serverFd, (struct sockaddr *)&this->_remoteaddr, &this->_addrlen);
                     if (newFd == -1)
-                        ft_err_msg(std::strerror(errno), ERR_STILL_SAVED, 2);
+                        ft_err_msg("can not allocate socket client information", ERR_STILL_SAVED, 2);
                         //perror("accept");
                     else
                     {
@@ -187,7 +189,7 @@ void    IRC_Server::launch()
                         if (nbytes == 0)    // Connection closed
                             std::cout << "pollserver: Socket " << senderFd << " hung up" << std::endl;
                         else
-                            ft_err_msg(std::strerror(errno), ERR_STILL_SAVED, 2);
+                            ft_err_msg("can not receive client data", ERR_STILL_SAVED, 2);
                             //perror("recv");
                         close(senderFd);
                         delFromPfds(this->_clients, i, &this->_connectedClientsNum);
@@ -203,7 +205,7 @@ void    IRC_Server::launch()
                             if (destFd != this->_serverFd && destFd != senderFd)    // Except the listener and ourselves
                             {
                                 if (send(destFd, buf, nbytes, 0) == -1)
-                                    ft_err_msg(std::strerror(errno), ERR_STILL_SAVED, 2);
+                                    ft_err_msg("can not send data to destiny", ERR_STILL_SAVED, 2);
                             }
                         }
                     }

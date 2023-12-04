@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Headers.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 11:47:03 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/15 19:46:39 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/03 19:38:59 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 # include <unistd.h>
 # include <sstream>
 # include <string>
-# include <cerrno>
 # include <ctime>
 # include <fstream>
 
