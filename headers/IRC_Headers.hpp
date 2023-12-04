@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 11:47:03 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/03 19:38:59 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/04 16:54:20 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 // common STL structures needed
 # include <vector>
 # include <map>
+# include <utility>
 
 // private functions, structures and constants by function
 # include "IRC_Colors.hpp"

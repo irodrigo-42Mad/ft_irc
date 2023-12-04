@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:51:12 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/04 16:08:57 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/04 16:18:02 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ bool	checkChannelName(std::string const &name)
 	{
         // Comprobar si hay espacio, coma o ASCII 7 en el string
         if (name[i] == ' ' || name[i] == ',' || name[i] == 7)
-            return false;  // El string no cumple con los requisitos
+            return (false);  // El string no cumple con los requisitos
     }
-    return true;  // El string cumple con los requisitos
+    return (true);  // El string cumple con los requisitos
 }
 
 void	deleteUnwantedChars(std::string &name)

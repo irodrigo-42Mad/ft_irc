@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/11/17 18:52:46 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/04 17:04:57 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@ class IRC_Server
 		char					_remoteIP[INET6_ADDRSTRLEN];
 
 		IRC_Server();									// cannot be instantiated without a port and password
-		IRC_Server(IRC_Server const &cpy);				// cannot be instantiated by copy
-		IRC_Server &operator = (IRC_Server const &cpy);	// cannot be copied
 		
 		int	_myAddrInfo(std::string const &port);
 		
@@ -54,6 +52,7 @@ class IRC_Server
 		// Command		_CommandMap;
 		// IRC_Channel	_ChannelMap;
 	public:
+		
 		// server status notifications.
 		enum State
 		{
@@ -68,6 +67,8 @@ class IRC_Server
 		};
 
 		IRC_Server(char *port, const std::string &password);
+		IRC_Server(IRC_Server const &copy);
+		IRC_Server &operator = (IRC_Server const &copy);
 		~IRC_Server();
 		
 		// getters and setters
@@ -103,7 +104,7 @@ class IRC_Server
 		void				eraseClient(int fd);
 		void				eraseClientChannel(IRC_Client &client);
 		void				clientDisconnect(int fd);
-
+		//estas dos funciones no deberían estar mejor en client??????
 		bool				is_in_channel(IRC_Client &client);
 		bool				is_oper_in_channel(IRC_Client &client);
 

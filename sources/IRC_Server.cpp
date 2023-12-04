@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/03 19:38:52 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/04 19:43:21 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,6 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
     _MOTD(""), _connectedClientsNum(0)
 {
     fillMOTDMsg("./images/ascii-art5.txt");
-    //{
-        //std::strncat(this->_MOTD, "Bienvenido al IRC de irodrigo e icastell\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
-    //    return ;
-    //}
     std::time_t now = std::time(nullptr);
     std::tm     *localTime = std::localtime(&now);
     
@@ -31,6 +27,23 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
 }
 
 IRC_Server::~IRC_Server() {}
+
+/*IRC_Server::IRC_Server(IRC_Server const &copy)
+{
+    _port = copy._port; // Copia del puerto (suponiendo que _port es un C-string)
+    _password = copy._password;  // Copia de la cadena de contraseña (operador de asignación para std::string)
+    _serverName = copy._serverName;  // Copia de la cadena de nombre de servidor (operador de asignación para std::string)
+    _serverFd = copy._serverFd;  // Copia del descriptor de archivo
+    _connectedClientsNum = copy._connectedClientsNum;  // Copia del número de clientes conectados
+    memcpy(_MOTD, copy._MOTD, sizeof(_MOTD));  // Copia del mensaje del día
+    _myTimeStamp = copy._myTimeStamp;  // Copia de la estructura de tiempo
+    // Copia de la estructura de pollfd (asumiendo que se necesita una copia profunda)
+    _clients = new struct pollfd[_connectedClientsNum];
+    memcpy(_clients, copy._clients, _connectedClientsNum * sizeof(struct pollfd));
+    memcpy(&_remoteaddr, &copy._remoteaddr, sizeof(struct sockaddr_storage));  // Copia de la estructura sockaddr_storage
+    _addrlen = copy._addrlen;  // Copia de la longitud de la dirección
+    strcpy(_remoteIP, copy._remoteIP);  // Copia de la dirección IP (suponiendo que _remoteIP es un C-string)
+}*/
 
 int IRC_Server::_myAddrInfo(std::string const &port)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Channel.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:04:15 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/15 19:13:19 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/04 16:35:50 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 #include "IRC_Headers.hpp"
 #include "IRC_Users.hpp"
+#include "IRC_Structs.hpp"
 
 class IRC_Server;
 
@@ -28,12 +29,20 @@ class IRC_Channel
 		std::string _topic;
     	std::string _key;
     	int			_limit;
+		_usersInChannelMap  _userMap;
 		
 	public:
 		IRC_Channel(IRC_Server &server, IRC_Users* creator, std::string const &name);
 		~IRC_Channel();
-		bool	addUser(IRC_Users *newUser);
-		void	deleteUser(IRC_Users *user);
-		void	sendMessage(std::string const &str, int userFd);
+        std::string	getName();
+        std::string	getTopic();
+		void	setName(std::string name);
+        void	setTopic(std::string newTopic);
+		bool	addUser(IRC_Users *userToAdd);
+        void    deleteUser(IRC_Users *userToDelete);
+        bool    isUserInChannel(IRC_Users *actualUser);
+        bool    isUserOnline(IRC_Users *actualUser);
+        void    sendMessage(std::string const &str, int userFd);
+        void    channelBroadcast(std::string const &str, IRC_Users *user);
 };
 #endif

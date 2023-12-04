@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:34:40 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/05 11:03:04 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/04 16:54:10 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,25 +15,17 @@
 #define IRC_STRUCTS_HPP
 
 # include "IRC_Headers.hpp"
+# include "IRC_Users.hpp"
+# include "IRC_Messages.hpp"
 
-//server data structs and enums
-	//struct addrinfo _hints;							// basic server data structs
-	//struct pollfd *pfds;									// contains client file controlers
+class IRC_Users;
+class IRC_Messages;
 
-
-
-
-// 	typedef std::map<int, IRC_Users*>						UserMap;     // ojo hay que ver si correcto
-// 	typedef UserMap::iterator								UserMapIterator;
-// 	typedef std::map<std::string, void (*)(IRC_Messages &)>	cmdMap;
-// 	typedef	std::map<IRC_Users*, int>						channelUsersMap; // ojo, hay que ver si correcto.
-
-
-// //channel data structs and enums
-// 	typedef std::map<std::string, IRC_Channel*>				channelsMap; // ojo, hay que ver si correcto
-// 	typedef std::pair<channelsMap::iterator, bool>			pairAddChannel;
-
-
-// //client data structs and enums
+typedef std::map<int, IRC_Users*>                           _userMap;
+typedef _userMap::iterator                                  _userMapIterator;
+typedef std::map<std::string, IRC_Channel*>                 _channel;
+typedef std::map<IRC_Users*, int>                           _usersInChannelMap;
+typedef std::pair<_usersInChannelMap::iterator, bool>       _channelUserPair;
+typedef std::map <std::string, void(*)(IRC_Messages &)>     _cmdMap;
 
 #endif
