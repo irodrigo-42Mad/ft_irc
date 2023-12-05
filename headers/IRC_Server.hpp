@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/04 17:04:57 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/05 07:56:33 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,9 @@ class IRC_Server
     	socklen_t				_addrlen;
 		char					_remoteIP[INET6_ADDRSTRLEN];
 
-		IRC_Server();									// cannot be instantiated without a port and password
+		IRC_Server();										// can not be instantiated without a port and password
+		IRC_Server(IRC_Server const &copy);					// can not be instantiated by copy
+		IRC_Server &operator = (IRC_Server const &copy);	// can not be instantiated using = operator
 		
 		int	_myAddrInfo(std::string const &port);
 		
@@ -67,8 +69,8 @@ class IRC_Server
 		};
 
 		IRC_Server(char *port, const std::string &password);
-		IRC_Server(IRC_Server const &copy);
-		IRC_Server &operator = (IRC_Server const &copy);
+		//IRC_Server(IRC_Server const &copy);
+		//IRC_Server &operator = (IRC_Server const &copy);
 		~IRC_Server();
 		
 		// getters and setters

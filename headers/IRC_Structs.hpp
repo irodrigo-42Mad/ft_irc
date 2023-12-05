@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:34:40 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/04 16:54:10 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/05 09:25:48 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,10 @@
 # include "IRC_Headers.hpp"
 # include "IRC_Users.hpp"
 # include "IRC_Messages.hpp"
+# include "IRC_Channel.hpp"
 
 class IRC_Users;
+class IRC_Channel;
 class IRC_Messages;
 
 typedef std::map<int, IRC_Users*>                           _userMap;

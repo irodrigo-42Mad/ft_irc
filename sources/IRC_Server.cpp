@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/04 19:43:21 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/05 08:04:22 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,10 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
               << std::endl;
 }
 
-IRC_Server::~IRC_Server() {}
+IRC_Server::~IRC_Server()
+{
+    delete (this->_clients);    //hay que hacer free de éste porque viene de un new?
+}
 
 /*IRC_Server::IRC_Server(IRC_Server const &copy)
 {
@@ -170,7 +173,6 @@ void    IRC_Server::launch()
                 ft_err_msg("timeout error", ERR_COMPLETELY_SCREWED, 1);
             exit(1);
         }
-        
 
         // Run through the existing connections looking for data to read
         for (int i = 0; i < this->_connectedClientsNum; i++)    // Check if someone's ready to read
