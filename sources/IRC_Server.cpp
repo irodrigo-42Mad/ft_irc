@@ -19,7 +19,7 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
     _MOTD(""), _connectedClientsNum(0)
 {
     fillMOTDMsg("./images/ascii-art5.txt");
-    std::time_t now = std::time(nullptr);
+    std::time_t now = std::time(NULL);
     std::tm     *localTime = std::localtime(&now);
     
     std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec //solo de momento
