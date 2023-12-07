@@ -28,7 +28,7 @@ SRCFILES	:= main.cpp IRC_Errors.cpp IRC_Utils.cpp IRC_Server.cpp
 SOURCES		:= $(addprefix $(SRCPATH), $(SRCFILES))
 
 # DEPENDENCIES
-DEPENDENCIES = -MD
+DEPENDENCIES = -MMD
 
 # COMPILER AND FLAGS#
 CXX = clang++
