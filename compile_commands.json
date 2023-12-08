@@ -1,0 +1,78 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++98",
+      "-pedantic",
+      "-Iheaders/",
+      "-O3",
+      "-c",
+      "-o",
+      "sources/main.o",
+      "sources/main.cpp"
+    ],
+    "directory": "/home/rnavarre/isaac",
+    "file": "/home/rnavarre/isaac/sources/main.cpp",
+    "output": "/home/rnavarre/isaac/sources/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++98",
+      "-pedantic",
+      "-Iheaders/",
+      "-O3",
+      "-c",
+      "-o",
+      "sources/IRC_Errors.o",
+      "sources/IRC_Errors.cpp"
+    ],
+    "directory": "/home/rnavarre/isaac",
+    "file": "/home/rnavarre/isaac/sources/IRC_Errors.cpp",
+    "output": "/home/rnavarre/isaac/sources/IRC_Errors.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++98",
+      "-pedantic",
+      "-Iheaders/",
+      "-O3",
+      "-c",
+      "-o",
+      "sources/IRC_Utils.o",
+      "sources/IRC_Utils.cpp"
+    ],
+    "directory": "/home/rnavarre/isaac",
+    "file": "/home/rnavarre/isaac/sources/IRC_Utils.cpp",
+    "output": "/home/rnavarre/isaac/sources/IRC_Utils.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "--std=c++98",
+      "-pedantic",
+      "-Iheaders/",
+      "-O3",
+      "-c",
+      "-o",
+      "sources/IRC_Server.o",
+      "sources/IRC_Server.cpp"
+    ],
+    "directory": "/home/rnavarre/isaac",
+    "file": "/home/rnavarre/isaac/sources/IRC_Server.cpp",
+    "output": "/home/rnavarre/isaac/sources/IRC_Server.o"
+  }
+]

@@ -22,7 +22,7 @@ INCLUDES	:= headers/
 SRCPATH		:= sources/
 
 # USER FILES DEFINITION #
-SRCFILES	:= main.cpp IRC_Errors.cpp IRC_Utils.cpp IRC_Server.cpp
+SRCFILES	:= main.cpp IRC_Errors.cpp IRC_Utils.cpp IRC_Server.cpp IRC_User.cpp
 
 # SOURCES #
 SOURCES		:= $(addprefix $(SRCPATH), $(SRCFILES))

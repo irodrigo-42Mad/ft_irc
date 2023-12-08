@@ -10,7 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/IRC_Server.hpp"
+#include "IRC_Server.hpp"
+#include "IRC_User.hpp"
+#include "IRC_Channel.hpp"
+#include <exception>
                                                                                                                
 IRC_Server::IRC_Server() {}
 
@@ -92,17 +95,17 @@ int IRC_Server::_myAddrInfo(std::string const &port)
     return (listener);
 }
 
-std::string IRC_Server::getPort() const
+const std::string& IRC_Server::getPort() const
 {
     return (this->_port);
 }
 
-std::string IRC_Server::getPassword() const
+const std::string& IRC_Server::getPassword() const
 {
     return (this->_password);
 }
 
-std::string IRC_Server::getServerName() const
+const std::string& IRC_Server::getServerName() const
 {
     return (this->_serverName);
 }
@@ -197,23 +200,51 @@ void    IRC_Server::launch()
                 }
                 else                        // If not the listener, we're just a regular client
                 {
-                    int senderFd = this->_clients[i].fd;
-                    int nbytes = recv(senderFd, buf, sizeof buf, 0);
-                    if (nbytes <= 0)        // Got error or connection closed by client
-                    {
-                        if (nbytes == 0)    // Connection closed
-                            std::cout << "pollserver: Socket " << senderFd << " hung up" << std::endl;
-                        else
-                            ft_err_msg("can not receive client data", ERR_STILL_SAVED, 2);
-                            //perror("recv");
-                        close(senderFd);
-                        delFromPfds(this->_clients, i, &this->_connectedClientsNum);
-                    }
-                    else                    // We got some good data from a client
-                    {
+                	this->_readFromUser(this->_clients[i].fd);
+                }   // END handle data from client
+            }       // END got ready-to-read from poll()
+        }           // END looping through file descriptors
+    }               // END for(;;)--and you thought it would never end!
+}
+
+void IRC_Server::_readFromUser(int fd) {
+	char buffer[1024 + 1];
+	IRC_User* senderUser = this->findUserByFd(fd);
+
+
+	if (!senderUser)
+		throw std::runtime_error("User not exists");
+
+	int nbytes = recv(fd, buffer, 1024, 0);
+
+  if (nbytes <= 0)        // Got error or connection closed by client
+  {
+    if (nbytes == 0)    // Connection closed
+      std::cout << "pollserver: Socket " << senderUser->getFd() << " hung up" << std::endl;
+    else
+      ft_err_msg("can not receive client data", ERR_STILL_SAVED, 2);
+    this->deleteUser(senderUser);
+  }
+  else                    // We got some good data from a client
+  {
+  	buffer[nbytes] = '\0';
+  	senderUser->addReceiveData(buffer);
+  	this->_processUserCommand(senderUser);
+		
+  }
+}
+
+void IRC_User::_processUserCommand(IRC_User* user) {
+
+		// extraer mensaje completo si lo hubiera de user, instanciar message, procesar comando
+}
+
+
+
+
                             //aqui es donde se envian cosas entre ellos
                             //sendMSG(this->_MOTD, NORMALMSG);
-                        
+                       /* 
                         for (int j = 0; j < this->_connectedClientsNum; j++)        // Send to everyone!
                         {   
                             int destFd = this->_clients[j].fd;
@@ -223,12 +254,8 @@ void    IRC_Server::launch()
                                     ft_err_msg("can not send data to destiny", ERR_STILL_SAVED, 2);
                             }
                         }
-                    }
-                }   // END handle data from client
-            }       // END got ready-to-read from poll()
-        }           // END looping through file descriptors
-    }               // END for(;;)--and you thought it would never end!
-}
+                      }
+                      */
 
 void    *IRC_Server::getInAddr(struct sockaddr *sa)
 {
@@ -238,29 +265,43 @@ void    *IRC_Server::getInAddr(struct sockaddr *sa)
     return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
 
-void    IRC_Server::addToPfds(pollfd *pfds[], int newfd, int *fd_count, int *fd_size)
-{
-    if (*fd_count == *fd_size)
-    {
-        *fd_size *= 2;
-        pollfd* new_pfds = new pollfd[*fd_size];
-        for (int i = 0; i < *fd_count; i++) {
-            new_pfds[i] = (*pfds)[i];
-        }
-        delete[] *pfds;     // Libera la memoria del array original
-        *pfds = new_pfds;   // Asigna el nuevo array a pfds
-    }
+void    IRC_Server::addToPfds(int newfd)
+{	
+		int pos = this->_connectedClientsNum;
 
-        (*pfds)[*fd_count].fd = newfd;
-        (*pfds)[*fd_count].events = POLLIN; // Verificar lectura disponible
-        (*fd_count)++;
+    if (this->_connectedClientsNum == MAX_CLIENTS)
+    {
+    	::send(newfd, "Too many users connected", 25, 0);
+    	::close(newfd);
+    	return ;
+    }
+    this->_clients[pos].fd = newfd;
+    this->_clients[pos].events = POLLIN; // Verificar lectura disponible
+    ++this->_connectedClientsNum;
 }
 
-void    IRC_Server::delFromPfds(pollfd pfds[], int i, int *fd_count)
+void    IRC_Server::delFromPfds(struct pollfd* pollPosition)
 {
     // Copy the one from the end over this one
-    pfds[i] = pfds[*fd_count - 1];
-    (*fd_count)--;
+    struct pollfd* last = this->_clients + this->_connectedClientsNum - 1;
+
+		*pollPosition = *last;
+		last->fd = -1;
+		--this->_connectedClientsNum;
+}
+
+IRC_User* IRC_Server::newUser(struct pollfd* pollPosition) {
+	IRC_User* user = new IRC_User(pollPosition);
+	
+	this->_usersByFd[pollPosition->fd] = user;
+	return (user);
+}
+
+void IRC_Server::deleteUser(IRC_User* user) {
+	this->_usersByFd.erase(user->getFd());
+	if (user->getAccess() > 0) //registrado en adelante
+		this->_usersByName.erase(user->getName());
+	this->delFromPfds(user->getPollPosition());
 }
 
 void    IRC_Server::fillMOTDMsg(const char *filename)
@@ -296,6 +337,30 @@ int IRC_Server::sendMOTDMsg(int newClient)
 IRC_Server::State 	IRC_Server::getState() const
 {
 	return (ALIVE);
+}
+
+bool IRC_Server::changeNameUser(IRC_User* user, const std::string& nickname) {
+	if (this->findUserByName(nickname))
+		return (false);
+	user->setName(nickname);
+	return (true);
+}
+
+
+bool addUserToChannel(IRC_User* user, IRC_Channel* channel) {
+	if (user->isInChannel(channel))
+		return (false);
+	user->addChannel(channel);
+	channel->addUser(user);
+	return (true);
+}
+
+bool removeUserFromChannel(IRC_User* user, IRC_Channel* channel) {
+	if (!user->isInChannel(channel))
+		return (false);
+	user->removeChannel(channel);
+	channel->removeUser(user);
+	return (true);
 }
 
 
