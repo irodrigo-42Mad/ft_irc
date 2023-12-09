@@ -10,14 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
 #ifndef IRC_STRUCTS_HPP
-#define IRC_STRUCTS_HPP
+# define IRC_STRUCTS_HPP
 
-# include "IRC_Headers.hpp"
-# include "IRC_Users.hpp"
-# include "IRC_Messages.hpp"
-# include "IRC_Channel.hpp"
+# include <map>
+# include <string>
 
 class IRC_Users;
 class IRC_Channel;
