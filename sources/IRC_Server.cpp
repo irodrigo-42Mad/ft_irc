@@ -3,62 +3,63 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/15 20:18:59 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/05 08:04:22 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/IRC_Server.hpp"
+#include "IRC_Server.hpp"
+#include "IRC_User.hpp"
+#include "IRC_Channel.hpp"
+#include <exception>
+                                                                                                               
+IRC_Server::IRC_Server() {}
 
-// common constructor and destructor of class Server
 IRC_Server::IRC_Server(char *port, const std::string &password):
-    _port(port), _serverName("ircserv")//, _MOTD("Aúpa Osasuna\n\n")
+    _port(port), _password(password), _serverName("ircserv"),
+    _MOTD(""), _connectedClientsNum(0)
 {
-    //debemos asignar el puerto y el pass para poder funcionar con el resto de elementos.
-	this->_serverFd = this->_myAddrinfo(this->_port);
-	if (this->_serverFd <= 0)
-	{
-		std::cout << "estamos jodidos" << std::endl;
-		return ;
-	}
-	std::time_t now = std::time(nullptr);
+    fillMOTDMsg("./images/ascii-art5.txt");
+    std::time_t now = std::time(NULL);
     std::tm     *localTime = std::localtime(&now);
-    if (!fillMOTDMsg("./images/ascii-art.txt"))
-    {
-        std::cout << "fallo con la carga de MOTD" << std::endl;
-        return ;
-    }
-    else
-        std::cout << "ha ido todo bien en la carga" << std::endl;
-        std::cout << this->_MOTD << std::endl;
-        
-	
-    // solo de momento
-    std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec
-              << std::endl;
     
-	// crear los pollFDs para los clientes conectados. 
-	this->_clients = this->_createPoll(this->_serverFd);
-	std::cout << "hola, este es el FD del servidor: " << this->_serverFd << std::endl;
-	this->_password = password;
-    //aquí llamamos a rellenador de MOTD
+    std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec //solo de momento
+              << std::endl;
 }
 
 IRC_Server::~IRC_Server()
-{}
-
-// private funtions used to initialization
-
-int IRC_Server::_myAddrinfo(char *serverPort)
 {
-	int rv;									// Control error output messages
+    delete (this->_clients);    //hay que hacer free de éste porque viene de un new?
+}
+
+/*IRC_Server::IRC_Server(IRC_Server const &copy)
+{
+    _port = copy._port; // Copia del puerto (suponiendo que _port es un C-string)
+    _password = copy._password;  // Copia de la cadena de contraseña (operador de asignación para std::string)
+    _serverName = copy._serverName;  // Copia de la cadena de nombre de servidor (operador de asignación para std::string)
+    _serverFd = copy._serverFd;  // Copia del descriptor de archivo
+    _connectedClientsNum = copy._connectedClientsNum;  // Copia del número de clientes conectados
+    memcpy(_MOTD, copy._MOTD, sizeof(_MOTD));  // Copia del mensaje del día
+    _myTimeStamp = copy._myTimeStamp;  // Copia de la estructura de tiempo
+    // Copia de la estructura de pollfd (asumiendo que se necesita una copia profunda)
+    _clients = new struct pollfd[_connectedClientsNum];
+    memcpy(_clients, copy._clients, _connectedClientsNum * sizeof(struct pollfd));
+    memcpy(&_remoteaddr, &copy._remoteaddr, sizeof(struct sockaddr_storage));  // Copia de la estructura sockaddr_storage
+    _addrlen = copy._addrlen;  // Copia de la longitud de la dirección
+    strcpy(_remoteIP, copy._remoteIP);  // Copia de la dirección IP (suponiendo que _remoteIP es un C-string)
+}*/
+
+int IRC_Server::_myAddrInfo(std::string const &port)
+{
+	const char  *serverPort = port.c_str(); // Get char* pointer from the string std::string
+    int rv;									// Control error output messages
 	int listener;							// Listening socket descriptor
 	int yes = 1;							// For setsockopt() SO_REUSEADDR, below
 	struct addrinfo *p;						// auxiliar variable for check listener lists
 	
-	std::memset(&_hints, 0, sizeof this->_hints);
+	std::memset(&_hints, 0, sizeof(this->_hints));
     this->_hints.ai_flags = AI_PASSIVE;       		// Fill in my IP for me
     this->_hints.ai_family = AF_UNSPEC;       		// Don't care IPv4 or IPv6
     this->_hints.ai_socktype = SOCK_STREAM;   		// TCP stream sockets
@@ -85,6 +86,7 @@ int IRC_Server::_myAddrinfo(char *serverPort)
     }
 
     // If we got here, it means we didn't get bound
+    std::cout << "listener: " << listener << std::endl;
     if (p == NULL)
     	return (-1);
     freeaddrinfo(this->_res); // All done with this
@@ -93,20 +95,70 @@ int IRC_Server::_myAddrinfo(char *serverPort)
     return (listener);
 }
 
-struct pollfd * IRC_Server::_createPoll(int serverListener)
+const std::string& IRC_Server::getPort() const
+{
+    return (this->_port);
+}
+
+const std::string& IRC_Server::getPassword() const
+{
+    return (this->_password);
+}
+
+const std::string& IRC_Server::getServerName() const
+{
+    return (this->_serverName);
+}
+
+std::string IRC_Server::getMOTD() const
+{
+    return (this->_MOTD);
+}
+
+int IRC_Server::getServerFd() const
+{
+    return (this->_serverFd);
+}
+
+int IRC_Server::getConnectedClientsNum() const
+{
+    return (this->_connectedClientsNum);
+}
+
+void    IRC_Server::setServerFd(int serverSocket)
+{
+    this->_serverFd = serverSocket;
+}
+
+void    IRC_Server::setClients(struct pollfd *clients)
+{
+    this->_clients = clients;
+}
+
+bool    IRC_Server::initializeSocket()
+{
+    int srvFd = _myAddrInfo(this->_port);
+
+    if (srvFd < 0)
+        return (false);
+    else
+        this->_serverFd = srvFd;
+    return (true);
+}
+
+struct  pollfd * IRC_Server::createPoll(int serverListener)
 {
 	struct pollfd *pfds = new pollfd[MAX_CLIENTS];
 	
 	// Add the server listener to set
     pfds[0].fd = serverListener;
-    pfds[0].events = POLLIN; // Ready to read on incoming connection
+    pfds[0].events = POLLIN;        // Ready to read on incoming connection
 
     this->_connectedClientsNum = 1; // For the listener
 	return (pfds);
 }
 
-// Public functions in server
-void IRC_Server::launch()
+void    IRC_Server::launch()
 {
 	int     newFd;
 	int     fdMaxSize = MAX_CLIENTS;
@@ -116,125 +168,94 @@ void IRC_Server::launch()
     while (42)
     {
         int poll_count = poll(this->_clients, this->_connectedClientsNum, -1);
-        if (poll_count == -1)
+        if (poll_count <= 0)
         {
-            perror("poll");
+            if (poll_count == -1)
+                ft_err_msg("fatal server error", ERR_COMPLETELY_SCREWED, 1);
+            else if (poll_count == 0)
+                ft_err_msg("timeout error", ERR_COMPLETELY_SCREWED, 1);
             exit(1);
         }
 
         // Run through the existing connections looking for data to read
-        for (int i = 0; i < this->_connectedClientsNum; i++)
+        for (int i = 0; i < this->_connectedClientsNum; i++)    // Check if someone's ready to read
         {
-            // Check if someone's ready to read
-            if (this->_clients[i].revents & POLLIN) // We got one!!
+            if (this->_clients[i].revents & POLLIN)             // We got one!!
             {
-                if (this->_clients[i].fd == this->_serverFd)
+                if (this->_clients[i].fd == getServerFd())    // If listener is ready to read, handle new connection
                 {
-                    // If listener is ready to read, handle new connection
-
-                    this->_addrlen = sizeof this->_remoteaddr;
+                    this->_addrlen = sizeof(this->_remoteaddr);
                     newFd = accept(this->_serverFd, (struct sockaddr *)&this->_remoteaddr, &this->_addrlen);
                     if (newFd == -1)
-                        perror("accept");
+                        ft_err_msg("can not allocate socket client information", ERR_STILL_SAVED, 2);
+                        //perror("accept");
                     else
                     {
-                        //std::cout << "antes: " << this->_connectedClientsNum << std::endl;
                         addToPfds(&this->_clients, newFd, &this->_connectedClientsNum, &fdMaxSize);
-                        //std::cout << "después: " << this->_connectedClientsNum << std::endl;
                         std::cout << "pollserver: New connection from " << inet_ntop(this->_remoteaddr.ss_family,
                             getInAddr((struct sockaddr *)&this->_remoteaddr),
                             this->_remoteIP, INET6_ADDRSTRLEN) << " on socket " << newFd << std::endl;
-                        //sendMSG(this->_MOTD, FIRST);
-
-                        
-                        
-                        
-                        //// __________ ///////
-                        // int senderFd = this->_clients[0].fd;
-                        
-                        // int nbytes = recv(senderFd, this->_MOTD, sizeof (this->_MOTD), 0);
-                        // for (int j = 1; j < this->_connectedClientsNum; j++)
-                        // {
-                            // Send to everyone!
-                            //int destFd = this->_clients[j].fd;
-
-                            // Except the listener and ourselves
-                            if (sendMOTDMsg(newFd) < 0)
-                                return ;
-                            
-                            // if (send(newFd, this->_MOTD, sizeof(this->_MOTD), 0) == -1)
-                            //     perror("send");
-                     //   }
-
-
-
-                        //// __________ //////
-
-                        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        
+                        sendMOTDMsg(newFd); //¿qué hacemos si no se manda?
                     }
                 }
-                else
+                else                        // If not the listener, we're just a regular client
                 {
-                    //int nbytes = recv(this->_clients[i].fd, buf, sizeof buf, 0);
-                    
-                    // If not the listener, we're just a regular client
-                    int senderFd = this->_clients[i].fd;
-                    int nbytes = recv(senderFd, buf, sizeof buf, 0);
-                    if (nbytes <= 0)
-                    {
-                        // Got error or connection closed by client
-                        if (nbytes == 0)
-                            // Connection closed
-                            std::cout << "pollserver: Socket " << senderFd << " hung up" << std::endl;
-                        else
-                            perror("recv");
-                        //close(this->_clients[i].fd); // Bye!
-                        close(senderFd);
-                        delFromPfds(this->_clients, i, &this->_connectedClientsNum);
-                    }
-                    else
-                    {
+                	this->_readFromUser(this->_clients[i].fd);
+                }   // END handle data from client
+            }       // END got ready-to-read from poll()
+        }           // END looping through file descriptors
+    }               // END for(;;)--and you thought it would never end!
+}
+
+void IRC_Server::_readFromUser(int fd) {
+	char buffer[1024 + 1];
+	IRC_User* senderUser = this->findUserByFd(fd);
+
+
+	if (!senderUser)
+		throw std::runtime_error("User not exists");
+
+	int nbytes = recv(fd, buffer, 1024, 0);
+
+  if (nbytes <= 0)        // Got error or connection closed by client
+  {
+    if (nbytes == 0)    // Connection closed
+      std::cout << "pollserver: Socket " << senderUser->getFd() << " hung up" << std::endl;
+    else
+      ft_err_msg("can not receive client data", ERR_STILL_SAVED, 2);
+    this->deleteUser(senderUser);
+  }
+  else                    // We got some good data from a client
+  {
+  	buffer[nbytes] = '\0';
+  	senderUser->addReceiveData(buffer);
+  	this->_processUserCommand(senderUser);
+		
+  }
+}
+
+void IRC_User::_processUserCommand(IRC_User* user) {
+
+		// extraer mensaje completo si lo hubiera de user, instanciar message, procesar comando
+}
+
+
+
+
                             //aqui es donde se envian cosas entre ellos
                             //sendMSG(this->_MOTD, NORMALMSG);
-                        
-
-                        
-                        // We got some good data from a client
-                        for (int j = 0; j < this->_connectedClientsNum; j++)
-                        {
-                            // Send to everyone!
+                       /* 
+                        for (int j = 0; j < this->_connectedClientsNum; j++)        // Send to everyone!
+                        {   
                             int destFd = this->_clients[j].fd;
-
-                            // Except the listener and ourselves
-                            if (destFd != this->_serverFd && destFd != senderFd)
+                            if (destFd != this->_serverFd && destFd != senderFd)    // Except the listener and ourselves
                             {
                                 if (send(destFd, buf, nbytes, 0) == -1)
-                                    perror("send");
+                                    ft_err_msg("can not send data to destiny", ERR_STILL_SAVED, 2);
                             }
                         }
-                    }
-                } // END handle data from client
-            }     // END got ready-to-read from poll()
-        }         // END looping through file descriptors
-    }             // END for(;;)--and you thought it would never end!
-}
+                      }
+                      */
 
 void    *IRC_Server::getInAddr(struct sockaddr *sa)
 {
@@ -244,41 +265,64 @@ void    *IRC_Server::getInAddr(struct sockaddr *sa)
     return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
 
-void    IRC_Server::addToPfds(pollfd *pfds[], int newfd, int *fd_count, int *fd_size)
-{
-    if (*fd_count == *fd_size)
-    {
-        *fd_size *= 2;
-        pollfd* new_pfds = new pollfd[*fd_size];
-        for (int i = 0; i < *fd_count; i++) {
-            new_pfds[i] = (*pfds)[i];
-        }
-        delete[] *pfds;     // Libera la memoria del array original
-        *pfds = new_pfds;   // Asigna el nuevo array a pfds
-    }
+void    IRC_Server::addToPfds(int newfd)
+{	
+		int pos = this->_connectedClientsNum;
 
-        (*pfds)[*fd_count].fd = newfd;
-        (*pfds)[*fd_count].events = POLLIN; // Verificar lectura disponible
-        (*fd_count)++;
+    if (this->_connectedClientsNum == MAX_CLIENTS)
+    {
+    	::send(newfd, "Too many users connected", 25, 0);
+    	::close(newfd);
+    	return ;
+    }
+    this->_clients[pos].fd = newfd;
+    this->_clients[pos].events = POLLIN; // Verificar lectura disponible
+    ++this->_connectedClientsNum;
 }
 
-void    IRC_Server::delFromPfds(pollfd pfds[], int i, int *fd_count)
+void    IRC_Server::delFromPfds(struct pollfd* pollPosition)
 {
     // Copy the one from the end over this one
-    pfds[i] = pfds[*fd_count - 1];
-    (*fd_count)--;
+    struct pollfd* last = this->_clients + this->_connectedClientsNum - 1;
+
+		*pollPosition = *last;
+		last->fd = -1;
+		--this->_connectedClientsNum;
 }
 
-IRC_Server::State 	IRC_Server::getState() const
+IRC_User* IRC_Server::newUser(struct pollfd* pollPosition) {
+	IRC_User* user = new IRC_User(pollPosition);
+	
+	this->_usersByFd[pollPosition->fd] = user;
+	return (user);
+}
+
+void IRC_Server::deleteUser(IRC_User* user) {
+	this->_usersByFd.erase(user->getFd());
+	if (user->getAccess() > 0) //registrado en adelante
+		this->_usersByName.erase(user->getName());
+	this->delFromPfds(user->getPollPosition());
+}
+
+void    IRC_Server::fillMOTDMsg(const char *filename)
 {
-	return (ALIVE);
-}
+    std::ifstream file(filename, std::ios::in | std::ios::binary);  //Open the file in read mode
 
-std::string IRC_Server::getMOTD() const
-{
-    return (this->_MOTD);
+    if (file.is_open())
+    {
+        file.read(this->_MOTD, sizeof(this->_MOTD));
+        this->_MOTD[file.gcount()] = '\0';  //Make sure that the string ends with a null character
+        file.close();
+        std::strncat(this->_MOTD, "Somos un equipo,\nvaliente y luchador,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        std::strncat(this->_MOTD, "que defiende su IRC,\ncon el corazón.\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        std::strncat(this->_MOTD, "Los años pasando,\ny seguimos aquí,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        std::strncat(this->_MOTD, "porque somos los currelas,\ny esto nunca va a morir ...\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+    }
+    else
+        std::strncat(this->_MOTD, "Bienvenido al IRC de irodrigo e icastell\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        //return (false);
+    //return (true);
 }
-
 
 int IRC_Server::sendMOTDMsg(int newClient)
 {
@@ -286,26 +330,40 @@ int IRC_Server::sendMOTDMsg(int newClient)
 
     totalSend = send(newClient, this->_MOTD, sizeof(this->_MOTD), 0);
     if (totalSend == -1)
-        return (ft_err_msg("Envio MOTD Fallido", ERR_CURA_SANA, totalSend));
+        return (ft_err_msg("Envío MOTD Fallido", ERR_CURA_SANA, totalSend));
     return (totalSend);
 }
 
-bool    IRC_Server::fillMOTDMsg(const char *filename)
+IRC_Server::State 	IRC_Server::getState() const
 {
-    //std::ifstream file(filename);
-    std::ifstream file(filename, std::ios::in | std::ios::binary);
-
-    if (file.is_open())
-    {
-        //file.getline(this->_MOTD, 16383); //leer el contenido del archivo hasta una máximo de 255 caracteres
-        file.read(this->_MOTD, sizeof(this->_MOTD));
-        this->_MOTD[file.gcount()] = '\0';
-        file.close();
-    }
-    else
-        return (false);
-    return (true);
+	return (ALIVE);
 }
+
+bool IRC_Server::changeNameUser(IRC_User* user, const std::string& nickname) {
+	if (this->findUserByName(nickname))
+		return (false);
+	user->setName(nickname);
+	return (true);
+}
+
+
+bool addUserToChannel(IRC_User* user, IRC_Channel* channel) {
+	if (user->isInChannel(channel))
+		return (false);
+	user->addChannel(channel);
+	channel->addUser(user);
+	return (true);
+}
+
+bool removeUserFromChannel(IRC_User* user, IRC_Channel* channel) {
+	if (!user->isInChannel(channel))
+		return (false);
+	user->removeChannel(channel);
+	channel->removeUser(user);
+	return (true);
+}
+
+
 // void                IRC_Server::sendMSG(std::string message, int type)
 // {
 //     // We got some good data from a client

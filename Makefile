@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Untitled-1                                         :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/10/19 18:11:49 by icastell          #+#    #+#              #
-#    Updated: 2023/10/19 18:11:49 by icastell         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 # OS DISCLAIMER #
 .DELETE_ON_ERROR:
 
@@ -34,13 +22,13 @@ INCLUDES	:= headers/
 SRCPATH		:= sources/
 
 # USER FILES DEFINITION #
-SRCFILES	:= main.cpp IRC_Errors.cpp IRC_Utils.cpp IRC_Server.cpp
+SRCFILES	:= main.cpp IRC_Errors.cpp IRC_Utils.cpp IRC_Server.cpp IRC_User.cpp
 
 # SOURCES #
 SOURCES		:= $(addprefix $(SRCPATH), $(SRCFILES))
 
 # DEPENDENCIES
-DEPENDENCIES = -MD
+DEPENDENCIES = -MMD
 
 # COMPILER AND FLAGS#
 CXX = clang++
@@ -64,7 +52,7 @@ WHITE	:= \033[0;37m
 RESET 	:= \033[0m
 
 OBJS = $(SOURCES:.cpp=.o)
-#DEPS = $(OBJS:.o=.d)
+DEPS = $(OBJS:.o=.d)
 
 .cpp.o:
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
