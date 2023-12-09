@@ -13,6 +13,7 @@
 #include "IRC_Channel.hpp"
 #include "IRC_User.hpp"
 #include "IRC_Structs.hpp"
+#include <iostream>
 
 IRC_Channel::IRC_Channel(IRC_Server &server, IRC_User* creator, std::string const &name)
 	: _server(server)
@@ -41,7 +42,7 @@ void    IRC_Channel::removeUser(IRC_User* userToDelete)
 {
     // Eliminar un usuario del canal
     this->_usersSet.erase(userToDelete);
-    
+
     // Resto del código de eliminación del usuario...
     if (this->_usersSet.empty())  // there are not users in channel
     {
@@ -53,22 +54,22 @@ void    IRC_Channel::removeUser(IRC_User* userToDelete)
 }
 
 //FIX: La entidad mínima con la que deberíais trabajar es "IRC_User" ya que ella contiene el fd de cada usuarios.
-void    IRC_Channel::sendMessage(const std::string& str, int userFd)
-{
-    // Enviar un mensaje a todos los usuarios del canal excepto el que lo envió (si se proporciona userFd)
-    for (_usersInChannelIterator it = _usersSet.begin(); it != _usersSet.end(); it++)
-    {
-        if (!userFd || userFd != (*it)->getFd())
-            this->send_all(*it, str.c_str()); // Asegúrate de que esta función esté definida adecuadamente.
-    }
-}
+// void    IRC_Channel::sendMessage(const std::string& str, int userFd)
+// {
+//     // Enviar un mensaje a todos los usuarios del canal excepto el que lo envió (si se proporciona userFd)
+//     for (_usersInChannelIterator it = _usersSet.begin(); it != _usersSet.end(); it++)
+//     {
+//         if (!userFd || userFd != (*it)->getFd())
+//             this->send_all(*it, str.c_str()); // Asegúrate de que esta función esté definida adecuadamente.
+//     }
+// }
 
-void IRC_Channel::setTopic(std::string newTopic)
-{
-    // se debe comprobar que el nombre de canal es correcto.
-    // y no existe en la lista de canales.
-    this->_topic = newTopic;
-}
+// void IRC_Channel::setTopic(std::string newTopic)
+// {
+//     // se debe comprobar que el nombre de canal es correcto.
+//     // y no existe en la lista de canales.
+//     this->_topic = newTopic;
+// }
 
 const std::string& IRC_Channel::getTopic() const
 {
@@ -77,13 +78,13 @@ const std::string& IRC_Channel::getTopic() const
 
 //FIX: Si queréis evitar tener que pasar por referencia la instancia IRC_Server
 //os recomiendo que toda la lógica de comprobación tanto de nicks como de canales
-//la realice IRC_Server. 
-void IRC_Channel::setName(std::string chName)
-{
-    // se debe comprobar que el nombre de canal es correcto.
-    // y no existe en la lista de canales.
-    this->_channelName = chName;
-}
+//la realice IRC_Server.
+// void IRC_Channel::setName(std::string chName)
+// {
+//     // se debe comprobar que el nombre de canal es correcto.
+//     // y no existe en la lista de canales.
+//     this->_channelName = chName;
+// }
 
 //FIX: Os he cambiado todo lo que devolvéis a referencia constante. Si no usáis una referencia o un puntero
 //estaréis haciendo copias una y otra vez cada vez que devolváis cualquier valor. Esto es importante puesto que no es lo mismo devolver
@@ -96,7 +97,14 @@ const std::string& IRC_Channel::getName() const
     return (this->_channelName);
 }
 
-const IRC_Channel::_usersInChannelType* IRC_Channel::getUsers() const
+const IRC_Channel::usersSetType *IRC_Channel::getUsers() const
 {
     return (&this->_usersSet);
 }
+
+/*const IRC_Channel::_usersInChannelType* IRC_Channel::getUsers() const
+{
+    return (&this->_usersSet);
+}*/
+
+

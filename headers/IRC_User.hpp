@@ -41,7 +41,7 @@ struct IRC_User{
 
 	const channelsSetType getChannels() const;
 	const IRC_Channel::usersSetType getCommonUsersArray() const;
-	const IRC_User::channelsSetType IRC_User::getCommonUsers() const;
+	const IRC_User::channelsSetType getCommonUsers() const;
 
 
 	int getFd() const;

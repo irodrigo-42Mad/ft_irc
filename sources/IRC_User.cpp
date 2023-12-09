@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+
 IRC_User::IRC_User(struct pollfd* pollPosition)
 	: _pollPosition(pollPosition)
 	, _access(0)
@@ -55,19 +56,23 @@ const IRC_User::channelsSetType IRC_User::getChannels() const {
 	//return std::set<IRC_Channel*>(this->_channels.begin(), this->_channels.end());
 }
 
+/*const IRC_User::channelsSetType IRC_User::getCommonUsers() const {
 
-
-const IRC_User::channelsSetType IRC_User::getCommonUsers() const {
+	//IRC_Channel::usersSetType allUsers;
 	IRC_Channel::usersSetIterator users;
 	const IRC_Channel::usersSetIterator channelUsers;
 
 	for (IRC_User::channelsSetConstIterator it = this->_channels.begin(); it != this->_channels.end(); ++it) {
+		// Convertir el puntero a un conjunto constante
+		//allUsers = *(*it)->getUsers();
 
-
-		channelUsers = it->getUsers();
-		users.insert(it->getUsers());
+		(*channelUsers)-> = (*it)->;
+		(*users).insert
+		insert((*it)->getUsers());
+		//users.insert(it->getUsers());  //<-pregunta
 	}
-}
+	// que tipo de contenido set tiene que generar channel, un * o un []
+}*/
 
 void IRC_User::addReceiveData(char* buffer) {
 	if (this->_inputBuffer.size() > 4096) {

@@ -31,11 +31,11 @@ struct IRC_Channel
   const std::string& getName() const;
   const std::string& getTopic() const;
   const IRC_User* getCreator() const;
-  const usersSetType getUsers() const;
+  const usersSetType *getUsers() const;
 
   void setTopic(const std::string&);
 
-	bool addUser(IRC_User*);
+  bool addUser(IRC_User*);
   bool hasUser(IRC_User*);
   void removeUser(IRC_User*);
 
@@ -50,6 +50,7 @@ private:
 	std::string			_key;
 	int							_limit;
 	usersSetType		_usersSet;
+
 
 };
 
