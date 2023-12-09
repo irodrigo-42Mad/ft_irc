@@ -41,11 +41,14 @@ struct IRC_User{
 
 	const channelsSetType getChannels() const;
 	const IRC_Channel::usersSetType getCommonUsersArray() const;
+	const IRC_User::channelsSetType IRC_User::getCommonUsers() const;
+
 
 	int getFd() const;
 	struct pollfd* getPollPosition();
 	const std::string& getName() const;
 	const std::string getMask() const;
+	const std::string getUsers() const;  // habrá que crearlas
 
 	void setFd(int);
 	void setName(const std::string&);

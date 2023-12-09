@@ -20,10 +20,10 @@
 
 # include <map>
 
-class IRC_Client;
-class IRC_Channel;
-class IRC_Messages;
-class IRC_User;
+struct IRC_Client;
+struct IRC_Channel;
+struct IRC_Messages;
+struct IRC_User;
 
 struct IRC_Server
 {
@@ -41,7 +41,7 @@ struct IRC_Server
 
 		// common configuration variables.
 	public:
-		
+
 		// server status notifications.
 		enum State
 		{
@@ -59,19 +59,19 @@ struct IRC_Server
 		//IRC_Server(IRC_Server const &copy);
 		//IRC_Server &operator = (IRC_Server const &copy);
 		~IRC_Server();
-		
+
 		// getters and setters
 		const std::string&	getPort() const;
 		const std::string&	getPassword() const;
-		const std::string&	getServerName() const;			
+		const std::string&	getServerName() const;
 		std::string					getMOTD() const;
 		int									getServerFd() const;
 		int									getConnectedClientsNum() const;
 		IRC_Server::State 	getState() const;
 		void								setServerFd(int serverSocket);
-		void								setClients(struct pollfd* clients);
+		void								setClients(struct pollfd* clients); // revisar esta funcion
 		//void 				setState(enum State myst);
-		
+
 		// general irc functions
 		bool								initializeSocket();
 		struct pollfd*			createPoll(int serverFd);
@@ -102,7 +102,7 @@ struct IRC_Server
 		// Server command implementation
 
 		//user and channel management
-		
+
 		IRC_Channel*	newChannel(const std::string& name, IRC_User* user);
 		void					deleteChannel(IRC_Channel* channel);
 		IRC_Channel*	findChannelByName(const std::string& name);
@@ -116,7 +116,7 @@ struct IRC_Server
 		bool changeNameUser(IRC_User* user, const std::string& name);
 		void addUsertoChannel(IRC_User* user, IRC_Channel* channel);
 		void removeUserFromChannel(IRC_User* user, IRC_Channel* channel);
-		
+
 	private:
 		std::string				_port;
 		std::string				_password;
@@ -139,17 +139,18 @@ struct IRC_Server
 		IRC_Server();										// can not be instantiated without a port and password
 		IRC_Server(const IRC_Server& copy);					// can not be instantiated by copy
 		IRC_Server &operator = (const IRC_Server& copy);	// can not be instantiated using = operator
-		
+
 		int	_myAddrInfo(const std::string& port);
 		void _readFromUser(int fd);
-		
+		void _processUserCommand(IRC_User* user);
+
 		// User		_UserMap;
 		// Command		_CommandMap;
 		// IRC_Channel	_ChannelMap;
 
 };
-		
- 
+
+
 
 		// two functions in one threatment
 		//void			cmdPing(Message &message);

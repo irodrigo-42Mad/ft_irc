@@ -14,7 +14,7 @@
 #include "IRC_User.hpp"
 #include "IRC_Channel.hpp"
 #include <exception>
-                                                                                                               
+
 IRC_Server::IRC_Server() {}
 
 IRC_Server::IRC_Server(char *port, const std::string &password):
@@ -24,14 +24,14 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
     fillMOTDMsg("./images/ascii-art5.txt");
     std::time_t now = std::time(NULL);
     std::tm     *localTime = std::localtime(&now);
-    
+
     std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec //solo de momento
               << std::endl;
 }
 
 IRC_Server::~IRC_Server()
 {
-    delete (this->_clients);    //hay que hacer free de éste porque viene de un new?
+   // delete (this->_clients);    //hay que hacer free de éste porque viene de un new?
 }
 
 /*IRC_Server::IRC_Server(IRC_Server const &copy)
@@ -58,12 +58,12 @@ int IRC_Server::_myAddrInfo(std::string const &port)
 	int listener;							// Listening socket descriptor
 	int yes = 1;							// For setsockopt() SO_REUSEADDR, below
 	struct addrinfo *p;						// auxiliar variable for check listener lists
-	
+
 	std::memset(&_hints, 0, sizeof(this->_hints));
     this->_hints.ai_flags = AI_PASSIVE;       		// Fill in my IP for me
     this->_hints.ai_family = AF_UNSPEC;       		// Don't care IPv4 or IPv6
     this->_hints.ai_socktype = SOCK_STREAM;   		// TCP stream sockets
-	
+
 	if ((rv = getaddrinfo(NULL, serverPort, &this->_hints, &this->_res)) != 0)
     {
         fprintf(stderr, "selectserver: %s\n", gai_strerror(rv));
@@ -74,7 +74,7 @@ int IRC_Server::_myAddrInfo(std::string const &port)
         listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
         if (listener < 0)
             continue;
-    
+
         // Lose the pesky "address already in use" error message
         setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
         if (bind(listener, p->ai_addr, p->ai_addrlen) < 0)
@@ -129,11 +129,12 @@ void    IRC_Server::setServerFd(int serverSocket)
 {
     this->_serverFd = serverSocket;
 }
-
+/* hay que revisar el código de esta funcion
 void    IRC_Server::setClients(struct pollfd *clients)
 {
-    this->_clients = clients;
-}
+    // revisar como tiene que quedar la struct pollfd
+    //this->_clients = clients;
+}*/
 
 bool    IRC_Server::initializeSocket()
 {
@@ -149,7 +150,7 @@ bool    IRC_Server::initializeSocket()
 struct  pollfd * IRC_Server::createPoll(int serverListener)
 {
 	struct pollfd *pfds = new pollfd[MAX_CLIENTS];
-	
+
 	// Add the server listener to set
     pfds[0].fd = serverListener;
     pfds[0].events = POLLIN;        // Ready to read on incoming connection
@@ -161,9 +162,11 @@ struct  pollfd * IRC_Server::createPoll(int serverListener)
 void    IRC_Server::launch()
 {
 	int     newFd;
-	int     fdMaxSize = MAX_CLIENTS;
-	char    buf[256];
-	
+
+    // estas variables no se usan por estar incluidas en la struct de usuario
+	//int     fdMaxSize = MAX_CLIENTS;
+	//char    buf[256];
+
 	// Main loop
     while (42)
     {
@@ -190,8 +193,8 @@ void    IRC_Server::launch()
                         ft_err_msg("can not allocate socket client information", ERR_STILL_SAVED, 2);
                         //perror("accept");
                     else
-                    {
-                        addToPfds(&this->_clients, newFd, &this->_connectedClientsNum, &fdMaxSize);
+                    {   addToPfds(newFd);
+                        //addToPfds(&this->_clients, newFd, &this->_connectedClientsNum, &fdMaxSize);
                         std::cout << "pollserver: New connection from " << inet_ntop(this->_remoteaddr.ss_family,
                             getInAddr((struct sockaddr *)&this->_remoteaddr),
                             this->_remoteIP, INET6_ADDRSTRLEN) << " on socket " << newFd << std::endl;
@@ -211,7 +214,6 @@ void IRC_Server::_readFromUser(int fd) {
 	char buffer[1024 + 1];
 	IRC_User* senderUser = this->findUserByFd(fd);
 
-
 	if (!senderUser)
 		throw std::runtime_error("User not exists");
 
@@ -230,13 +232,15 @@ void IRC_Server::_readFromUser(int fd) {
   	buffer[nbytes] = '\0';
   	senderUser->addReceiveData(buffer);
   	this->_processUserCommand(senderUser);
-		
+
   }
 }
 
-void IRC_User::_processUserCommand(IRC_User* user) {
+void IRC_Server::_processUserCommand(IRC_User* user) {
 
 		// extraer mensaje completo si lo hubiera de user, instanciar message, procesar comando
+    (void)user;
+
 }
 
 
@@ -244,9 +248,9 @@ void IRC_User::_processUserCommand(IRC_User* user) {
 
                             //aqui es donde se envian cosas entre ellos
                             //sendMSG(this->_MOTD, NORMALMSG);
-                       /* 
+                       /*
                         for (int j = 0; j < this->_connectedClientsNum; j++)        // Send to everyone!
-                        {   
+                        {
                             int destFd = this->_clients[j].fd;
                             if (destFd != this->_serverFd && destFd != senderFd)    // Except the listener and ourselves
                             {
@@ -261,12 +265,12 @@ void    *IRC_Server::getInAddr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET)
         return &(((struct sockaddr_in *)sa)->sin_addr);
-		
+
     return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
 
 void    IRC_Server::addToPfds(int newfd)
-{	
+{
 		int pos = this->_connectedClientsNum;
 
     if (this->_connectedClientsNum == MAX_CLIENTS)
@@ -292,7 +296,7 @@ void    IRC_Server::delFromPfds(struct pollfd* pollPosition)
 
 IRC_User* IRC_Server::newUser(struct pollfd* pollPosition) {
 	IRC_User* user = new IRC_User(pollPosition);
-	
+
 	this->_usersByFd[pollPosition->fd] = user;
 	return (user);
 }

@@ -39,7 +39,7 @@ const std::string& IRC_User::getName() const {
 }
 
 bool IRC_User::addChannel(IRC_Channel* channel) {
-	return this->_channels.insert(channel).second;	
+	return this->_channels.insert(channel).second;
 }
 
 bool IRC_User::removeChannel(IRC_Channel* channel) {
@@ -55,11 +55,15 @@ const IRC_User::channelsSetType IRC_User::getChannels() const {
 	//return std::set<IRC_Channel*>(this->_channels.begin(), this->_channels.end());
 }
 
+
+
 const IRC_User::channelsSetType IRC_User::getCommonUsers() const {
 	IRC_Channel::usersSetIterator users;
 	const IRC_Channel::usersSetIterator channelUsers;
 
 	for (IRC_User::channelsSetConstIterator it = this->_channels.begin(); it != this->_channels.end(); ++it) {
+
+
 		channelUsers = it->getUsers();
 		users.insert(it->getUsers());
 	}
@@ -71,3 +75,5 @@ void IRC_User::addReceiveData(char* buffer) {
 	}
 	this->_inputBuffer += buffer;
 }
+
+

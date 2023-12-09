@@ -16,9 +16,9 @@
 # include <map>
 # include <string>
 
-class IRC_Users;
-class IRC_Channel;
-class IRC_Messages;
+struct IRC_Users;
+struct IRC_Channel;
+struct IRC_Messages;
 
 typedef std::map<int, IRC_Users*>                           _userMap;
 typedef _userMap::iterator                                  _userMapIterator;

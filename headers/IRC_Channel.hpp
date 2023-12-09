@@ -16,8 +16,8 @@
 # include <string>
 # include <set>
 
-class IRC_Server;
-class IRC_User;
+struct IRC_Server;
+struct IRC_User;
 
 struct IRC_Channel
 {
@@ -31,7 +31,7 @@ struct IRC_Channel
   const std::string& getName() const;
   const std::string& getTopic() const;
   const IRC_User* getCreator() const;
-  const usersSetType getUsers() const; 
+  const usersSetType getUsers() const;
 
   void setTopic(const std::string&);
 
@@ -50,7 +50,7 @@ private:
 	std::string			_key;
 	int							_limit;
 	usersSetType		_usersSet;
-		
+
 };
 
 #endif
