@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Headers.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 11:47:03 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/04 16:54:20 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/15 19:46:39 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <unistd.h>
 # include <sstream>
 # include <string>
+# include <cerrno>
 # include <ctime>
 # include <fstream>
 
@@ -35,7 +36,6 @@
 // common STL structures needed
 # include <vector>
 # include <map>
-# include <utility>
 
 // private functions, structures and constants by function
 # include "IRC_Colors.hpp"

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:49:23 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/04 16:00:50 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/04 12:44:11 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,6 @@
 // auxiliar functions
 bool		checkPort(char *port);
 bool		checkPasswordNotEmpty(std::string const &password);
-std::string	channelName(std::string const &name);
-bool		checkChannelName(std::string const &name);
-void		deleteUnwantedChars(std::string &name);
-bool		checkHostName(std::string &name);
 
 
 // string functions

@@ -3,55 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Channel.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:04:15 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/05 09:26:55 by icastell         ###   ########.fr       */
+/*   Updated: 2023/10/15 19:13:19 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
 #ifndef IRC_CHANNEL_HPP
-# define IRC_CHANNEL_HPP
+#define IRC_CHANNEL_HPP
 
-# include <string>
-# include <set>
+#include "IRC_Headers.hpp"
+#include "IRC_Users.hpp"
 
-struct IRC_Server;
-struct IRC_User;
+class IRC_Server;
 
-struct IRC_Channel
+class IRC_Channel
 {
-	typedef std::set<IRC_User*>						usersSetType;
-	typedef usersSetType::iterator				usersSetIterator;
-	typedef usersSetType::const_iterator	usersSetConstIterator;
-
-	IRC_Channel(IRC_Server&, IRC_User*, const std::string&);
-	~IRC_Channel();
-
-  const std::string& getName() const;
-  const std::string& getTopic() const;
-  const IRC_User* getCreator() const;
-  const usersSetType *getUsers() const;
-
-  void setTopic(const std::string&);
-
-  bool addUser(IRC_User*);
-  bool hasUser(IRC_User*);
-  void removeUser(IRC_User*);
-
-  void sendExcept(const std::string&, IRC_User*);
-  void send(const std::string&);
-
-private:
-	IRC_Server&			_server;
-	std::string			_channelName;
-	IRC_User*				_creator;
-	std::string			_topic;
-	std::string			_key;
-	int							_limit;
-	usersSetType		_usersSet;
-
-
+	private:
+		IRC_Server& _server;
+		std::string _channelName;
+		IRC_Users*	_creator;
+		std::string _topic;
+    	std::string _key;
+    	int			_limit;
+		
+	public:
+		IRC_Channel(IRC_Server &server, IRC_Users* creator, std::string const &name);
+		~IRC_Channel();
+		bool	addUser(IRC_Users *newUser);
+		void	deleteUser(IRC_Users *user);
+		void	sendMessage(std::string const &str, int userFd);
 };
-
 #endif
