@@ -16,12 +16,12 @@
 
 # include <string>
 
-class IRC_Messages
+struct IRC_Messages
 {
 	private:
 
 	public:
-	
+
 };
 
 #endif
