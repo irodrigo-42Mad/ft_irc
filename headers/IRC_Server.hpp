@@ -3,20 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/05 07:56:33 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/11 11:35:13 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
 #ifndef IRC_SERVER_HPP
 #define IRC_SERVER_HPP
 
 # include "IRC_Headers.hpp"
 # include "IRC_Structs.hpp"
 # include "IRC_Constants.hpp"
+# include "IRC_User.hpp"
+# include "IRC_Channel.hpp"
 
 # include <map>
 
@@ -27,19 +28,22 @@ struct IRC_User;
 
 struct IRC_Server
 {
-		typedef std::map<std::string, IRC_User*>		usersNameType;
-		typedef usersNameType::iterator						usersNameIterator;
-		typedef usersNameType::const_iterator			usersNameConstIterator;
+		typedef std::map<std::string, IRC_User*>	usersNameType;			//map<nick, user*>
+		typedef usersNameType::iterator				usersNameIterator;
+		typedef usersNameType::const_iterator		usersNameConstIterator;
 
-		typedef std::map<int, IRC_User*>						usersFdType;
-		typedef usersFdType::iterator							usersFdIterator;
-		typedef usersFdType::const_iterator				usersFdConstIterator;
+		typedef std::map<int, IRC_User*>			usersFdType;			//map<fd, user*>
+		typedef usersFdType::iterator				usersFdIterator;
+		typedef usersFdType::const_iterator			usersFdConstIterator;
 
-		typedef std::map<std::string, IRC_Channel*>	channelsNameType;
-		typedef channelsNameType::iterator				channelsNameIterator;
+		typedef std::map<std::string, IRC_Channel*>	channelsNameType;		//map<channelName, channel*>
+		typedef channelsNameType::iterator			channelsNameIterator;
 		typedef channelsNameType::const_iterator	channelsNameConstIterator;
 
-		// common configuration variables.
+		typedef std::map<std::string, void(*)(IRC_Messages &)>	commandType;
+		typedef commandType::iterator							commandTypeIterator;
+		typedef commandType::const_iterator						commandTypeConstIterator;
+
 	public:
 
 		// server status notifications.
@@ -60,17 +64,19 @@ struct IRC_Server
 		//IRC_Server &operator = (IRC_Server const &copy);
 		~IRC_Server();
 
+
 		// getters and setters
 		const std::string&	getPort() const;
 		const std::string&	getPassword() const;
-		const std::string&	getServerName() const;
-		std::string					getMOTD() const;
-		int									getServerFd() const;
-		int									getConnectedClientsNum() const;
+		//const std::string&	getServerName() const;
+		//int					getServerFd() const;
+		
 		IRC_Server::State 	getState() const;
-		void								setServerFd(int serverSocket);
-		void								setClients(struct pollfd* clients); // revisar esta funcion
+		//void				setServerFd(int serverSocket);
+		//void				setClients(struct pollfd* clients); // revisar esta funcion
 		//void 				setState(enum State myst);
+		//std::string		getMOTD() const;
+		//int				getConnectedClientsNum() const;
 
 		// general irc functions
 		bool								initializeSocket();
@@ -104,43 +110,49 @@ struct IRC_Server
 		//user and channel management
 
 		IRC_Channel*	newChannel(const std::string& name, IRC_User* user);
-		void					deleteChannel(IRC_Channel* channel);
+		void			deleteChannel(IRC_Channel* channel);
 		IRC_Channel*	findChannelByName(const std::string& name);
 
-		IRC_User*			newUser(struct pollfd* pollPosition);
-		void					deleteUser(IRC_User* user);
-
-		IRC_User*			findUserByName(const std::string& name);
-		IRC_User*			findUserByFd(int fd);
+		IRC_User*		newUser(struct pollfd* pollPosition);
+		void			deleteUser(IRC_User* user);
+		IRC_User*		findUserByName(const std::string& name);
+		IRC_User*		findUserByFd(int fd);
 
 		bool changeNameUser(IRC_User* user, const std::string& name);
 		void addUsertoChannel(IRC_User* user, IRC_Channel* channel);
 		void removeUserFromChannel(IRC_User* user, IRC_Channel* channel);
 
 	private:
-		std::string				_port;
-		std::string				_password;
-		std::string				_serverName;
-		char							_MOTD[4096];
-		int								_serverFd;
-		int								_connectedClientsNum;
-		std::tm						_myTimeStamp;
-		struct addrinfo		_hints;
-		struct addrinfo*	_res;
-		struct pollfd			_clients[MAX_CLIENTS];
-		struct sockaddr_storage _remoteaddr; // client address
-		socklen_t					_addrlen;
-		char							_remoteIP[INET_ADDRSTRLEN];
-
+		int					_serverFd;
+		std::string			_port;
+		std::string			_password;
+		std::string			_serverName;
+		std::string			_host;
 		usersNameType		_usersByName;
 		usersFdType			_usersByFd;
-		channelsNameType _channelsByName;
+		channelsNameType	_channelsByName;
+		commandType			_commandsByName;
+		
+		struct pollfd		_pfds[MAX_CLIENTS];
+		
+		char				_MOTD[4096];
+		int					_connectedClientsNum;
+		
+		std::tm			_myTimeStamp;
+		//struct addrinfo		_hints;
+		//struct addrinfo*	_res;
+		//struct sockaddr_storage _remoteaddr; // client address
+		//socklen_t				_addrlen;
+		//char					_remoteIP[INET_ADDRSTRLEN];
+
 
 		IRC_Server();										// can not be instantiated without a port and password
 		IRC_Server(const IRC_Server& copy);					// can not be instantiated by copy
 		IRC_Server &operator = (const IRC_Server& copy);	// can not be instantiated using = operator
 
-		int	_myAddrInfo(const std::string& port);
+		int		createServerSocket(std::string const &port);
+		void	fillCommandMap(void);
+		//int	_myAddrInfo(const std::string& port);
 		void _readFromUser(int fd);
 		void _processUserCommand(IRC_User* user);
 

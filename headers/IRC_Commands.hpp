@@ -34,8 +34,8 @@ void				cmdMode (IRC_Messages& message);   // >1
 struct IRC_Command {
 	void (*fn_cmd)(IRC_Messages&);
 	std::string cmd;
-	int params;
-	int access;
+	int			params;
+	int			access;
 
 	IRC_Command() {}
 
