@@ -10,17 +10,33 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-#ifndef IRC_MESSAGES_HPP
-#define IRC_MESSAGES_HPP
+#ifndef IRC_MESSAGE_HPP
+#define IRC_MESSAGE_HPP
 
 # include <string>
+# include <vector>
 
-struct IRC_Messages
+struct IRC_User;
+struct IRC_Server;
+
+struct IRC_Message
 {
-	private:
+	IRC_Message(IRC_User* sourceUser, IRC_Server* server, const std::string& data);
+	const std::string& cmd() const;
 
-	public:
+	size_t size() const;
+
+	const std::string& operator[](int pos);
+
+	const IRC_User& sourceUser() const;
+
+	IRC_Server& server();
+
+private:
+	std::string								_cmd;
+	IRC_User&									_sourceUser;
+	std::vector<std::string>	_params;
+	IRC_Server&								_server;
 
 };
 

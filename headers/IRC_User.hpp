@@ -14,7 +14,7 @@
 # define IRC_USER_HPP
 
 # include "IRC_Channel.hpp"
-# include "IRC_Messages.hpp"
+# include "IRC_Message.hpp"
 
 # include <set>
 # include <vector>
@@ -54,7 +54,7 @@ struct IRC_User{
 	void setName(const std::string&);
 	int getAccess() const;
 
-	void send(IRC_Messages& message);
+	void send(IRC_Message& message);
 
 private:
 	struct pollfd*		_pollPosition;

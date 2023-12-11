@@ -35,8 +35,20 @@ const std::string IRC_User::getMask() const {
 	return (this->_name + "!" + this->_ident + "@" + this->_hostname);
 }
 
+void IRC_User::setName(const std::string& value) {
+	this->_name = value;
+}
+
 const std::string& IRC_User::getName() const {
 	return this->_name;
+}
+
+int IRC_User::getAccess() const {
+	return this->_access;
+}
+
+struct pollfd* IRC_User::getPollPosition() {
+	return this->_pollPosition;
 }
 
 bool IRC_User::addChannel(IRC_Channel* channel) {

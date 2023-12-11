@@ -18,12 +18,13 @@
 # include "IRC_Constants.hpp"
 # include "IRC_User.hpp"
 # include "IRC_Channel.hpp"
+# include "commands.hpp"
 
 # include <map>
 
 struct IRC_Client;
 struct IRC_Channel;
-struct IRC_Messages;
+struct IRC_Message;
 struct IRC_User;
 
 struct IRC_Server
@@ -40,7 +41,7 @@ struct IRC_Server
 		typedef channelsNameType::iterator			channelsNameIterator;
 		typedef channelsNameType::const_iterator	channelsNameConstIterator;
 
-		typedef std::map<std::string, void(*)(IRC_Messages &)>	commandType;
+		typedef std::map<std::string, IRC_ACommand*>	commandType;
 		typedef commandType::iterator							commandTypeIterator;
 		typedef commandType::const_iterator						commandTypeConstIterator;
 
@@ -79,9 +80,9 @@ struct IRC_Server
 		//int				getConnectedClientsNum() const;
 
 		// general irc functions
-		bool								initializeSocket();
-		struct pollfd*			createPoll(int serverFd);
-		void								launch();
+		struct pollfd*			createPoll();
+		void								start();
+		bool								listen(int backlog);
 		void*								getInAddr(struct sockaddr* sa);
 		void								addToPfds(int newfd);
 		void								delFromPfds(struct pollfd* pollPosition);
@@ -119,8 +120,8 @@ struct IRC_Server
 		IRC_User*		findUserByFd(int fd);
 
 		bool changeNameUser(IRC_User* user, const std::string& name);
-		void addUsertoChannel(IRC_User* user, IRC_Channel* channel);
-		void removeUserFromChannel(IRC_User* user, IRC_Channel* channel);
+		bool addUserToChannel(IRC_User* user, IRC_Channel* channel);
+		bool removeUserFromChannel(IRC_User* user, IRC_Channel* channel);
 
 	private:
 		int					_serverFd;
@@ -150,8 +151,10 @@ struct IRC_Server
 		IRC_Server(const IRC_Server& copy);					// can not be instantiated by copy
 		IRC_Server &operator = (const IRC_Server& copy);	// can not be instantiated using = operator
 
-		int		createServerSocket(std::string const &port);
-		void	fillCommandMap(void);
+		bool	createServerSocket();
+		void	_fillCommands(void);
+		void  _addCommand(IRC_ACommand* command);
+		void  _run_command(IRC_Message& message);
 		//int	_myAddrInfo(const std::string& port);
 		void _readFromUser(int fd);
 		void _processUserCommand(IRC_User* user);

@@ -5,3 +5,4 @@ trash_*.*
 ircserv
 irc
 .DS_Store
+.cache

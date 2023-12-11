@@ -11,7 +11,8 @@
 /* ************************************************************************** */
 
 # include "IRC_Server.hpp"
-# include "IRC_Commands.hpp"
+# include "IRC_ACommand.hpp"
+# include "IRC_Message.hpp"
 //#include "IRC_User.hpp"
 //#include "IRC_Channel.hpp"
 # include <exception>
@@ -22,28 +23,38 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
     _port(port), _password(password), _serverName("ircserv"), _host("127.0.0.1"),
     _MOTD(""), _connectedClientsNum(0)
 {
-    _serverFd = createServerSocket(_port);
+    if (!createServerSocket()) {
+			std::cout << "no es posible inicializar el socket" << std::endl;
+			return ;
+    }
+		if (!listen(10)) {
+			std::cout << "No se puede abrir el puerto" << std::endl;
+			return ;
+		}
+
     fillMOTDMsg("./images/ascii-art5.txt");
-    fillCommandMap();
+    _fillCommands();
     
     std::time_t now = std::time(NULL);
     std::tm     *localTime = std::localtime(&now);
 
     std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec //solo de momento
               << std::endl;
+
+		createPoll();
 }
 
 IRC_Server::~IRC_Server()
 {
 }
 
-int IRC_Server::createServerSocket(std::string const &port)
+bool IRC_Server::createServerSocket()
 {
 	struct addrinfo		hints;
     struct addrinfo*	res;
-    const char  *serverPort = port.c_str(); // Get char* pointer from the string std::string
+    const char  *serverPort = _port.c_str(); // Get char* pointer from the string std::string
     int rv;									// Control error output messages
-	int listener;							// Listening socket descriptor
+	//int listener;							// Listening socket descriptor
 	int yes = 1;							// For setsockopt() SO_REUSEADDR, below
 	struct addrinfo *p;						// auxiliar variable for check listener lists
 
@@ -52,35 +63,38 @@ int IRC_Server::createServerSocket(std::string const &port)
     hints.ai_family = AF_UNSPEC;       		// Don't care IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM;   		// TCP stream sockets
 
-	if ((rv = getaddrinfo(NULL, serverPort, &hints, &this->_res)) != 0)
+	if ((rv = getaddrinfo(NULL, serverPort, &hints, &res)) != 0)
     {
         fprintf(stderr, "selectserver: %s\n", gai_strerror(rv));
-        return(-1);	//exit no está permitida. Hay que cambiar esto.
+        return (false);	//exit no está permitida. Hay que cambiar esto.
     }
 	for (p = res; p != NULL; p = p->ai_next)
     {
-        listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-        if (listener < 0)
+        _serverFd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+        if (_serverFd < 0)
             continue;
 
         // Lose the pesky "address already in use" error message
-        setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
-        if (bind(listener, p->ai_addr, p->ai_addrlen) < 0)
+        setsockopt(_serverFd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+        if (bind(_serverFd, p->ai_addr, p->ai_addrlen) < 0)
         {
-            close(listener);
+            close(_serverFd);
             continue;
         }
         break;
     }
+  freeaddrinfo(res); // All done with this
+  if (p == NULL)
+    return (false);
+	return (true);
+}
 
+bool IRC_Server::listen(int backlog) {
     // If we got here, it means we didn't get bound
-    std::cout << "listener: " << listener << std::endl;
-    if (p == NULL)
-    	return (-1);
-    freeaddrinfo(res); // All done with this
-    if (listen(listener, 10) == -1)
-        return (-1);
-    return (listener);
+    std::cout << "listener: " << _serverFd << std::endl;
+    if (::listen(_serverFd, backlog) == -1)
+        return (false);
+    return (true);
 }
 
 const std::string& IRC_Server::getPort() const
@@ -92,11 +106,12 @@ const std::string& IRC_Server::getPassword() const
 {
     return (this->_password);
 }
-
+/*
 const std::string& IRC_Server::getServerName() const
 {
     return (this->_serverName);
 }
+*/
 
 /*std::string IRC_Server::getMOTD() const
 {
@@ -124,7 +139,7 @@ void    IRC_Server::setClients(struct pollfd *clients)
     // revisar como tiene que quedar la struct pollfd
     //this->_clients = clients;
 }*/
-
+/*
 bool    IRC_Server::initializeSocket()
 {
     int srvFd = _myAddrInfo(this->_port);
@@ -135,20 +150,21 @@ bool    IRC_Server::initializeSocket()
         this->_serverFd = srvFd;
     return (true);
 }
+*/
 
-struct  pollfd * IRC_Server::createPoll(int serverListener)
+struct  pollfd * IRC_Server::createPoll()
 {
 	struct pollfd *pfds = new pollfd[MAX_CLIENTS];
 
 	// Add the server listener to set
-    pfds[0].fd = serverListener;
+    pfds[0].fd = _serverFd;
     pfds[0].events = POLLIN;        // Ready to read on incoming connection
 
     this->_connectedClientsNum = 1; // For the listener
 	return (pfds);
 }
 
-void    IRC_Server::launch()
+void    IRC_Server::start()
 {
     struct sockaddr_storage remoteaddr; // client address
     socklen_t				addrlen;
@@ -177,7 +193,7 @@ void    IRC_Server::launch()
         {
             if (this->_pfds[i].revents & POLLIN)             // We got one!!
             {
-                if (this->_pfds[i].fd == getServerFd())    // If listener is ready to read, handle new connection
+                if (this->_pfds[i].fd == this->_serverFd)    // If listener is ready to read, handle new connection
                 {
                     addrlen = sizeof(remoteaddr);
                     newFd = accept(this->_serverFd, (struct sockaddr *)&remoteaddr, &addrlen);
@@ -232,6 +248,22 @@ void IRC_Server::_processUserCommand(IRC_User* user) {
 		// extraer mensaje completo si lo hubiera de user, instanciar message, procesar comando
     (void)user;
 
+}
+
+IRC_User* IRC_Server::findUserByName(const std::string& name) {
+	IRC_Server::usersNameIterator it = this->_usersByName.find(name);
+
+	if (it == this->_usersByName.end())
+		return (NULL);
+	return it->second;
+}
+
+IRC_User* IRC_Server::findUserByFd(int fd) {
+	IRC_Server::usersFdIterator it = this->_usersByFd.find(fd);
+
+	if (it == this->_usersByFd.end())
+		return (NULL);
+	return it->second;
 }
 
 
@@ -300,11 +332,6 @@ void IRC_Server::deleteUser(IRC_User* user) {
 	this->delFromPfds(user->getPollPosition());
 }
 
-void    IRC_Server::fillCommandMap(void)
-{
-    this->_commandsByName["NICK"] = &cmdNick;
-}
-
 void    IRC_Server::fillMOTDMsg(const char *filename)
 {
     std::ifstream file(filename, std::ios::in | std::ios::binary);  //Open the file in read mode
@@ -344,12 +371,13 @@ bool IRC_Server::changeNameUser(IRC_User* user, const std::string& nickname)
 {
 	if (this->findUserByName(nickname))
 		return (false);
+	//TODO: hay que actualizar la clave del mapa
 	user->setName(nickname);
 	return (true);
 }
 
 
-bool addUserToChannel(IRC_User* user, IRC_Channel* channel)
+bool IRC_Server::addUserToChannel(IRC_User* user, IRC_Channel* channel)
 {
 	if (user->isInChannel(channel))
 		return (false);
@@ -358,13 +386,43 @@ bool addUserToChannel(IRC_User* user, IRC_Channel* channel)
 	return (true);
 }
 
-bool removeUserFromChannel(IRC_User* user, IRC_Channel* channel)
+bool IRC_Server::removeUserFromChannel(IRC_User* user, IRC_Channel* channel)
 {
 	if (!user->isInChannel(channel))
 		return (false);
 	user->removeChannel(channel);
 	channel->removeUser(user);
 	return (true);
+}
+
+void IRC_Server::_fillCommands() {
+	this->_addCommand(new IRC_NickCommand);
+	/*...*/
+}
+
+void IRC_Server::_addCommand(IRC_ACommand* command) {
+	this->_commandsByName[command->cmd] = command;
+}
+
+void IRC_Server::_run_command(IRC_Message& message) {
+	IRC_Server::commandTypeIterator it =this->_commandsByName.find(message.cmd());
+	IRC_ACommand* command = it->second;
+
+	if (it == this->_commandsByName.end()) {
+		std::cout << "comando '" << message.cmd() << "' no existe\n";
+		//error comando no existe
+		return ;
+	}
+
+	if (message.sourceUser().getAccess() < command->access) {
+		//error privillegios insuficientes
+		return ;
+	}
+	if (message.size() <= command->params) {
+		;//error // parametros insuficientes
+		return ;
+	}
+	command->execute(message);
 }
 
 

@@ -31,16 +31,16 @@ int	main(int argc, char *argv[])
 		std::cout << "nombre Hostname correcto" << std::endl;
 	else
 		std::cout << "nombre Hostname incorrecto" << std::endl;
-	exit (0);
+	//exit (0);
 	
 	IRC_Server irc(argv[1], argv[2]);   // crearemos el servidor
-	if (irc.initializeSocket())
+//	if (irc.initializeSocket())
 	//{
 		//ahora hay que crear el array de clientes
-		irc.setClients(irc.createPoll(irc.getServerFd()));
+	//	irc.setClients(irc.createPoll(irc.getServerFd()));
 	//}
-	else
-		return (ft_err_msg("can not create a server", ERR_COMPLETELY_SCREWED, 1));
+//	else
+	//	return (ft_err_msg("can not create a server", ERR_COMPLETELY_SCREWED, 1));
 	
 	IRC_Server::State srvState = IRC_Server::ALIVE;
 
@@ -48,7 +48,7 @@ int	main(int argc, char *argv[])
 	{
 		try {
 			//irc.loadConfig(configFile.c_str());
-			irc.launch();    		 	// lanzaremos el bucle del pool
+			irc.start();    		 	// lanzaremos el bucle del pool
 			srvState = irc.getState();  // comprobamos que no está caido en cada ejecución
 
 
