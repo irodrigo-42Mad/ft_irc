@@ -93,4 +93,7 @@ void IRC_User::addReceiveData(char* buffer) {
 	this->_inputBuffer += buffer;
 }
 
+const std::string IRC_User::getBuffer() const{
+	return (this->_inputBuffer);
+}
 

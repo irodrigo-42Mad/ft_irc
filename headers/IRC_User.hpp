@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IRC_Users.hpp                                      :+:      :+:    :+:   */
+/*   IRC_User.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/05 10:34:38 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/12 11:37:41 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ struct IRC_User{
 	int getFd() const;
 	struct pollfd* getPollPosition();
 	const std::string& getName() const;
+	const std::string getBuffer() const;
 	const std::string getMask() const;
 	const std::string getUsers() const;  // habrá que crearlas
 

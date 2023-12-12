@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/10 22:42:57 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/12 11:49:00 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "IRC_Server.hpp"
-# include "IRC_ACommand.hpp"
-# include "IRC_Message.hpp"
+# include "../headers/IRC_Server.hpp"
+# include "../headers/IRC_ACommand.hpp"
+# include "../headers/IRC_Message.hpp"
 //#include "IRC_User.hpp"
 //#include "IRC_Channel.hpp"
 # include <exception>
@@ -27,10 +27,10 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
 			std::cout << "no es posible inicializar el socket" << std::endl;
 			return ;
     }
-		if (!listen(10)) {
-			std::cout << "No se puede abrir el puerto" << std::endl;
-			return ;
-		}
+	if (!listen(10)) {
+		std::cout << "No se puede abrir el puerto" << std::endl;
+		return ;
+	}
 
     fillMOTDMsg("./images/ascii-art5.txt");
     _fillCommands();
@@ -41,7 +41,7 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
     std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec //solo de momento
               << std::endl;
 
-		createPoll();
+	createPoll();
 }
 
 IRC_Server::~IRC_Server()
@@ -151,17 +151,17 @@ bool    IRC_Server::initializeSocket()
     return (true);
 }
 */
-
-struct  pollfd * IRC_Server::createPoll()
+void IRC_Server::createPoll()
+//struct  pollfd * IRC_Server::createPoll()
 {
-	struct pollfd *pfds = new pollfd[MAX_CLIENTS];
+	//struct pollfd *pfds = new pollfd[MAX_CLIENTS];
 
 	// Add the server listener to set
-    pfds[0].fd = _serverFd;
-    pfds[0].events = POLLIN;        // Ready to read on incoming connection
+    this->_pfds[0].fd = this->_serverFd;
+    this->_pfds[0].events = POLLIN;        // Ready to read on incoming connection
 
     this->_connectedClientsNum = 1; // For the listener
-	return (pfds);
+	//return (pfds);
 }
 
 void    IRC_Server::start()
@@ -179,7 +179,8 @@ void    IRC_Server::start()
     while (42)
     {
         int poll_count = poll(this->_pfds, this->_connectedClientsNum, -1);
-        if (poll_count <= 0)
+        //int poll_count = poll(this->_pfds, this->_connectedClientsNum, -1);
+        if (poll_count < 0)
         {
             if (poll_count == -1)
                 ft_err_msg("fatal server error", ERR_COMPLETELY_SCREWED, 1);
@@ -246,7 +247,15 @@ void IRC_Server::_readFromUser(int fd) {
 void IRC_Server::_processUserCommand(IRC_User* user) {
 
 		// extraer mensaje completo si lo hubiera de user, instanciar message, procesar comando
-    (void)user;
+    std::string raw;
+    
+    std::string command;
+    std::string params;
+    std::string level;
+
+    
+    raw = user->getBuffer();
+    std::cout << raw << std::endl;
 
 }
 

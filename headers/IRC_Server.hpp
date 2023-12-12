@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/11 11:35:13 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/12 11:48:56 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,8 @@ struct IRC_Server
 		//int				getConnectedClientsNum() const;
 
 		// general irc functions
-		struct pollfd*			createPoll();
+		void			createPoll();
+		//struct pollfd*			createPoll();
 		void								start();
 		bool								listen(int backlog);
 		void*								getInAddr(struct sockaddr* sa);
