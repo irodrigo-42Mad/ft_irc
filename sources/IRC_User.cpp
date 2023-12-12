@@ -87,10 +87,14 @@ const IRC_User::channelsSetType IRC_User::getChannels() const {
 }*/
 
 void IRC_User::addReceiveData(char* buffer) {
-	if (this->_inputBuffer.size() > 4096) {
-		//desconectar al cliente por exceso de información recibida
-	}
-	this->_inputBuffer += buffer;
+	std::cout << this->_inputBuffer.size() << std::endl;
+
+
+
+	// if (this->_inputBuffer.size() > 4096) {
+	// 	//desconectar al cliente por exceso de información recibida
+	// }
+	this->_inputBuffer += *buffer;
 }
 
 const std::string IRC_User::getBuffer() const{

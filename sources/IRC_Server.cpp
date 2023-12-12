@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/12 11:49:00 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/12 13:55:55 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
 
 IRC_Server::~IRC_Server()
 {
+    /* recorrer la lista de FDS y ver el nivel de registro, si es no registrado eliminamos de FD
+    solamente, sino, habrá que eliminarlo de todas las posiciones en las que está registrado.
+    */
 }
 
 bool IRC_Server::createServerSocket()
@@ -60,7 +63,7 @@ bool IRC_Server::createServerSocket()
 
 	std::memset(&hints, 0, sizeof(hints));
     hints.ai_flags = AI_PASSIVE;       		// Fill in my IP for me
-    hints.ai_family = AF_UNSPEC;       		// Don't care IPv4 or IPv6
+    hints.ai_family = AF_INET;       		// Don't care IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM;   		// TCP stream sockets
 
 	if ((rv = getaddrinfo(NULL, serverPort, &hints, &res)) != 0)
@@ -203,16 +206,21 @@ void    IRC_Server::start()
                         //perror("accept");
                     else
                     {   addToPfds(newFd);
+                        //addUser
+                        // añadir el usuario a la estructura y mapas de usuario
+                        IRC_User *newUser = createUser();
+                        std::cout << newUser->getFd() << std::endl;
+                        
                         //addToPfds(&this->_clients, newFd, &this->_connectedClientsNum, &fdMaxSize);
                         std::cout << "pollserver: New connection from " << inet_ntop(remoteaddr.ss_family,
                             getInAddr((struct sockaddr *)&remoteaddr),
-                            remoteIP, INET6_ADDRSTRLEN) << " on socket " << newFd << std::endl;
+                            remoteIP, INET_ADDRSTRLEN) << " on socket " << newFd << std::endl;
                         sendMOTDMsg(newFd); //¿qué hacemos si no se manda?
                     }
                 }
                 else                        // If not the listener, we're just a regular client
                 {
-                	this->_readFromUser(this->_pfds[i].fd);
+                    this->_readFromUser(this->_pfds[i].fd);
                 }   // END handle data from client
             }       // END got ready-to-read from poll()
         }           // END looping through file descriptors
@@ -222,26 +230,27 @@ void    IRC_Server::start()
 void IRC_Server::_readFromUser(int fd) {
 	char buffer[1024 + 1];
 	IRC_User* senderUser = this->findUserByFd(fd);
-
-	if (!senderUser)
-		throw std::runtime_error("User not exists");
+    
+    //std::cout << senderUser->getName() << std::endl;
+    //if (!senderUser)
+	//  	throw std::runtime_error("User not exists");
 
 	int nbytes = recv(fd, buffer, 1024, 0);
 
-  if (nbytes <= 0)        // Got error or connection closed by client
-  {
-    if (nbytes == 0)    // Connection closed
-      std::cout << "pollserver: Socket " << senderUser->getFd() << " hung up" << std::endl;
-    else
-      ft_err_msg("can not receive client data", ERR_STILL_SAVED, 2);
-    this->deleteUser(senderUser);
-  }
-  else                    // We got some good data from a client
-  {
-  	buffer[nbytes] = '\0';
-  	senderUser->addReceiveData(buffer);
-  	this->_processUserCommand(senderUser);
-  }
+    if (nbytes <= 0)        // Got error or connection closed by client
+    {
+        if (nbytes == 0)    // Connection closed
+            std::cout << "pollserver: Socket " << senderUser->getFd() << " hung up" << std::endl;
+        else
+            ft_err_msg("can not receive client data", ERR_STILL_SAVED, 2);
+        this->deleteUser(senderUser);
+    }
+    else                    // We got some good data from a client
+    {
+        buffer[nbytes] = '\0';
+  	    senderUser->addReceiveData(buffer);
+  	    this->_processUserCommand(senderUser);
+    }
 }
 
 void IRC_Server::_processUserCommand(IRC_User* user) {
@@ -253,8 +262,9 @@ void IRC_Server::_processUserCommand(IRC_User* user) {
     std::string params;
     std::string level;
 
-    
-    raw = user->getBuffer();
+    std::cout << "he llegado aqui _process" << std::endl;
+    std::cout << user->getBuffer() << std::endl; 
+
     std::cout << raw << std::endl;
 
 }
@@ -326,8 +336,9 @@ void    IRC_Server::delFromPfds(struct pollfd* pollPosition)
 	--this->_connectedClientsNum;
 }
 
-IRC_User* IRC_Server::newUser(struct pollfd* pollPosition)
+IRC_User* IRC_Server::createUser()
 {
+    struct pollfd* pollPosition = this->_pfds + this->_connectedClientsNum - 1;
 	IRC_User* user = new IRC_User(pollPosition);
 
 	this->_usersByFd[pollPosition->fd] = user;
@@ -339,6 +350,8 @@ void IRC_Server::deleteUser(IRC_User* user) {
 	if (user->getAccess() > 0) //registrado en adelante
 		this->_usersByName.erase(user->getName());
 	this->delFromPfds(user->getPollPosition());
+    ::close(user->getFd());
+    delete user;
 }
 
 void    IRC_Server::fillMOTDMsg(const char *filename)

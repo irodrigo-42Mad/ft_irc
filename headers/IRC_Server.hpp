@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/12 11:48:56 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/12 13:51:18 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,11 +111,11 @@ struct IRC_Server
 
 		//user and channel management
 
-		IRC_Channel*	newChannel(const std::string& name, IRC_User* user);
+		IRC_Channel*	createChannel(const std::string& name, IRC_User* user);
 		void			deleteChannel(IRC_Channel* channel);
 		IRC_Channel*	findChannelByName(const std::string& name);
 
-		IRC_User*		newUser(struct pollfd* pollPosition);
+		IRC_User*		createUser();
 		void			deleteUser(IRC_User* user);
 		IRC_User*		findUserByName(const std::string& name);
 		IRC_User*		findUserByFd(int fd);
