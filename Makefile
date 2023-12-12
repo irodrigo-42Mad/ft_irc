@@ -29,7 +29,24 @@ SRCFILES	:= 	main.cpp						\
 				IRC_User.cpp					\
 				IRC_Channel.cpp 				\
 				IRC_Message.cpp					\
+				commands/IRC_DieCommand.cpp		\
+				commands/IRC_JoinCommand.cpp	\
+				commands/IRC_KickCommand.cpp	\
+				commands/IRC_KillCommand.cpp	\
+				commands/IRC_ListCommand.cpp	\
+				commands/IRC_NamesCommand.cpp	\
 				commands/IRC_NickCommand.cpp	\
+				commands/IRC_NoticeCommand.cpp	\
+				commands/IRC_OperCommand.cpp	\
+				commands/IRC_PartCommand.cpp	\
+				commands/IRC_PassCommand.cpp	\
+				commands/IRC_PingCommand.cpp	\
+				commands/IRC_PongCommand.cpp	\
+				commands/IRC_PrivMsgCommand.cpp	\
+				commands/IRC_QuitCommand.cpp	\
+				commands/IRC_TopicCommand.cpp	\
+				commands/IRC_UserCommand.cpp	\
+								
 
 # SOURCES #
 SOURCES		:= $(addprefix $(SRCPATH), $(SRCFILES))
