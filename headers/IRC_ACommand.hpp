@@ -17,17 +17,17 @@
 																									
 //void				cmdPrivMsg(IRC_Message& message); // 2 REGISTERED
 //void				cmdNotice(IRC_Message& message);  // 2 REGISTERED
-																									 //
+
 //void				cmdOper(IRC_Message& message); // 2 OPERATOR (user)
 //void				cmdKill(IRC_Message& message); // 2 OPERATOR
 //void				cmdDie(IRC_Message& message);  // 1 OPERATOR
-																									 //
+
 //void				cmdJoin(IRC_Message& message);
-//void				cmdList(IRC_Message& message);  // 0 OPERATOR????
-//void				cmdNames(IRC_Message& message); // 1 OPERATOR????
-//void				cmdPart(IRC_Message& message);  // 2 OPERATOR????
-//void				cmdKick(IRC_Message& message);  // 3 OPERATOR????
-//void				cmdTopic(IRC_Message& message); // 2 OPERATOR????
+//void				cmdList(IRC_Message& message);  // 0 REGISTERED
+//void				cmdNames(IRC_Message& message); // 1 REGISTERED
+//void				cmdPart(IRC_Message& message);  // 2 REGISTERED
+//void				cmdKick(IRC_Message& message);  // 3 REGISTERED
+//void				cmdTopic(IRC_Message& message); // 2 REGISTERED
 
 struct IRC_ACommand
 {

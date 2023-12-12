@@ -1,7 +1,7 @@
 # include "commands/IRC_PartCommand.hpp"
 
 IRC_PartCommand::IRC_PartCommand()
-	: IRC_ACommand("PART", 2, 1)
+	: IRC_ACommand("PART", 2, 2)
 {}
 
 void IRC_PartCommand::execute(IRC_Message& /*message*/) {

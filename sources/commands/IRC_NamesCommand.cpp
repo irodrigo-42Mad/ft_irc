@@ -1,7 +1,7 @@
 # include "commands/IRC_NamesCommand.hpp"
 
 IRC_NamesCommand::IRC_NamesCommand()
-	: IRC_ACommand("NAMES", 1, 1)
+	: IRC_ACommand("NAMES", 1, 2)
 {}
 
 void IRC_NamesCommand::execute(IRC_Message& /*message*/) {
