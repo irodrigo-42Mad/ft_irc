@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IRC_Messages.hpp                                   :+:      :+:    :+:   */
+/*   IRC_Message.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/03 13:52:37 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/13 14:04:52 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ private:
 	IRC_User&									_sourceUser;
 	std::vector<std::string>	_params;
 	IRC_Server&								_server;
+	void _processCommand(std::string command);
 
 };
 

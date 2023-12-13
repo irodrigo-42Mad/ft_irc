@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/12 13:51:18 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/13 12:31:39 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,7 @@ struct IRC_Server
 		//int	_myAddrInfo(const std::string& port);
 		void _readFromUser(int fd);
 		void _processUserCommand(IRC_User* user);
+		IRC_ACommand* _parseCommand(std::string buffer);
 
 		// User		_UserMap;
 		// Command		_CommandMap;

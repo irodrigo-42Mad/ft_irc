@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/12 13:55:55 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/13 14:18:51 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,19 +254,23 @@ void IRC_Server::_readFromUser(int fd) {
 }
 
 void IRC_Server::_processUserCommand(IRC_User* user) {
-
-		// extraer mensaje completo si lo hubiera de user, instanciar message, procesar comando
-    std::string raw;
+    std::string mydata = user->getBuffer();
     
-    std::string command;
-    std::string params;
-    std::string level;
+    // para que pruebes todo el contenido, cambia mydata, por el comando que quieres probar, yo, esta tarde
+    // te entregaré un parser básico que deberia ejecutar ya todo
+    // descomenta estas primera linea para pruebas y pon tu comando entre "" (te incluyo un ejemplo)
+    // deberia de parsearse del todo.
+    
+    //    IRC_Message procesed = IRC_Message(user, this, "NICK hola");
+    //    this->_run_command(procesed);
 
-    std::cout << "he llegado aqui _process" << std::endl;
-    std::cout << user->getBuffer() << std::endl; 
-
-    std::cout << raw << std::endl;
-
+    if (mydata.find("\r\n") != std::string::npos)
+    {
+        IRC_Message procesed = IRC_Message(user, this, mydata);
+        this->_run_command(procesed);
+    }
+    else
+        std::cout << "incomplete command" << std::endl;
 }
 
 IRC_User* IRC_Server::findUserByName(const std::string& name) {
@@ -418,8 +422,23 @@ bool IRC_Server::removeUserFromChannel(IRC_User* user, IRC_Channel* channel)
 }
 
 void IRC_Server::_fillCommands() {
+    this->_addCommand(new IRC_DieCommand);
+    this->_addCommand(new IRC_JoinCommand);
+    this->_addCommand(new IRC_KickCommand);
+    this->_addCommand(new IRC_KillCommand);
+    this->_addCommand(new IRC_ListCommand);
+    this->_addCommand(new IRC_NamesCommand);
 	this->_addCommand(new IRC_NickCommand);
-	/*...*/
+    this->_addCommand(new IRC_NoticeCommand);
+    this->_addCommand(new IRC_OperCommand);
+    this->_addCommand(new IRC_PartCommand);
+    this->_addCommand(new IRC_PassCommand);
+    this->_addCommand(new IRC_PingCommand);
+    this->_addCommand(new IRC_PongCommand);
+    this->_addCommand(new IRC_PrivMsgCommand);
+    this->_addCommand(new IRC_QuitCommand);
+    this->_addCommand(new IRC_TopicCommand);
+    this->_addCommand(new IRC_UserCommand);
 }
 
 void IRC_Server::_addCommand(IRC_ACommand* command) {
