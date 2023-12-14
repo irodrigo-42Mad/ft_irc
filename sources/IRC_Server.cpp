@@ -3,18 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/14 13:28:25 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/14 21:14:17 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../headers/IRC_Server.hpp"
-# include "../headers/IRC_ACommand.hpp"
-# include "../headers/IRC_Message.hpp"
-//#include "IRC_User.hpp"
-//#include "IRC_Channel.hpp"
+# include "IRC_Server.hpp"
+# include "IRC_ACommand.hpp"
+# include "IRC_Message.hpp"
+# include "IRC_Utils.hpp"
 # include <exception>
 
 IRC_Server::IRC_Server() {}
@@ -109,12 +108,11 @@ const std::string& IRC_Server::getPassword() const
 {
     return (this->_password);
 }
-/*
+
 const std::string& IRC_Server::getServerName() const
 {
     return (this->_serverName);
 }
-*/
 
 /*std::string IRC_Server::getMOTD() const
 {
@@ -158,8 +156,7 @@ void IRC_Server::createPoll()
 {
 	// Add the server listener to set
     this->_pfds[0].fd = this->_serverFd;
-    this->_pfds[0].events = POLLIN;        // Ready to read on incoming connection
-
+    this->_pfds[0].events = POLLIN; // Ready to read on incoming connection
     this->_connectedClientsNum = 1; // For the listener
 }
 
@@ -257,10 +254,10 @@ void IRC_Server::_processUserCommand(IRC_User* user) {
     // descomenta estas primera linea para pruebas y pon tu comando entre "" (te incluyo un ejemplo)
     // deberia de parsearse del todo.
     
-        //IRC_Message procesed = IRC_Message(user, this, "NICK hola");
-        //this->_runCommand(procesed);
+        IRC_Message procesed = IRC_Message(user, this, "NICK hola");
+        this->_runCommand(procesed);
     
-    std::cout << mydata.length();
+    /*std::cout << mydata.length();
 
     if (mydata.find("\r\n") != std::string::npos)
     {
@@ -268,7 +265,7 @@ void IRC_Server::_processUserCommand(IRC_User* user) {
         this->_runCommand(procesed);
     }
     else
-        std::cout << "incomplete command" << std::endl;
+        std::cout << "incomplete command" << std::endl;*/
 }
 
 IRC_User* IRC_Server::findUserByName(const std::string& name) {
@@ -305,11 +302,25 @@ IRC_User* IRC_Server::findUserByFd(int fd) {
                       }
                       */
 
+void    IRC_Server::userPolloutByFd(int fd)
+{
+    this->_pfds[fd].events = POLLOUT;
+}
+
+/*int IRC_Server::findPollPosition(IRC_User* user)
+{
+    for (int i = 0; i < this->_connectedClientsNum; i++)
+    {
+		if (this->_pfds[i].fd == user->getFd())
+			return (i);
+    }
+	return (-1);
+}*/
+
 void    *IRC_Server::getInAddr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET)
         return &(((struct sockaddr_in *)sa)->sin_addr);
-
     return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
 
@@ -347,7 +358,8 @@ IRC_User* IRC_Server::createUser()
 	return (user);
 }
 
-void IRC_Server::deleteUser(IRC_User* user) {
+void IRC_Server::deleteUser(IRC_User* user)
+{
 	this->_usersByFd.erase(user->getFd());
 	if (user->getAccess() > 0) //registrado en adelante
 		this->_usersByName.erase(user->getName());
@@ -400,7 +412,6 @@ bool IRC_Server::changeNameUser(IRC_User* user, const std::string& nickname)
 	return (true);
 }
 
-
 bool IRC_Server::addUserToChannel(IRC_User* user, IRC_Channel* channel)
 {
 	if (user->isInChannel(channel))
@@ -446,7 +457,7 @@ void IRC_Server::_addCommand(IRC_ACommand* command)
 
 void IRC_Server::_runCommand(IRC_Message& message)
 {
-	IRC_Server::commandTypeIterator it = this->_commandsByName.find(message.getCmd());
+	IRC_Server::commandTypeIterator it = this->_commandsByName.find(toUpper(message.getCmd()));
 	IRC_ACommand* command = it->second;
 
 	if (it == this->_commandsByName.end())

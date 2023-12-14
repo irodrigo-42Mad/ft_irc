@@ -23,49 +23,81 @@ IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const s
 	std::cout << "User '" << this->_name << "' created" << std::endl;
 }
 
-IRC_User::~IRC_User() {
+IRC_User::~IRC_User()
+{
 	std::cout << "User '" << this->_name << "' destroyed" << std::endl;
 }
 
-int IRC_User::getFd() const {
-	return this->_pollPosition->fd;
+int	IRC_User::getFd() const
+{
+	return (this->_pollPosition->fd);
 }
 
-const std::string IRC_User::getMask() const {
+const std::string	IRC_User::getMask() const {
 	return (this->_name + "!" + this->_ident + "@" + this->_hostname);
 }
 
-void IRC_User::setName(const std::string& value) {
+void	IRC_User::setName(const std::string& value) {
 	this->_name = value;
 }
 
-const std::string& IRC_User::getName() const {
-	return this->_name;
+const std::string&	IRC_User::getName() const {
+	return (this->_name);
 }
 
-int IRC_User::getAccess() const {
-	return this->_access;
+int	IRC_User::getAccess() const {
+	return (this->_access);
 }
 
-struct pollfd* IRC_User::getPollPosition() {
-	return this->_pollPosition;
+struct pollfd*	IRC_User::getPollPosition() {
+	return (this->_pollPosition);
 }
 
-bool IRC_User::addChannel(IRC_Channel* channel) {
-	return this->_channels.insert(channel).second;
+bool	IRC_User::addChannel(IRC_Channel* channel) {
+	return (this->_channels.insert(channel).second);
 }
 
-bool IRC_User::removeChannel(IRC_Channel* channel) {
-	return this->_channels.erase(channel);
+bool	IRC_User::removeChannel(IRC_Channel* channel) {
+	return (this->_channels.erase(channel));
 }
 
-bool IRC_User::isInChannel(IRC_Channel* channel) {
+bool	IRC_User::isInChannel(IRC_Channel* channel) {
 	return (this->_channels.find(channel) != this->_channels.end());
 }
 
 const IRC_User::channelsSetType IRC_User::getChannels() const {
-	return this->_channels;
+	return (this->_channels);
 	//return std::set<IRC_Channel*>(this->_channels.begin(), this->_channels.end());
+}
+
+void	IRC_User::sendMessage(const std::string& message) const
+{
+	std::string bufferToSend = message + "\r\n";
+	int bufferLength = bufferToSend.length();
+	int	numBytes;
+	
+	numBytes = send(this->getFd(), bufferToSend.c_str(), bufferLength, 0);
+	while (bufferLength > 0)
+	{
+		if (numBytes < 0)
+		{
+    	    throw std::runtime_error("Error while sending a message to the user!");
+			return ;
+		}
+		else if (numBytes < bufferLength)
+		{
+			this->_server->userPolloutByFd(this->_pollPosition->fd);
+			break ;
+		}
+		bufferToSend += numBytes;
+		bufferLength -= numBytes;
+	}
+	return ;
+}
+
+void	IRC_User::errorReply(const std::string& reply)
+{
+	this->sendMessage(":" + this->_server->getServerName() + " " + reply);
 }
 
 /*const IRC_User::channelsSetType IRC_User::getCommonUsers() const {

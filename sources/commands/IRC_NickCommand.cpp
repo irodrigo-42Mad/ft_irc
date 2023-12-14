@@ -1,6 +1,7 @@
 # include "commands/IRC_NickCommand.hpp"
 # include "IRC_Server.hpp"
 # include "IRC_Utils.hpp"
+# include "IRC_Errors.hpp"
 
 IRC_NickCommand::IRC_NickCommand()
 	: IRC_ACommand("NICK", 1, 0)
@@ -15,21 +16,23 @@ void IRC_NickCommand::execute(IRC_Message& message)
 	if (message.getParams().empty() || nickName.empty())
 	{
 		std::cout << "error 431 ERR_NONNICKNAMEGIVEN\n";
+		message.getSourceUser().errorReply(ERR_NONICKNAMEGIVEN(nickName));
+		//client->reply(ERR_NONICKNAMEGIVEN(client->get_nickname()));
 		return ;
 	}
 	if (!checkNickname(nickName))
 	{
 		std::cout << "error 432 ERR_ERRONEUSNICKNAME\n";
+		message.getSourceUser().errorReply(ERR_ERRONEUSNICKNAME(nickName));
 		return ;
 	}
-	IRC_Server &srv = message.getServer();
-	std::string const nickNameC = toUpperInIRC(nickName);
-	if (srv.findUserByName(nickNameC))
+	if (message.getServer().findUserByName(toUpperNickname(nickName)))
 	{
 		std::cout << "error 433 ERR_NICKNAMEINUSE\n";
+		message.getSourceUser().errorReply(ERR_NICKNAMEINUSE(nickName));
 		return ;
 	}
 	//añadir el nickName
-	srv.changeNameUser(&message.getSourceUser(), nickName);
-	std::cout << "se ha cambiado el nick por" << nickName << std::endl; 
+	message.getServer().changeNameUser(&message.getSourceUser(), nickName);//TODO: comprobar si esto hay que ponerlo en mayúsculas
+	std::cout << "se ha cambiado el nick por" << nickName << std::endl;		//y si ha habido que crearlo también se crea?
 }

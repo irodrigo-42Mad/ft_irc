@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:51:12 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/14 11:39:10 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/14 17:45:15 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,21 @@ bool	checkNickname(const std::string &name)
     return (true);  // El string cumple con los requisitos
 }
 
-std::string toUpperInIRC(std::string &str)
+std::string	toUpper(const std::string &str)
+{
+	std::string toUpperStr;
+
+	for (std::size_t i = 0; i < str.length(); ++i)
+	{
+        char currentChar = str[i];
+		if (currentChar >= 'a' && currentChar <= 'z')
+			currentChar -= 32;
+		toUpperStr += currentChar;
+    }
+    return (toUpperStr);	
+}
+
+std::string toUpperNickname(const std::string &str)
 {
 	std::string toUpperStr;
 

@@ -5,7 +5,7 @@
 
 	// IRC Commands
 
-//USER LEVEL FLAG: 1 UNREGISTERED, 2 REGISTERED, 3 OPERATOR
+//USER LEVEL FLAG: 0 UNREGISTERED, 1 REGISTERED, 2 OPERATOR
 
 //void				cmdPass(IRC_Message& message); // 1 UNREGISTERED
 //void				cmdNick(IRC_Message& message); // 1 UNREGISTERED

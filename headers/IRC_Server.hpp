@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/13 18:18:54 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/14 21:01:26 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ struct IRC_Server
 		// getters and setters
 		const std::string&	getPort() const;
 		const std::string&	getPassword() const;
-		//const std::string&	getServerName() const;
+		const std::string&	getServerName() const;
+		struct pollfd		getPollfd();
 		//int					getServerFd() const;
 		
 		IRC_Server::State 	getState() const;
@@ -113,6 +114,8 @@ struct IRC_Server
 		void			deleteUser(IRC_User* user);
 		IRC_User*		findUserByName(const std::string& name);
 		IRC_User*		findUserByFd(int fd);
+		void			userPolloutByFd(int fd);
+		//int				findPollPosition(IRC_User* user);
 
 		bool changeNameUser(IRC_User* user, const std::string& name);
 		bool addUserToChannel(IRC_User* user, IRC_Channel* channel);

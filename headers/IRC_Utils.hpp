@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:49:23 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/14 12:39:25 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/14 17:43:11 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
 #ifndef IRC_UTILS_HPP
-#define IRC_UTILS_HPP
+# define IRC_UTILS_HPP
 
 # include "IRC_Headers.hpp"
 
@@ -23,7 +22,7 @@ std::string	channelName(std::string const &name);
 bool		checkChannelName(std::string const &name);
 void		deleteUnwantedChars(std::string &name);
 bool		checkHostName(std::string &name);
-bool	checkNickname(const std::string &name);
+bool		checkNickname(const std::string &name);
 
 
 // string functions
@@ -34,6 +33,7 @@ std::string	strReplace(std::string str, std::string strFind, std::string strRepl
 
 std::string strXtractWord(std::string &str);
 std::string	maxBufferTrim(std::string &rawLine, int maxSize);
-std::string toUpperInIRC(std::string &str);
+std::string	toUpper(const std::string &str);
+std::string toUpperNickname(const std::string &str);
 
 #endif
