@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:51:12 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/04 16:18:02 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/14 08:46:35 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "../headers/IRC_Utils.hpp"
+# include "../headers/IRC_Constants.hpp"
 
 // general utils
 bool	checkPort(char *port)
@@ -82,7 +83,7 @@ bool	checkHostName(std::string &name)
 	if (name.length() > 63)
 		name.erase(name.begin()+63, name.end());
 	//std::cout << "el nuevo hostname es: " << name << std::endl;
-    for (std::size_t i = 0; i < name.length(); ++i)	// Verificar los caracteres permitidos
+    for (std::size_t i = 0; i < name.length(); ++i)	// Verificar los letteres permitidos
 	{
         char currentChar = name[i];
         // Permitir a-z, A-Z, 0-9, y '-' (excepto en la primera y última posición)
@@ -90,10 +91,44 @@ bool	checkHostName(std::string &name)
               (currentChar >= 'A' && currentChar <= 'Z') ||
               (currentChar >= '0' && currentChar <= '9') ||
               (currentChar == '-' && i > 0 && i < name.length() - 1))) {
-            return (false);  // Caracter no permitido
+            return (false);  // letter no permitido
         }
     }
     return (true);  // El string cumple con los requisitos
+}
+
+bool	checkNickname(const std::string &name)
+{
+    if (name.length() > 9)
+        return (false);
+	std::string allowedChar = SPECIALCHAR;
+    for (std::size_t i = 0; i < name.length(); ++i) {
+        char currentChar = name[i];
+        // Permitir letras (mayúsculas y minúsculas), dígitos y letteres definidos en SPECIALCHAR
+        if (!((currentChar >= 'a' && currentChar <= 'z') ||
+              (currentChar >= 'A' && currentChar <= 'Z') ||
+              (currentChar >= '0' && currentChar <= '9') ||
+              (allowedChar.find(currentChar) != std::string::npos))) {
+            return (false);  // letter no permitido
+        }
+    }
+    return (true);  // El string cumple con los requisitos
+}
+
+std::string toUpperInIRC(std::string &str)
+{
+	std::string toUpperStr;
+
+    for (std::size_t i = 0; i < str.length(); ++i)
+	{
+        char currentChar = str[i];
+		if ((currentChar >= 'a' && currentChar <= 'z') ||
+              (currentChar == '{' || currentChar == '}' ||
+			  currentChar == '|' || currentChar == '^'))
+			currentChar -= 32;
+		toUpperStr += currentChar;
+    }
+    return (toUpperStr);
 }
 
 // string threatment utils

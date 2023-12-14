@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/13 14:18:51 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/14 10:50:12 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ IRC_Server::IRC_Server(char *port, const std::string &password):
     _port(port), _password(password), _serverName("ircserv"), _host("127.0.0.1"),
     _MOTD(""), _connectedClientsNum(0)
 {
-    if (!createServerSocket()) {
+    if (!_createServerSocket()) {
 			std::cout << "no es posible inicializar el socket" << std::endl;
 			return ;
     }
@@ -51,13 +51,12 @@ IRC_Server::~IRC_Server()
     */
 }
 
-bool IRC_Server::createServerSocket()
+bool IRC_Server::_createServerSocket()
 {
 	struct addrinfo		hints;
     struct addrinfo*	res;
-    const char  *serverPort = _port.c_str(); // Get char* pointer from the string std::string
+    const char  *serverPort = this->_port.c_str(); // Get char* pointer from the string std::string
     int rv;									// Control error output messages
-	//int listener;							// Listening socket descriptor
 	int yes = 1;							// For setsockopt() SO_REUSEADDR, below
 	struct addrinfo *p;						// auxiliar variable for check listener lists
 
@@ -73,29 +72,30 @@ bool IRC_Server::createServerSocket()
     }
 	for (p = res; p != NULL; p = p->ai_next)
     {
-        _serverFd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-        if (_serverFd < 0)
+        this->_serverFd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+        if (this->_serverFd < 0)
             continue;
 
         // Lose the pesky "address already in use" error message
-        setsockopt(_serverFd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
-        if (bind(_serverFd, p->ai_addr, p->ai_addrlen) < 0)
+        setsockopt(this->_serverFd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+        if (bind(this->_serverFd, p->ai_addr, p->ai_addrlen) < 0)
         {
-            close(_serverFd);
+            close(this->_serverFd);
             continue;
         }
         break;
     }
-  freeaddrinfo(res); // All done with this
-  if (p == NULL)
-    return (false);
-	return (true);
+    freeaddrinfo(res); // All done with this
+    if (p == NULL)
+        return (false);
+    return (true);
 }
 
-bool IRC_Server::listen(int backlog) {
+bool IRC_Server::listen(int backlog)
+{
     // If we got here, it means we didn't get bound
-    std::cout << "listener: " << _serverFd << std::endl;
-    if (::listen(_serverFd, backlog) == -1)
+    std::cout << "listener: " << this->_serverFd << std::endl;
+    if (::listen(this->_serverFd, backlog) == -1)
         return (false);
     return (true);
 }
@@ -155,16 +155,12 @@ bool    IRC_Server::initializeSocket()
 }
 */
 void IRC_Server::createPoll()
-//struct  pollfd * IRC_Server::createPoll()
 {
-	//struct pollfd *pfds = new pollfd[MAX_CLIENTS];
-
 	// Add the server listener to set
     this->_pfds[0].fd = this->_serverFd;
     this->_pfds[0].events = POLLIN;        // Ready to read on incoming connection
 
     this->_connectedClientsNum = 1; // For the listener
-	//return (pfds);
 }
 
 void    IRC_Server::start()
@@ -182,7 +178,6 @@ void    IRC_Server::start()
     while (42)
     {
         int poll_count = poll(this->_pfds, this->_connectedClientsNum, -1);
-        //int poll_count = poll(this->_pfds, this->_connectedClientsNum, -1);
         if (poll_count < 0)
         {
             if (poll_count == -1)
@@ -261,16 +256,16 @@ void IRC_Server::_processUserCommand(IRC_User* user) {
     // descomenta estas primera linea para pruebas y pon tu comando entre "" (te incluyo un ejemplo)
     // deberia de parsearse del todo.
     
-    //    IRC_Message procesed = IRC_Message(user, this, "NICK hola");
-    //    this->_run_command(procesed);
+        IRC_Message procesed = IRC_Message(user, this, "NICK hola");
+        this->_runCommand(procesed);
 
-    if (mydata.find("\r\n") != std::string::npos)
+    /*if (mydata.find("\r\n") != std::string::npos)
     {
         IRC_Message procesed = IRC_Message(user, this, mydata);
-        this->_run_command(procesed);
+        this->_runCommand(procesed);
     }
     else
-        std::cout << "incomplete command" << std::endl;
+        std::cout << "incomplete command" << std::endl;*/
 }
 
 IRC_User* IRC_Server::findUserByName(const std::string& name) {
@@ -441,26 +436,33 @@ void IRC_Server::_fillCommands() {
     this->_addCommand(new IRC_UserCommand);
 }
 
-void IRC_Server::_addCommand(IRC_ACommand* command) {
+void IRC_Server::_addCommand(IRC_ACommand* command)
+{
 	this->_commandsByName[command->cmd] = command;
 }
 
-void IRC_Server::_run_command(IRC_Message& message) {
-	IRC_Server::commandTypeIterator it =this->_commandsByName.find(message.cmd());
+void IRC_Server::_runCommand(IRC_Message& message)
+{
+	IRC_Server::commandTypeIterator it = this->_commandsByName.find(message.getCmd());
 	IRC_ACommand* command = it->second;
 
-	if (it == this->_commandsByName.end()) {
-		std::cout << "comando '" << message.cmd() << "' no existe\n";
+	if (it == this->_commandsByName.end())
+    {
+		std::cout << "comando '" << message.getCmd() << "' no existe\n";
 		//error comando no existe
 		return ;
 	}
 
-	if (message.sourceUser().getAccess() < command->access) {
-		//error privillegios insuficientes
+	if (message.getSourceUser().getAccess() < command->access)
+    {
+		std::cout << "privilegios insuficientes\n";
+        //error privillegios insuficientes
 		return ;
 	}
-	if (message.size() <= command->params) {
-		;//error // parametros insuficientes
+	if (message.getParamSize() <= command->params)
+    {
+        std::cout << "parámetros insuficientes\n";
+		//error // parametros insuficientes
 		return ;
 	}
 	command->execute(message);

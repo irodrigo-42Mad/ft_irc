@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/13 12:31:39 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/13 18:18:54 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ struct IRC_Server
 		typedef channelsNameType::const_iterator	channelsNameConstIterator;
 
 		typedef std::map<std::string, IRC_ACommand*>	commandType;
-		typedef commandType::iterator							commandTypeIterator;
-		typedef commandType::const_iterator						commandTypeConstIterator;
+		typedef commandType::iterator					commandTypeIterator;
+		typedef commandType::const_iterator				commandTypeConstIterator;
 
 	public:
 
@@ -61,10 +61,7 @@ struct IRC_Server
 		};
 
 		IRC_Server(char* port, const std::string& password);
-		//IRC_Server(IRC_Server const &copy);
-		//IRC_Server &operator = (IRC_Server const &copy);
 		~IRC_Server();
-
 
 		// getters and setters
 		const std::string&	getPort() const;
@@ -79,33 +76,30 @@ struct IRC_Server
 		//std::string		getMOTD() const;
 		//int				getConnectedClientsNum() const;
 
-		// general irc functions
-		void			createPoll();
-		//struct pollfd*			createPoll();
-		void								start();
-		bool								listen(int backlog);
-		void*								getInAddr(struct sockaddr* sa);
-		void								addToPfds(int newfd);
-		void								delFromPfds(struct pollfd* pollPosition);
+		// General irc functions
+		void	createPoll();
+		void	start();
+		bool	listen(int backlog);
+		void*	getInAddr(struct sockaddr* sa);
+		void	addToPfds(int newfd);
+		void	delFromPfds(struct pollfd* pollPosition);
 
 		// Server Display
-		// void                sendMSG(std::string message, int type);
-
-		void				fillMOTDMsg(const char* filename);
-		int                 sendMOTDMsg(int newClient);
-		void				handleMessage(int fd);
-		void				displayClient();
+		void	fillMOTDMsg(const char* filename);
+		int		sendMOTDMsg(int newClient);
+		void	handleMessage(int fd);
+		void	displayClient();
 
 		// Server Display
-		void				newClient();
-		void				eraseClient(int fd);
+		void	newClient();
+		void	eraseClient(int fd);
 
-		void				addClientToChannel(IRC_Client* client, IRC_Channel* channel);
-		void				removeClientFromChannel(IRC_Client* client, IRC_Channel* channel);
-		void				clientDisconnect(int fd);
+		void	addClientToChannel(IRC_Client* client, IRC_Channel* channel);
+		void	removeClientFromChannel(IRC_Client* client, IRC_Channel* channel);
+		void	clientDisconnect(int fd);
 		//estas dos funciones no deberían estar mejor en client??????
-		bool				is_in_channel(IRC_Client& client);
-		bool				is_oper_in_channel(IRC_Client& client);
+		bool	is_in_channel(IRC_Client& client);
+		bool	is_oper_in_channel(IRC_Client& client);
 
 		// Server command implementation
 
@@ -140,41 +134,24 @@ struct IRC_Server
 		char				_MOTD[4096];
 		int					_connectedClientsNum;
 		
-		std::tm			_myTimeStamp;
-		//struct addrinfo		_hints;
-		//struct addrinfo*	_res;
-		//struct sockaddr_storage _remoteaddr; // client address
-		//socklen_t				_addrlen;
-		//char					_remoteIP[INET_ADDRSTRLEN];
-
-
+		std::tm				_myTimeStamp;
+		
 		IRC_Server();										// can not be instantiated without a port and password
 		IRC_Server(const IRC_Server& copy);					// can not be instantiated by copy
 		IRC_Server &operator = (const IRC_Server& copy);	// can not be instantiated using = operator
 
-		bool	createServerSocket();
-		void	_fillCommands(void);
-		void  _addCommand(IRC_ACommand* command);
-		void  _run_command(IRC_Message& message);
-		//int	_myAddrInfo(const std::string& port);
-		void _readFromUser(int fd);
-		void _processUserCommand(IRC_User* user);
-		IRC_ACommand* _parseCommand(std::string buffer);
+		bool			_createServerSocket();
+		void			_fillCommands(void);
+		void  			_addCommand(IRC_ACommand* command);
+		void  			_runCommand(IRC_Message& message);
+		void			_readFromUser(int fd);
+		void			_processUserCommand(IRC_User* user);
+		IRC_ACommand*	_parseCommand(std::string buffer);
 
 		// User		_UserMap;
 		// Command		_CommandMap;
 		// IRC_Channel	_ChannelMap;
 
 };
-
-
-
-		// two functions in one threatment
-		//void			cmdPing(Message &message);
-		//void			cmd_pong(Message &message);
-		// lo mismo no hace falta.
-		//void			cmd_names_inChannel(Message &message, std::string channelName);
-
-
 
 #endif

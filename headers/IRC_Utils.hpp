@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:49:23 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/04 16:00:50 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/14 08:28:47 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ std::string	channelName(std::string const &name);
 bool		checkChannelName(std::string const &name);
 void		deleteUnwantedChars(std::string &name);
 bool		checkHostName(std::string &name);
+bool		checkNickname(std::string &name);
 
 
 // string functions
@@ -33,5 +34,6 @@ std::string	strReplace(std::string str, std::string strFind, std::string strRepl
 
 std::string strXtractWord(std::string &str);
 std::string	maxBufferTrim(std::string &rawLine, int maxSize);
+std::string toUpperInIRC(std::string &str);
 
 #endif

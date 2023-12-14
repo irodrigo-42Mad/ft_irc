@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Message.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/13 14:28:34 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/14 10:41:44 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,24 +54,32 @@ void IRC_Message::_processCommand(std::string data)
     }
 }
 
-
-
-const std::string& IRC_Message::cmd() const {
-	return this->_cmd;
+const std::vector<std::string>&	IRC_Message::getParams() const
+{
+    return (this->_params);
 }
 
-size_t IRC_Message::size() const {
-	return this->_params.size();
+const std::string& IRC_Message::getCmd() const
+{
+	return (this->_cmd);
 }
 
-const std::string& IRC_Message::operator[](int pos) {
-	return this->_params[pos];
+size_t IRC_Message::getParamSize() const
+{
+	return (this->_params.size());
 }
 
-const IRC_User& IRC_Message::sourceUser() const {
-	return this->_sourceUser;
+const IRC_User& IRC_Message::getSourceUser() const
+{
+	return (this->_sourceUser);
 }
 
-IRC_Server& IRC_Message::server() {
-	return this->_server;
+IRC_Server& IRC_Message::getServer()
+{
+	return (this->_server);
+}
+
+const std::string& IRC_Message::operator[](int pos)
+{
+	return (this->_params[pos]);
 }

@@ -29,6 +29,8 @@
 //void				cmdKick(IRC_Message& message);  // 3 REGISTERED
 //void				cmdTopic(IRC_Message& message); // 2 REGISTERED
 
+//struct IRC_Server;
+
 struct IRC_ACommand
 {
 		std::string	cmd;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Constants.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:22:13 by icastell          #+#    #+#             */
-/*   Updated: 2023/10/07 11:41:04 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/13 19:25:04 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@
 # define _version 		"1.0.0"			//first version of ft42irc server
 
 // special character
-# define SPECIALCHAR 	"-[]\\`^{}"		//must try to control this characters in structures.
+# define SPECIALCHAR 	"-_[]\\`^{|}"	//must try to control this characters in structures.
+
+# define MAXNICKLENGTH	9
 
 // const to control messages
 # define FIRST			1				//used to set first message send to client
