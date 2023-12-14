@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Message.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/14 10:41:31 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/14 11:44:38 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ struct IRC_Message
 	const IRC_User& 				getSourceUser() const;
 	const std::vector<std::string>&	getParams() const;
 	size_t							getParamSize() const;
-	IRC_Server& 				getServer();
+	IRC_Server& 					getServer();  
 	const std::string& operator[](int pos);
 private:
 	std::string					_cmd;

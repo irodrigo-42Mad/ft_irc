@@ -1,4 +1,5 @@
 # include "commands/IRC_NickCommand.hpp"
+# include "IRC_Server.hpp"
 # include "IRC_Utils.hpp"
 
 IRC_NickCommand::IRC_NickCommand()
@@ -21,10 +22,16 @@ void IRC_NickCommand::execute(IRC_Message& message)
 		std::cout << "error 432 ERR_ERRONEUSNICKNAME\n";
 		return ;
 	}
-	if (message.getServer().findUserByName(toUpperInIRC(nickName)))
+	IRC_Server &srv = message.getServer();
+	std::string const nickNameC = toUpperInIRC(nickName);
+	if (srv.findUserByName(nickNameC))
 	{
 		std::cout << "error 433 ERR_NICKNAMEINUSE\n";
 		return ;
 	}
+	// if (message.getServer().findUserByName(toUpperInIRC(nickName)))
+	// {
+	
+	// }
 	//añadir el nickName
 }
