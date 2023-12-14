@@ -3,7 +3,7 @@
 # include "IRC_Utils.hpp"
 
 IRC_NickCommand::IRC_NickCommand()
-	: IRC_ACommand("NICK", 1, 1)
+	: IRC_ACommand("NICK", 1, 0)
 {}
 
 void IRC_NickCommand::execute(IRC_Message& message)
@@ -29,9 +29,7 @@ void IRC_NickCommand::execute(IRC_Message& message)
 		std::cout << "error 433 ERR_NICKNAMEINUSE\n";
 		return ;
 	}
-	// if (message.getServer().findUserByName(toUpperInIRC(nickName)))
-	// {
-	
-	// }
 	//añadir el nickName
+	srv.changeNameUser(&message.getSourceUser(), nickName);
+	std::cout << "se ha cambiado el nick por" << nickName << std::endl; 
 }

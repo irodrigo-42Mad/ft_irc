@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/14 11:45:03 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/14 13:01:22 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ size_t IRC_Message::getParamSize() const
 	return (this->_params.size());
 }
 
-const IRC_User& IRC_Message::getSourceUser() const
+IRC_User& IRC_Message::getSourceUser()
 {
 	return (this->_sourceUser);
 }

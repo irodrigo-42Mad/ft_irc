@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/14 10:50:12 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/14 13:28:25 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,22 +250,25 @@ void IRC_Server::_readFromUser(int fd) {
 
 void IRC_Server::_processUserCommand(IRC_User* user) {
     std::string mydata = user->getBuffer();
+    std::cout << user->getBuffer();
     
     // para que pruebes todo el contenido, cambia mydata, por el comando que quieres probar, yo, esta tarde
     // te entregaré un parser básico que deberia ejecutar ya todo
     // descomenta estas primera linea para pruebas y pon tu comando entre "" (te incluyo un ejemplo)
     // deberia de parsearse del todo.
     
-        IRC_Message procesed = IRC_Message(user, this, "NICK hola");
-        this->_runCommand(procesed);
+        //IRC_Message procesed = IRC_Message(user, this, "NICK hola");
+        //this->_runCommand(procesed);
+    
+    std::cout << mydata.length();
 
-    /*if (mydata.find("\r\n") != std::string::npos)
+    if (mydata.find("\r\n") != std::string::npos)
     {
         IRC_Message procesed = IRC_Message(user, this, mydata);
         this->_runCommand(procesed);
     }
     else
-        std::cout << "incomplete command" << std::endl;*/
+        std::cout << "incomplete command" << std::endl;
 }
 
 IRC_User* IRC_Server::findUserByName(const std::string& name) {
