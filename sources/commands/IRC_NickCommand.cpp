@@ -16,20 +16,20 @@ void IRC_NickCommand::execute(IRC_Message& message)
 	if (message.getParams().empty() || nickName.empty())
 	{
 		std::cout << "error 431 ERR_NONNICKNAMEGIVEN\n";
-		message.getSourceUser().errorReply(ERR_NONICKNAMEGIVEN(nickName));
+		message.reply(ERR_NONICKNAMEGIVEN(nickName));
 		//client->reply(ERR_NONICKNAMEGIVEN(client->get_nickname()));
 		return ;
 	}
 	if (!checkNickname(nickName))
 	{
 		std::cout << "error 432 ERR_ERRONEUSNICKNAME\n";
-		message.getSourceUser().errorReply(ERR_ERRONEUSNICKNAME(nickName));
+		message.reply(ERR_ERRONEUSNICKNAME(nickName));
 		return ;
 	}
-	if (message.getServer().findUserByName(toUpperNickname(nickName)))
+	if (message.getServer().findUserByName(nickName))
 	{
 		std::cout << "error 433 ERR_NICKNAMEINUSE\n";
-		message.getSourceUser().errorReply(ERR_NICKNAMEINUSE(nickName));
+		message.reply(ERR_NICKNAMEINUSE(nickName));
 		return ;
 	}
 	//añadir el nickName

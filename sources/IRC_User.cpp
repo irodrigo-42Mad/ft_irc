@@ -12,13 +12,12 @@ IRC_User::IRC_User(struct pollfd* pollPosition)
 	std::cout << "User '" << this->_name << "' created" << std::endl;
 }
 
-IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const std::string& ident, const std::string& realname, IRC_Server& server)
+IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const std::string& ident, const std::string& realname)
 	: _pollPosition(pollPosition)
 	, _name(name)
 	, _ident(ident)
 	, _realname(realname)
 	, _access(0)
-	, _server(&server)
 {
 	std::cout << "User '" << this->_name << "' created" << std::endl;
 }
@@ -70,8 +69,11 @@ const IRC_User::channelsSetType IRC_User::getChannels() const {
 	//return std::set<IRC_Channel*>(this->_channels.begin(), this->_channels.end());
 }
 
-void	IRC_User::sendMessage(const std::string& message) const
+void	IRC_User::sendMessage(const std::string& message)
 {
+	this->_outputBuffer += message + "\r\n";
+	this->_pollPosition->events |= POLLOUT;
+/*
 	std::string bufferToSend = message + "\r\n";
 	int bufferLength = bufferToSend.length();
 	int	numBytes;
@@ -93,11 +95,7 @@ void	IRC_User::sendMessage(const std::string& message) const
 		bufferLength -= numBytes;
 	}
 	return ;
-}
-
-void	IRC_User::errorReply(const std::string& reply)
-{
-	this->sendMessage(":" + this->_server->getServerName() + " " + reply);
+*/
 }
 
 /*const IRC_User::channelsSetType IRC_User::getCommonUsers() const {
@@ -128,8 +126,3 @@ void IRC_User::addReceiveData(char* buffer) {
 	}
 	// std::cout << this->_inputBuffer << std::endl;
 }
-
-const std::string IRC_User::getBuffer() const{
-	return (this->_inputBuffer);
-}
-

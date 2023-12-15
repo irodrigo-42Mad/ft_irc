@@ -6,12 +6,14 @@
 /*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/14 21:01:26 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/15 13:16:08 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IRC_SERVER_HPP
 #define IRC_SERVER_HPP
+
+# define SOCKET_BUFFER   2048
 
 # include "IRC_Headers.hpp"
 # include "IRC_Structs.hpp"
@@ -148,6 +150,7 @@ struct IRC_Server
 		void  			_addCommand(IRC_ACommand* command);
 		void  			_runCommand(IRC_Message& message);
 		void			_readFromUser(int fd);
+		void 			_sendToUser(int fd);
 		void			_processUserCommand(IRC_User* user);
 		IRC_ACommand*	_parseCommand(std::string buffer);
 

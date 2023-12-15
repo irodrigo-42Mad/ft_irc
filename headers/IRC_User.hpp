@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_User.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/14 21:10:38 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/15 13:20:28 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ struct IRC_User
 	typedef channelsSetType::const_iterator	channelsSetConstIterator;
 
 	IRC_User(struct pollfd* pollPosition);
-	IRC_User(struct pollfd* pollPosition, const std::string& nick, const std::string& ident, const std::string& realname, IRC_Server&);
+	IRC_User(struct pollfd* pollPosition, const std::string& nick, const std::string& ident, const std::string& realname);
 	~IRC_User();
 
 	bool isInChannel(IRC_Channel*);
@@ -47,15 +47,14 @@ struct IRC_User
 	int	getAccess() const;
 	struct pollfd*		getPollPosition();
 	const std::string&	getName() const;
-	const std::string	getBuffer() const;
 	const std::string	getMask() const;
 	const std::string	getUsers() const;  // habrá que crearlas
 
 	void	setFd(int);
 	void	setName(const std::string&);
 
-	void	sendMessage(const std::string& message) const;
-	void	errorReply(const std::string& reply);
+	void	sendMessage(const std::string& message);
+//	void	errorReply(const std::string& reply);
 	//void	send(IRC_Message& message);
 
 private:
@@ -65,12 +64,14 @@ private:
 	std::string			_realname;
 	std::string			_hostname;
 	int					_access;
-	IRC_Server*			_server;
 	channelsSetType		_channels;
 	std::string			_inputBuffer;
+	std::string			_outputBuffer;
 
 	IRC_User(const IRC_User&);
 	IRC_User& operator=(const IRC_User&);
+
+	friend struct IRC_Server;
 };
 
 #endif

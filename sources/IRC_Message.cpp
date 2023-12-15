@@ -6,25 +6,37 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/14 13:01:22 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/15 13:21:05 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "IRC_Message.hpp"
+#include "IRC_User.hpp"
+#include "IRC_Server.hpp"
 
 #include <iostream>
 #include <sstream>
+
+void print_command(IRC_Message* msg) {
+    std::vector<std::string> params = msg->getParams();
+
+    std::cout << "cmd = " << msg->getCmd();
+    std::cout << "| params_count = " << msg->getParamSize();
+    std::cout << "| server_address = " << &msg->getServer();
+    std::cout << "| source_address = " << &msg->getSourceUser() << std::endl;
+    
+    for (size_t i = 0; i < params.size(); ++i)
+        std::cout << "param[" << i << "] = " << params[i] << std::endl;
+    
+    std::cout << std::endl;
+}
 
 IRC_Message::IRC_Message(IRC_User* sourceUser, IRC_Server* server, const std::string& data)
 		: _sourceUser(*sourceUser)
 		, _server(*server)
 {
-	(void)data;
-	size_t position = data.find(" ");
-
-	if (position != std::string::npos)
-		this->_cmd = data.substr(0, position);
-
+    this->_processCommand(data);
+    print_command(this);
 	//aquí el parseo del mensaje del cliente
 }
 
@@ -32,26 +44,44 @@ void IRC_Message::_processCommand(std::string data)
 {
 	// extraer mensaje completo si lo hubiera de user, instanciar message, procesar comando
 	std::string buffer; 
-    //buffer = user->getBuffer();
-
+    
     // search for prefix and erase
-    size_t position = data.find(':');
-    std::string micadena = buffer.substr(position);
-    std::istringstream bufferStream(micadena);
-    bufferStream >> this->_cmd;
-    // take params in command line
-    const int MAX_PARAMETROS = 15;
-    std::string parametros[MAX_PARAMETROS];
-    int i = 0;
-    while (bufferStream >> this->_params[i] 
-			&& i < MAX_PARAMETROS) {
-        ++i;
+    size_t position;
+    position = data.find(':');
+    if (position != std::string::npos)
+    {
+        buffer = data.substr(0,position + 1);
+        data = buffer;
+    }
+    // get command to message class
+    position = data.find(" ");
+    if (position != std::string::npos)
+    {
+		this->_cmd = data.substr(0, position);
+        buffer = data.substr(position + 1);
+        data = buffer;
     }
 
-    if (this->_cmd.empty()) {
-        std::cerr << "Error: El comando no puede estar vacío." << std::endl;
-        return ; // Código de error
+    if (data.find(" ") != std::string::npos)
+    {
+        // take params in message struct from buffer data
+        int num = 0;
+        position = data.find(" ");
+        while  (position != std::string::npos)
+        {
+            this->_params.push_back(data.substr(0, position));
+            buffer = data.substr(position + 1);
+            data = buffer;
+            ++num;
+            position = data.find(" ");
+//            std::cout << "'" << buffer << "'" << std::endl;
+        }
     }
+
+    if (this->_cmd == "")
+        this->_cmd = data;
+    else
+        this->_params.push_back(data.substr(0));
 }
 
 const std::vector<std::string>&	IRC_Message::getParams() const
@@ -83,3 +113,9 @@ const std::string& IRC_Message::operator[](int pos)
 {
 	return (this->_params[pos]);
 }
+
+void IRC_Message::reply(const std::string& reply)
+{
+    this->_sourceUser.sendMessage(":" + this->_server.getServerName() + " " + reply);
+}
+

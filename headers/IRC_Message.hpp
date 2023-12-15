@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/14 13:00:55 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/15 12:35:07 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #define IRC_MESSAGE_HPP
 
 # include <string>
-# include <vector>
+# include <vector> 
 
 struct IRC_User;
 struct IRC_Server;
@@ -28,6 +28,9 @@ struct IRC_Message
 	size_t							getParamSize() const;
 	IRC_Server& 					getServer();  
 	const std::string& 				operator[](int pos);
+
+	void reply(const std::string& data);
+
 private:
 	std::string						_cmd;
 	IRC_User&						_sourceUser;

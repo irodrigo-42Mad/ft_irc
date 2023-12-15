@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/14 21:14:17 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/15 13:50:05 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,19 +215,45 @@ void    IRC_Server::start()
                     this->_readFromUser(this->_pfds[i].fd);
                 }   // END handle data from client
             }       // END got ready-to-read from poll()
+			if (this->_pfds[i].revents & POLLOUT)
+			{
+				this->_sendToUser(this->_pfds[i].fd);
+			}
         }           // END looping through file descriptors
     }               // END for(;;)--and you thought it would never end!
 }
 
+void IRC_Server::_sendToUser(int fd) {
+	int bytesToSend;
+	int bytesSent;
+	IRC_User* targetUser = this->findUserByFd(fd);
+	std::string& buffer = targetUser->_outputBuffer;
+
+	if (buffer.size() > SOCKET_BUFFER)
+		bytesToSend = SOCKET_BUFFER;
+	else
+		bytesToSend = buffer.size();
+
+	bytesSent = ::send(fd, buffer.c_str(), bytesToSend, 0);
+
+	if (bytesSent == bytesToSend)
+		targetUser->_pollPosition->events &= ~POLLOUT;
+	if (bytesSent == -1)
+		//ERROR socket desconectado, hay que gestionarlo
+		;
+	buffer.erase(0, bytesSent);
+}
+
+
 void IRC_Server::_readFromUser(int fd) {
-	char buffer[1024 + 1];
+	char buffer[SOCKET_BUFFER + 1];
 	IRC_User* senderUser = this->findUserByFd(fd);
     
     //std::cout << senderUser->getName() << std::endl;
     //if (!senderUser)
 	//  	throw std::runtime_error("User not exists");
 
-	int nbytes = recv(fd, buffer, 1024, 0);
+	int nbytes = recv(fd, buffer, SOCKET_BUFFER, 0);
 
     if (nbytes <= 0)        // Got error or connection closed by client
     {
@@ -246,30 +272,35 @@ void IRC_Server::_readFromUser(int fd) {
 }
 
 void IRC_Server::_processUserCommand(IRC_User* user) {
-    std::string mydata = user->getBuffer();
-    std::cout << user->getBuffer();
+	size_t position;
+	std::string& mydata = user->_inputBuffer;
+    //std::cout << user->getBuffer();
     
     // para que pruebes todo el contenido, cambia mydata, por el comando que quieres probar, yo, esta tarde
     // te entregaré un parser básico que deberia ejecutar ya todo
     // descomenta estas primera linea para pruebas y pon tu comando entre "" (te incluyo un ejemplo)
     // deberia de parsearse del todo.
     
-        IRC_Message procesed = IRC_Message(user, this, "NICK hola");
-        this->_runCommand(procesed);
+    //   IRC_Message procesed = IRC_Message(user, this, "NICK hola");
+    //   this->_runCommand(procesed);
     
-    /*std::cout << mydata.length();
+    /*std::cout << mydata.length(); */
 
-    if (mydata.find("\r\n") != std::string::npos)
+    if ((position = mydata.find("\r\n")) != std::string::npos)
     {
+		std::cout << "my data = '" << mydata << "' " << position <<  std::endl;
         IRC_Message procesed = IRC_Message(user, this, mydata);
+
         this->_runCommand(procesed);
+        //procesed = NULL;
+		mydata.erase(0, position + 2);
     }
     else
-        std::cout << "incomplete command" << std::endl;*/
+        std::cout << "incomplete command" << std::endl;
 }
 
 IRC_User* IRC_Server::findUserByName(const std::string& name) {
-	IRC_Server::usersNameIterator it = this->_usersByName.find(name);
+	IRC_Server::usersNameIterator it = this->_usersByName.find(toUpperNickname(name));
 
 	if (it == this->_usersByName.end())
 		return (NULL);
@@ -362,7 +393,7 @@ void IRC_Server::deleteUser(IRC_User* user)
 {
 	this->_usersByFd.erase(user->getFd());
 	if (user->getAccess() > 0) //registrado en adelante
-		this->_usersByName.erase(user->getName());
+		this->_usersByName.erase(toUpperNickname(user->getName()));
 	this->delFromPfds(user->getPollPosition());
     ::close(user->getFd());
     delete user;
@@ -408,6 +439,8 @@ bool IRC_Server::changeNameUser(IRC_User* user, const std::string& nickname)
 	if (this->findUserByName(nickname))
 		return (false);
 	//TODO: hay que actualizar la clave del mapa
+	this->_usersByName.erase(toUpperNickname(user->_name));
+	this->_usersByName[toUpperNickname(nickname)] = user;
 	user->setName(nickname);
 	return (true);
 }
@@ -473,7 +506,8 @@ void IRC_Server::_runCommand(IRC_Message& message)
         //error privillegios insuficientes
 		return ;
 	}
-	if (message.getParamSize() <= command->params)
+    // std::cout << command->params << std::endl;
+	if (message.getParamSize() < command->params)
     {
         std::cout << "parámetros insuficientes\n";
 		//error // parametros insuficientes
