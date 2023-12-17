@@ -10,12 +10,14 @@
 // _realname = realname;
 IRC_User::IRC_User(struct pollfd* pollPosition)
 	: _pollPosition(pollPosition)
-	, _name("*")
-	, _realname("*")
-	, _ident("*")
+	, _name("")
+	, _ident("")
+	, _realname("")
+	, _hostname("")
+	, _pass("")
 	, _access(0)
-	, _timeout(0)
 	, _registratedT(0)
+	, _timeout(0)
 {
 	std::cout << "User '" << this->_name << "' created" << std::endl;
 }
@@ -26,8 +28,8 @@ IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const s
 	, _ident(ident)
 	, _realname(realname)
 	, _access(0)
-	, _timeout(0)
 	, _registratedT(0)
+	, _timeout(0)
 {
 	std::cout << "User '" << this->_name << "' created" << std::endl;
 }
@@ -108,7 +110,27 @@ void	IRC_User::sendMessage(const std::string& message)
 */
 }
 
-/*const IRC_User::channelsSetType IRC_User::getCommonUsers() const {
+IRC_Channel::usersSetType* IRC_User::getCommonUsers()
+{
+	IRC_Channel::usersSetType* commonUsers = new IRC_Channel::usersSetType();
+
+	for (IRC_User::channelsSetIterator it = this->_channels.begin(); it != this->_channels.end(); ++it) {
+		const IRC_Channel::usersSetType* users = (*it)->getUsers();
+
+		commonUsers->insert(users->begin(), users->end());
+	}
+	return (commonUsers);
+}
+
+IRC_Channel::usersSetType* IRC_User::getCommonUsersExcept(IRC_User* user) {
+	IRC_Channel::usersSetType* commonUsers = this->getCommonUsers();
+
+	commonUsers->erase(user);
+	return (commonUsers);
+}
+
+/*
+const IRC_User::channelsSetType IRC_User::getCommonUsers() const {
 
 	//IRC_Channel::usersSetType allUsers;
 	IRC_Channel::usersSetIterator users;
@@ -186,4 +208,14 @@ void	IRC_User::setRealName(const std::string& realname)
 void	IRC_User::setAccess(int access)
 {
 	this->_access = access;
+}
+
+const std::string&	IRC_User::getPass() const
+{
+	return (this->_pass);
+}
+
+void	IRC_User::setPass(const std::string& pass)
+{
+	this->_pass = pass;
 }

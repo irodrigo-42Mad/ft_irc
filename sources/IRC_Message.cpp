@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/17 17:31:00 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/17 18:51:34 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void IRC_Message::_processCommand(std::string data)
     //string trimmer for take correct command
     data = this->_lTrim(data);
     // take command
+    std::cout << "aqui\n";
     std::stringstream myss(data);
     std::string element;
     std::getline(myss, element);

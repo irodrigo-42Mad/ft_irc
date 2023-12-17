@@ -22,7 +22,7 @@ void IRC_PingCommand::execute(IRC_Message& message) {
 	std::cout << "PING command executed" << std::endl;
 }
 
-
+/*
 
 void	cmd_ping(Message &message)
 {
@@ -49,3 +49,4 @@ void	cmd_pong(Message &message)
 			user.set_timeout(0);
 	}
 }
+*/

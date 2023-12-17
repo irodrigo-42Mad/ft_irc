@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/17 12:07:27 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/17 19:40:14 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,8 @@ struct IRC_Server
 
 		IRC_User*		createUser();
 		void			deleteUser(IRC_User* user);
+		void			userQuit(IRC_User* User, const std::string& message);
+		
 		IRC_User*		findUserByName(const std::string& name);
 		IRC_User*		findUserByFd(int fd);
 		void			userPolloutByFd(int fd);

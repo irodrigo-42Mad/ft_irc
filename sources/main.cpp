@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 12:47:08 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/17 17:26:41 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/17 19:07:57 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int	main(int argc, char *argv[])
 {
-	if (std::strcmp(argv[0], "./ircserv") != 0)
-    	return (ft_err_msg("APP's name is not correct; it can not run", ERR_COMPLETELY_SCREWED, 1));   
+	//if (std::strcmp(argv[0], "./ircserv") != 0)
+    //	return (ft_err_msg("APP's name is not correct; it can not run", ERR_COMPLETELY_SCREWED, 1));   
 	if (argc != 3)
 		return (ft_err_msg("./ircserv <port> <password>", ERR_COMPLETELY_SCREWED, 2));
 	if (!checkPort(argv[1]))

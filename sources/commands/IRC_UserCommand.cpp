@@ -1,6 +1,4 @@
 # include "commands/IRC_UserCommand.hpp"
-
-# include "commands/IRC_PassCommand.hpp"
 # include "IRC_Server.hpp"
 # include "IRC_Errors.hpp"
 
@@ -10,23 +8,20 @@ IRC_UserCommand::IRC_UserCommand()
 
 void IRC_UserCommand::execute(IRC_Message& message)
 {
-    std::string source = message.getSourceUser().getName();
-
-    if (message.getParams().empty() || message.getParamSize() < 4)
-    {
-        message.reply(ERR_NEEDMOREPARAMS(source, "USER"));
-        return ;
-    }
-    if (message.getSourceUser().getAccess() >= 1)
+    if (message.getSourceUser().getAccess() > 0)
     {
         message.reply(ERR_ALREADYREGISTRED);
         return ;
     }  
-    //message.getSourceUser().setIdent() = message.operator[](0);
-    //message.getSourceUser().setRealname() = message.operator[](3);
-	//message.getSourceUser().setAccess(1);
-    //message.getSourceUser().updateMask();
+    message.getSourceUser().setIdent(message.operator[](0));
+    message.getSourceUser().setRealName(message.operator[](3));
+    if (!message.getSourceUser().getName().empty())
+    {
+	    message.getSourceUser().setAccess(1);
+        std::cout << "pass: " << message.getSourceUser().getPass() << std::endl;
+        if (message.getSourceUser().getPass() != message.getServer().getPassword())
+            message.getServer().userQuit(&message.getSourceUser(), "Invalid server password");
+    }
 
-        //aquí hay que mirar más cosas ...... Envío del ping y más ....
-    
+        //ToDo: ¿aquí hay que mirar más cosas ...... Envío del ping y más ....?
 }

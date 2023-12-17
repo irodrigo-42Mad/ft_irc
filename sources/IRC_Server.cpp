@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/17 17:25:40 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/17 20:53:13 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +213,7 @@ void    IRC_Server::start()
                 else                        // If not the listener, we're just a regular client
                 {
                     if (this->_checkClientTime(this->findUserByFd(this->_pfds[i].fd)))
-
+                    ;
 
                     this->_readFromUser(this->_pfds[i].fd);
                 }   // END handle data from client
@@ -395,11 +395,27 @@ IRC_User* IRC_Server::createUser()
 void IRC_Server::deleteUser(IRC_User* user)
 {
 	this->_usersByFd.erase(user->getFd());
-	if (user->getAccess() > 0) //registrado en adelante
+    if (!user->getName().empty())
+	//if (user->getAccess() > 0) //registrado en adelante
 		this->_usersByName.erase(toUpperNickname(user->getName()));
 	this->delFromPfds(user->getPollPosition());
     ::close(user->getFd());
     delete user;
+}
+
+void IRC_Server::userQuit(IRC_User* user, const std::string& text)
+{
+    const IRC_Channel::usersSetType* users = user->getCommonUsersExcept(user);
+    std::string data = user->getMask() + " QUIT :" + text;
+    
+    //IRC_Message message(user, this, "QUIT :" + text);
+    for (IRC_Channel::usersSetConstIterator it = users->begin(); it != users->end(); ++it)
+    {
+        (*it)->sendMessage(data);
+    }
+    user->sendMessage("ERROR :" + text);
+    this->deleteUser(user);
+    delete users;
 }
 
 void    IRC_Server::fillMOTDMsg(const char *filename)
@@ -496,24 +512,31 @@ void IRC_Server::_runCommand(IRC_Message& message)
 	IRC_Server::commandTypeIterator it = this->_commandsByName.find(toUpper(message.getCmd()));
 	IRC_ACommand* command = it->second;
 
+    std::cout << "comando" << std::endl;
 	if (it == this->_commandsByName.end())
     {
-		std::cout << "comando '" << message.getCmd() << "' no existe\n";
+		message.reply(ERR_UNKNOWNCOMMAND(message.getCmd()));
+        //std::cout << "comando '" << message.getCmd() << "' no existe\n";
 		//error comando no existe
 		return ;
 	}
 
 	if (message.getSourceUser().getAccess() < command->access)
     {
-        std::cout << "privilegios insuficientes\n";
-        message.getSourceUser().reply(macro(fdkjnfjkd sakfhdjk  ))
+        message.reply(ERR_NOPRIVILEGES);
+        //std::cout << "privilegios insuficientes\n";
+        //message.getSourceUser().reply(macro(fdkjnfjkd sakfhdjk  ))
         //error privillegios insuficientes
 		return ;
 	}
     // std::cout << command->params << std::endl;
 	if (message.getParamSize() < command->params)
     {
-        message.reply(ERR_NEEDMOREPARAMS(message.getSourceUser().getName(), message.getCmd()));
+        std::string sourceEmpty = "*";
+        if (message.getSourceUser().getName().empty())
+            message.reply(ERR_NEEDMOREPARAMS(sourceEmpty, message.getCmd()));
+        else
+            message.reply(ERR_NEEDMOREPARAMS(message.getSourceUser().getName(), message.getCmd()));
         std::cout << "parámetros insuficientes\n";
 		//error // parametros insuficientes
 		return ;

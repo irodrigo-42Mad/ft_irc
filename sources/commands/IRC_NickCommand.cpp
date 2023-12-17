@@ -11,6 +11,8 @@ void IRC_NickCommand::execute(IRC_Message& message)
 {
 	std::string nickName = message.operator[](0);
 	std::string source = message.getSourceUser().getName();
+	IRC_User& sourceUser = message.getSourceUser();
+
 	std::string err_nickName = nickName;
 	
 	// if (message.getParams().empty() || nickName.empty())
@@ -26,7 +28,7 @@ void IRC_NickCommand::execute(IRC_Message& message)
 	}
 	else if (toUpperNickname(source) == toUpperNickname(nickName))
 	{
-		std::cout << "'" << source << "':'" << nickName << "'" << std::endl;
+		//std::cout << "'" << source << "':'" << nickName << "'" << std::endl;
 		if (source == nickName)
 			return;
 	}
@@ -36,6 +38,18 @@ void IRC_NickCommand::execute(IRC_Message& message)
 		return ;
 	}
 	//añadir el nickName
-	message.getServer().changeNameUser(&message.getSourceUser(), nickName);
+	message.getServer().changeNameUser(&sourceUser, nickName);
+	if (sourceUser.getAccess() == 0)
+	{
+		if (!sourceUser.getIdent().empty())
+		{
+			std::cout << "ident " << sourceUser.getIdent() << std::endl;
+			sourceUser.setAccess(1);
+			//verificar que la contraseña es correcta: pass user == pass server?
+		}
+	}
+	else
+		;//informar
+	
 	std::cout << "se ha cambiado el nick por " << nickName << std::endl;		//y si ha habido que crearlo también se crea?
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_User.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/17 14:40:31 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/17 20:10:46 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ struct IRC_User
 	void addReceiveData(char* buffer);
 
 	const channelsSetType getChannels() const;
-	const IRC_Channel::usersSetType getCommonUsersArray() const;
-	const IRC_User::channelsSetType getCommonUsers() const;
+	IRC_Channel::usersSetType* getCommonUsersExcept(IRC_User*);
+	IRC_Channel::usersSetType* getCommonUsers();
 
 	int getFd() const;
 	int	getAccess() const;
@@ -51,6 +51,7 @@ struct IRC_User
 	const std::string	getUsers() const;  // habrá que crearlas
 	const std::string&	getIdent() const;
 	const std::string&	getRealName() const;
+	const std::string&	getPass() const;
 	time_t				getUserTimeOut();
 
 
@@ -60,6 +61,7 @@ struct IRC_User
 	void	setIdent(const std::string&);
 	void	setRealName(const std::string&);
 	void	setAccess(int access);
+	void	setPass(const std::string&);
 
 	void	sendMessage(const std::string& message);
 //	void	errorReply(const std::string& reply);
@@ -71,6 +73,7 @@ private:
 	std::string			_ident;
 	std::string			_realname;
 	std::string			_hostname;
+	std::string			_pass;
 	int					_access;
 	channelsSetType		_channels;
 	std::string			_inputBuffer;
