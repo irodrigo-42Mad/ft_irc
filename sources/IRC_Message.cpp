@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Message.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/16 12:58:42 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/17 09:39:52 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void IRC_Message::_processCommand(std::string data)
     std::string buffer;
     size_t position;
     // search for prefix and erase
-    position = data.find(‘:’);
+    position = data.find(':');
     // delete prefix from command to correct parse
     if (position != std::string::npos)
         data.erase(0, position + 1);
@@ -57,7 +57,7 @@ void IRC_Message::_processCommand(std::string data)
     std::string element;
     std::getline(myss, element);
     element = this->_lTrim(element);
-    this->_cmd = element.substr(0, element.find(” “));
+    this->_cmd = element.substr(0, element.find(" "));
     data = element.substr(this->_cmd.length() + 1, element.length());
     // take params
     std::stringstream line(data);
@@ -149,7 +149,7 @@ void IRC_Message::reply(const std::string& reply)
 
 std::string IRC_Message::_lTrim(std::string data)
 {
-    std::string SPACE = “\t\f\v”;
+    std::string SPACE = "\t\f\v";//“\t\f\v”;
     size_t position;
     std::string buffer;
     position = data.find_first_not_of(SPACE);

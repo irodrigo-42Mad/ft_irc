@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Errors.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 11:38:07 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/16 20:06:10 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/17 09:37:19 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define RPL_YOUAREOPER							"381" + " You are now an IRC operator"
 
 // error replies
+# define ERR_NOSUCHCHANNEL(channel)				"403 " + channel + " :No such channel"
 # define ERR_TOOMANYCHANNELS(channel)			"405 " + channel + " :You have joined too many channels"
 # define ERR_UNKNOWNCOMMAND(command)			"421 " + command + " :Unknown command"
 # define ERR_NONICKNAMEGIVEN(nickname)			"431 " + nickname + " :No nickname given"
@@ -48,7 +49,6 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 
 
 #define ERR_NOTONCHANNEL(source, channel)               "442 " + source + " " + channel + " :You're not on that channel"
-#define ERR_NOSUCHCHANNEL(source, channel)              "403 " + source + " " + channel + " :No such channel"
 #define ERR_FORBIDDEN()              					"403  :Cannot ban an operator"
 #define ERR_ALREADYINVITED(source, target, channel)     "472 " + source + " :User " + target + " is already invited to channel " + channel
 #define ERR_ALREADYONCHANNEL(source, channel)           "475 " + source + " :You are already on channel " + channel
@@ -64,7 +64,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 #define RPL_LIST(source, channel)						"319 " + source + " : " +  channel
 #define RPL_INVITELIST(source, channel)                 "332 " + source + " : You are now on the waiting list for " +  channel
 #define RPL_INVITE(source, channel, target)             "341 " + source + " " + channel + " : You are invited to channel " +  channel + " by " + target
-#define RPL_WELCOME(source)                             "001 " + source + " :Welcome " + source + " to the ft_irc network"
+//#define RPL_WELCOME(source)                             "001 " + source + " :Welcome " + source + " to the ft_irc network"
 #define NOTICE(source, channel, target)                 "001 " + source + " :Invitation to " + channel + " sent to " + target
 #define RPL_NAMREPLY(source, channel, users)            "353 " + source + " = " + channel + " :" + users
 #define RPL_ENDOFNAMES(source, channel)                 "366 " + source + " " + channel + " :End of /NAMES list."
