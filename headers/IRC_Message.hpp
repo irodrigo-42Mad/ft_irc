@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Message.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/15 12:35:07 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/16 12:51:28 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ struct IRC_Message
 	size_t							getParamSize() const;
 	IRC_Server& 					getServer();  
 	const std::string& 				operator[](int pos);
-
+	
 	void reply(const std::string& data);
 
 private:
@@ -37,7 +37,8 @@ private:
 	std::vector<std::string>		_params;
 	IRC_Server&						_server;
 	
-	void _processCommand(std::string command);
+	void 		_processCommand(std::string command);
+	std::string	_lTrim(std::string data);
 };
 
 #endif

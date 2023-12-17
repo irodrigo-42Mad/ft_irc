@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Message.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/15 13:21:05 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/16 12:58:42 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,34 @@ IRC_Message::IRC_Message(IRC_User* sourceUser, IRC_Server* server, const std::st
 }
 
 void IRC_Message::_processCommand(std::string data)
+{
+    // extraer mensaje completo si lo hubiera de user, instanciar message, procesar comando
+    std::string buffer;
+    size_t position;
+    // search for prefix and erase
+    position = data.find(‘:’);
+    // delete prefix from command to correct parse
+    if (position != std::string::npos)
+        data.erase(0, position + 1);
+    //string trimmer for take correct command
+    data = this->_lTrim(data);
+    // take command
+    std::stringstream myss(data);
+    std::string element;
+    std::getline(myss, element);
+    element = this->_lTrim(element);
+    this->_cmd = element.substr(0, element.find(” “));
+    data = element.substr(this->_cmd.length() + 1, element.length());
+    // take params
+    std::stringstream line(data);
+    std::string myparam;
+    while (line >> myparam)
+    {
+        this->_params.push_back(_lTrim(myparam));
+    }
+}
+
+/*void IRC_Message::_processCommand(std::string data)
 {
 	// extraer mensaje completo si lo hubiera de user, instanciar message, procesar comando
 	std::string buffer; 
@@ -82,7 +110,7 @@ void IRC_Message::_processCommand(std::string data)
         this->_cmd = data;
     else
         this->_params.push_back(data.substr(0));
-}
+}*/
 
 const std::vector<std::string>&	IRC_Message::getParams() const
 {
@@ -119,3 +147,20 @@ void IRC_Message::reply(const std::string& reply)
     this->_sourceUser.sendMessage(":" + this->_server.getServerName() + " " + reply);
 }
 
+std::string IRC_Message::_lTrim(std::string data)
+{
+    std::string SPACE = “\t\f\v”;
+    size_t position;
+    std::string buffer;
+    position = data.find_first_not_of(SPACE);
+    if (position > 0 && position != std::string::npos)
+        data.erase(0,position);
+    position = data.find_last_not_of(SPACE);
+    //int cmdlen = data.length();
+    if (position != std::string::npos)
+    {
+        buffer = data.substr(0, position + 1);
+        data = buffer;
+    }
+    return data;
+}
