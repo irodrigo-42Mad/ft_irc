@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/15 13:50:05 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/17 17:25:40 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,9 +178,9 @@ void    IRC_Server::start()
         if (poll_count < 0)
         {
             if (poll_count == -1)
-                ft_err_msg("fatal server error", ERR_COMPLETELY_SCREWED, 1);
+                ft_err_msg("Server::start fatal server error", ERR_COMPLETELY_SCREWED, 1);
             else if (poll_count == 0)
-                ft_err_msg("timeout error", ERR_COMPLETELY_SCREWED, 1);
+                ft_err_msg("Server::start timeout error", ERR_COMPLETELY_SCREWED, 1);
             exit(1);
         }
 
@@ -436,8 +436,8 @@ IRC_Server::State 	IRC_Server::getState() const
 
 bool IRC_Server::changeNameUser(IRC_User* user, const std::string& nickname)
 {
-	if (this->findUserByName(nickname))
-		return (false);
+	//if (this->findUserByName(nickname))
+	//	return (false);
 	//TODO: hay que actualizar la clave del mapa
 	this->_usersByName.erase(toUpperNickname(user->_name));
 	this->_usersByName[toUpperNickname(nickname)] = user;
@@ -509,6 +509,7 @@ void IRC_Server::_runCommand(IRC_Message& message)
     // std::cout << command->params << std::endl;
 	if (message.getParamSize() < command->params)
     {
+        message.reply(ERR_NEEDMOREPARAMS(message.getSourceUser().getName(), message.getCmd()));
         std::cout << "parámetros insuficientes\n";
 		//error // parametros insuficientes
 		return ;

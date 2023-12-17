@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 12:47:08 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/13 12:23:49 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/17 17:26:41 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,10 @@ int	main(int argc, char *argv[])
 	
 	IRC_Server::State srvState = IRC_Server::ALIVE;
 
-	while (srvState != IRC_Server::DIE)
+	irc.start();    		 	// lanzaremos el bucle del pool
+	srvState = irc.getState();  // comprobamos que no está caido en cada ejecución
+
+/*	while (srvState != IRC_Server::DIE)
 	{
 		try {
 			//irc.loadConfig(configFile.c_str());
@@ -71,5 +74,6 @@ int	main(int argc, char *argv[])
 		// 	// return (1);
 		// }
 	}
+	*/
 	return(0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:51:12 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/14 17:45:15 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/17 12:51:52 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,15 +102,22 @@ bool	checkNickname(const std::string &name)
     if (name.length() > 9)
         return (false);
 	std::string allowedChar = SPECIALCHAR;
-    for (std::size_t i = 0; i < name.length(); ++i) {
+    for (std::size_t i = 0; i < name.length(); ++i)
+	{
         char currentChar = name[i];
+		if (i == 0)
+		{
+			if (!((currentChar >= 'a' && currentChar <= 'z') ||
+          		  (currentChar >= 'A' && currentChar <= 'Z') ||
+          		  (allowedChar.find(currentChar) != std::string::npos)))
+        		return (false);
+		}
         // Permitir letras (mayúsculas y minúsculas), dígitos y letteres definidos en SPECIALCHAR
         if (!((currentChar >= 'a' && currentChar <= 'z') ||
               (currentChar >= 'A' && currentChar <= 'Z') ||
               (currentChar >= '0' && currentChar <= '9') ||
-              (allowedChar.find(currentChar) != std::string::npos))) {
+              (allowedChar.find(currentChar) != std::string::npos)))
             return (false);  // letter no permitido
-        }
     }
     return (true);  // El string cumple con los requisitos
 }
