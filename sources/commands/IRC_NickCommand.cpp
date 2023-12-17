@@ -10,29 +10,32 @@ IRC_NickCommand::IRC_NickCommand()
 void IRC_NickCommand::execute(IRC_Message& message)
 {
 	std::string nickName = message.operator[](0);
+	std::string source = message.getSourceUser().getName();
+	std::string err_nickName = nickName;
 	
-	std::cout << "NICK command executed" << std::endl;
-	//IRC_User& user = message.getSourceUser();
-	if (message.getParams().empty() || nickName.empty())
-	{
-		std::cout << "error 431 ERR_NONNICKNAMEGIVEN\n";
-		message.reply(ERR_NONICKNAMEGIVEN(nickName));
-		//client->reply(ERR_NONICKNAMEGIVEN(client->get_nickname()));
-		return ;
-	}
+	// if (message.getParams().empty() || nickName.empty())
+	// {
+		// message.reply(ERR_NEEDMOREPARAMS(source, "NICK"));	//ToDo: Review: 431 or 461?
+		// return ;
+	// }
 	if (!checkNickname(nickName))
 	{
-		std::cout << "error 432 ERR_ERRONEUSNICKNAME\n";
-		message.reply(ERR_ERRONEUSNICKNAME(nickName));
+		message.reply(ERR_ERRONEUSNICKNAME(source, err_nickName));
 		return ;
+		//stetic verification
 	}
-	if (message.getServer().findUserByName(nickName))
+	else if (toUpperNickname(source) == toUpperNickname(nickName))
 	{
-		std::cout << "error 433 ERR_NICKNAMEINUSE\n";
+		std::cout << "'" << source << "':'" << nickName << "'" << std::endl;
+		if (source == nickName)
+			return;
+	}
+	else if (message.getServer().findUserByName(nickName))
+	{
 		message.reply(ERR_NICKNAMEINUSE(nickName));
 		return ;
 	}
 	//añadir el nickName
-	message.getServer().changeNameUser(&message.getSourceUser(), nickName);//TODO: comprobar si esto hay que ponerlo en mayúsculas
-	std::cout << "se ha cambiado el nick por" << nickName << std::endl;		//y si ha habido que crearlo también se crea?
+	message.getServer().changeNameUser(&message.getSourceUser(), nickName);
+	std::cout << "se ha cambiado el nick por " << nickName << std::endl;		//y si ha habido que crearlo también se crea?
 }
