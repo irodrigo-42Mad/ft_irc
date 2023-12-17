@@ -8,7 +8,6 @@
 // _name = nickname;
 // _ident = user;
 // _realname = realname;
-
 IRC_User::IRC_User(struct pollfd* pollPosition)
 	: _pollPosition(pollPosition)
 	, _name("*")
@@ -17,7 +16,6 @@ IRC_User::IRC_User(struct pollfd* pollPosition)
 	, _access(0)
 	, _timeout(0)
 	, _registratedT(0)
-
 {
 	std::cout << "User '" << this->_name << "' created" << std::endl;
 }
