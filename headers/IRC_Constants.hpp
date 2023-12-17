@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Constants.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:22:13 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/13 19:25:04 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/17 12:55:03 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,9 @@
 // const to control messages
 # define FIRST			1				//used to set first message send to client
 # define NORMALMSG		0				//normal messages to clients
+
+# define PINGTOUT		180				//timeout over ping events
+# define UNREGTOUT		4000			//max timeout for register one user
+# define GRALTIMEOUT	90				//general timeout tick control
 
 # endif

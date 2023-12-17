@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/15 13:16:08 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/17 12:07:27 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,8 @@ struct IRC_Server
 		void			_readFromUser(int fd);
 		void 			_sendToUser(int fd);
 		void			_processUserCommand(IRC_User* user);
-		IRC_ACommand*	_parseCommand(std::string buffer);
+		//IRC_ACommand*	_parseCommand(std::string buffer);
+		bool			_checkClientTime(IRC_User *user);
 
 		// User		_UserMap;
 		// Command		_CommandMap;

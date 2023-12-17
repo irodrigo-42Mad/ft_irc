@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/15 13:20:28 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/17 14:40:31 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,17 @@ struct IRC_User
 	const std::string&	getName() const;
 	const std::string	getMask() const;
 	const std::string	getUsers() const;  // habrá que crearlas
+	const std::string&	getIdent() const;
+	const std::string&	getRealName() const;
+	time_t				getUserTimeOut();
+
 
 	void	setFd(int);
 	void	setName(const std::string&);
+	void	setUserTimeout(time_t myTimeOut);
+	void	setIdent(const std::string&);
+	void	setRealName(const std::string&);
+	void	setAccess(int access);
 
 	void	sendMessage(const std::string& message);
 //	void	errorReply(const std::string& reply);
@@ -67,9 +75,16 @@ private:
 	channelsSetType		_channels;
 	std::string			_inputBuffer;
 	std::string			_outputBuffer;
-
+	time_t				_registratedT;				// moment that user has registered in server
+	time_t				_timeout;					// calculate timeout
+	time_t				_time;						// check last command time
+	
 	IRC_User(const IRC_User&);
 	IRC_User& operator=(const IRC_User&);
+
+	void 	_resetTime(void);
+	time_t 	_getTime(void);
+	time_t	_getRegTime(void);
 
 	friend struct IRC_Server;
 };

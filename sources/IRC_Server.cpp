@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/15 13:50:05 by irodrigo         ###   ########.fr       */
+/*   Updated: 2023/12/17 14:36:11 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,6 +212,9 @@ void    IRC_Server::start()
                 }
                 else                        // If not the listener, we're just a regular client
                 {
+                    if (this->_checkClientTime(this->findUserByFd(this->_pfds[i].fd)))
+
+
                     this->_readFromUser(this->_pfds[i].fd);
                 }   // END handle data from client
             }       // END got ready-to-read from poll()
@@ -502,7 +505,8 @@ void IRC_Server::_runCommand(IRC_Message& message)
 
 	if (message.getSourceUser().getAccess() < command->access)
     {
-		std::cout << "privilegios insuficientes\n";
+        std::cout << "privilegios insuficientes\n";
+        message.getSourceUser().reply(macro(fdkjnfjkd sakfhdjk  ))
         //error privillegios insuficientes
 		return ;
 	}
@@ -515,6 +519,45 @@ void IRC_Server::_runCommand(IRC_Message& message)
 	}
 	command->execute(message);
 }
+
+bool	IRC_Server::_checkClientTime(IRC_User *user)
+{
+    if (user->getAccess() != 0)
+    {
+        if (user->getUserTimeOut() && user->_getTime() + PINGTOUT < time(NULL))
+        {
+            user->setUserTimeout(time(NULL) + GRALTIMEOUT);
+            // enviar a todos los usuarios un evento ping
+            
+        }
+        else if (user->getUserTimeOut() && (user->getUserTimeOut() < time (NULL)))
+        {
+            // cerrar usuarios por timeout
+            // reply  "ERROR :Closing link: (" + user->get_username() + "@" + user->get_host() + ") [Ping timeout]\r\n";
+            // send_all_user(REPLY);
+            // line = ":" + user->get_mask() + " QUIT :Ping timeout\r\n";
+            // eliminar el usuario de todos los canales e informar de ello
+            // eliminar la instancia y fd del usuario
+            return (true);
+        }
+    }
+    else // user is not registered
+    {
+        if ((user->_getRegTime() + UNREGTOUT) <= time(NULL))
+        {
+            // reply "PONG ERROR [Registration timeout]\r\n"
+            // send_all user(REPLY);
+            // eliminar el usuario (no ha entrado en canales)
+            // eliminar instancia y fd del usuario
+            return (true);
+        }
+    }
+    return (false);
+}
+
+
+
+
 
 
 // void                IRC_Server::sendMSG(std::string message, int type)

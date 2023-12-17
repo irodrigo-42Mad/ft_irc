@@ -5,9 +5,19 @@
 #include <iostream>
 
 
+// _name = nickname;
+// _ident = user;
+// _realname = realname;
+
 IRC_User::IRC_User(struct pollfd* pollPosition)
 	: _pollPosition(pollPosition)
+	, _name("*")
+	, _realname("*")
+	, _ident("*")
 	, _access(0)
+	, _timeout(0)
+	, _registratedT(0)
+
 {
 	std::cout << "User '" << this->_name << "' created" << std::endl;
 }
@@ -18,6 +28,8 @@ IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const s
 	, _ident(ident)
 	, _realname(realname)
 	, _access(0)
+	, _timeout(0)
+	, _registratedT(0)
 {
 	std::cout << "User '" << this->_name << "' created" << std::endl;
 }
@@ -125,4 +137,55 @@ void IRC_User::addReceiveData(char* buffer) {
 		std::cout << "desconexion necesaria" << std::endl;
 	}
 	// std::cout << this->_inputBuffer << std::endl;
+}
+
+time_t IRC_User::getUserTimeOut()
+{
+	return (this->_timeout);
+}
+
+void IRC_User::setUserTimeout(time_t myTimeOut)
+{
+	this->_timeout = myTimeOut;
+}
+
+// reseting time of user commands for server controls
+void IRC_User::_resetTime(void)
+{
+	this->_time = time(NULL);
+}
+
+time_t IRC_User::_getTime(void)
+{
+	return (this->_time);
+}
+
+time_t IRC_User::_getRegTime(void)
+{
+	return (this->_registratedT);
+}
+
+const std::string&	IRC_User::getIdent() const
+{
+	return (this->_ident);
+}
+
+const std::string&	IRC_User::getRealName() const
+{
+	return (this->_realname);
+}
+
+void	IRC_User::setIdent(const std::string& ident)
+{
+	this->_ident = ident;
+}
+
+void	IRC_User::setRealName(const std::string& realname)
+{
+	this->_realname = realname;
+}
+
+void	IRC_User::setAccess(int access)
+{
+	this->_access = access;
 }
