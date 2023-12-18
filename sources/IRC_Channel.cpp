@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/18 13:41:21 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/18 20:32:58 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,11 @@ const IRC_Channel::usersSetType *IRC_Channel::getUsers() const
 int IRC_Channel::getNumUsers() const
 {
     return (this->_usersSet.size());
+}
+
+void IRC_Channel::setTopic(const std::string& topic)
+{
+    this->_topic = topic;
 }
 
 /*const IRC_Channel::_usersInChannelType* IRC_Channel::getUsers() const

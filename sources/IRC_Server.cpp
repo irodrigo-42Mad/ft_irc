@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/18 17:29:37 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/18 20:42:07 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,41 +119,6 @@ std::string IRC_Server::getMOTD() const
     return (this->_MOTD);
 }
 
-
-
-/*int IRC_Server::getServerFd() const
-{
-    return (this->_serverFd);
-}
-
-int IRC_Server::getConnectedClientsNum() const
-{
-    return (this->_connectedClientsNum);
-}
-
-void    IRC_Server::setServerFd(int serverSocket)
-{
-    this->_serverFd = serverSocket;
-}*/
-
-/* hay que revisar el código de esta funcion
-void    IRC_Server::setClients(struct pollfd *clients)
-{
-    // revisar como tiene que quedar la struct pollfd
-    //this->_clients = clients;
-}*/
-/*
-bool    IRC_Server::initializeSocket()
-{
-    int srvFd = _myAddrInfo(this->_port);
-
-    if (srvFd < 0)
-        return (false);
-    else
-        this->_serverFd = srvFd;
-    return (true);
-}
-*/
 void IRC_Server::createPoll()
 {
 	// Add the server listener to set
@@ -249,7 +214,6 @@ void IRC_Server::_sendToUser(int fd) {
 	buffer.erase(0, bytesSent);
 }
 
-
 void IRC_Server::_readFromUser(int fd) {
 	char buffer[SOCKET_BUFFER + 1];
 	IRC_User* senderUser = this->findUserByFd(fd);
@@ -327,36 +291,10 @@ IRC_Channel* IRC_Server::findChannelByName(const std::string& name) {
 	return it->second;
 }
 
-
-                            //aqui es donde se envian cosas entre ellos
-                            //sendMSG(this->_MOTD, NORMALMSG);
-                       /*
-                        for (int j = 0; j < this->_connectedClientsNum; j++)        // Send to everyone!
-                        {
-                            int destFd = this->_clients[j].fd;
-                            if (destFd != this->_serverFd && destFd != senderFd)    // Except the listener and ourselves
-                            {
-                                if (send(destFd, buf, nbytes, 0) == -1)
-                                    ft_err_msg("can not send data to destiny", ERR_STILL_SAVED, 2);
-                            }
-                        }
-                      }
-                      */
-
 void    IRC_Server::userPolloutByFd(int fd)
 {
     this->_pfds[fd].events = POLLOUT;
 }
-
-/*int IRC_Server::findPollPosition(IRC_User* user)
-{
-    for (int i = 0; i < this->_connectedClientsNum; i++)
-    {
-		if (this->_pfds[i].fd == user->getFd())
-			return (i);
-    }
-	return (-1);
-}*/
 
 void    *IRC_Server::getInAddr(struct sockaddr *sa)
 {
@@ -619,7 +557,22 @@ void    IRC_Server::channelListByName(IRC_User* user, std::string name)
     }
 }
 
+void    IRC_Server::changeChannelTopic(IRC_User* user, std::string &name, std::string &topic)
+{
+    IRC_Channel *channel = this->findChannelByName(name);
 
+    if (channel)
+    {
+        if (topic.empty())
+            channel->setTopic("");
+        else if (topic == "*")
+            user->sendMessage(channel->getTopic());
+        else
+            channel->setTopic(topic);
+        return ;
+    }
+    //ToDo: escribimos mensaje de canal no existe
+}
 
 // void                IRC_Server::sendMSG(std::string message, int type)
 // {
@@ -647,3 +600,45 @@ void    IRC_Server::channelListByName(IRC_User* user, std::string name)
 // {
 // 	this->srvState = myst;
 // }
+/*int IRC_Server::getServerFd() const
+{
+    return (this->_serverFd);
+}
+
+int IRC_Server::getConnectedClientsNum() const
+{
+    return (this->_connectedClientsNum);
+}
+
+void    IRC_Server::setServerFd(int serverSocket)
+{
+    this->_serverFd = serverSocket;
+}*/
+
+/* hay que revisar el código de esta funcion
+void    IRC_Server::setClients(struct pollfd *clients)
+{
+    // revisar como tiene que quedar la struct pollfd
+    //this->_clients = clients;
+}*/
+/*
+bool    IRC_Server::initializeSocket()
+{
+    int srvFd = _myAddrInfo(this->_port);
+
+    if (srvFd < 0)
+        return (false);
+    else
+        this->_serverFd = srvFd;
+    return (true);
+}
+*/
+/*int IRC_Server::findPollPosition(IRC_User* user)
+{
+    for (int i = 0; i < this->_connectedClientsNum; i++)
+    {
+		if (this->_pfds[i].fd == user->getFd())
+			return (i);
+    }
+	return (-1);
+}*/
