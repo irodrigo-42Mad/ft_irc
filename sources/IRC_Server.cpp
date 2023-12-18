@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/18 14:29:19 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/18 17:29:37 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,11 +293,10 @@ void IRC_Server::_processUserCommand(IRC_User* user) {
 
     if ((position = mydata.find("\r\n")) != std::string::npos)
     {
-		std::cout << "my data = '" << mydata << "' " << position <<  std::endl;
+		std::cout << "my data = $" << mydata << "$ " << position <<  std::endl;
         IRC_Message procesed = IRC_Message(user, this, mydata);
 
         this->_runCommand(procesed);
-        //procesed = NULL;
 		mydata.erase(0, position + 2);
     }
     else
@@ -432,23 +431,16 @@ void    IRC_Server::fillMOTDMsg(const char *filename)
 
     if (file.is_open())
     {
+        file.read(this->_MOTD, sizeof(this->_MOTD));
+        this->_MOTD[file.gcount()] = '\0';  //Make sure that the string ends with a null character
+        file.close();
         std::strncat(this->_MOTD, "Somos un equipo,\nvaliente y luchador,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
         std::strncat(this->_MOTD, "que defiende su IRC,\ncon el corazón.\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
         std::strncat(this->_MOTD, "Los años pasando,\ny seguimos aquí,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
         std::strncat(this->_MOTD, "porque somos los currelas,\ny esto nunca va a morir ...\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
-        std::strncat(this->_MOTD, "\0", sizeof(_MOTD) - std::strlen(_MOTD) - 1); 
-        //file.read(this->_MOTD, sizeof(this->_MOTD));
-        //this->_MOTD[file.gcount()] = '\0';  //Make sure that the string ends with a null character
-        file.close();
-        //std::strncat(this->_MOTD, "Somos un equipo,\nvaliente y luchador,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
-        //std::strncat(this->_MOTD, "que defiende su IRC,\ncon el corazón.\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
-        //std::strncat(this->_MOTD, "Los años pasando,\ny seguimos aquí,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
-        //std::strncat(this->_MOTD, "porque somos los currelas,\ny esto nunca va a morir ...\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
     }
     else
         std::strncat(this->_MOTD, "Bienvenido al IRC de irodrigo e icastell\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
-        //return (false);
-    //return (true);
 }
 
 void IRC_Server::sendMOTDMsg(IRC_User* user)  //esto hay que leerlo de línea en línea e ir imprimiéndolo
@@ -620,8 +612,11 @@ void    IRC_Server::channelListByName(IRC_User* user, std::string name)
     std::string line;
     IRC_Channel *channel = this->findChannelByName(name);
     
-    line = ":" + this->getServerName() + " " + RPL_LIST(channel->getName(), "mode", channel->getTopic());
-    user->sendMessage(line);
+    if (channel)
+    {
+        line = ":" + this->getServerName() + " " + RPL_LIST(channel->getName(), "mode", channel->getTopic());
+        user->sendMessage(line);
+    }
 }
 
 

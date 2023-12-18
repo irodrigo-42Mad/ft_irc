@@ -6,14 +6,14 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/18 13:52:23 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:10:07 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IRC_SERVER_HPP
 #define IRC_SERVER_HPP
 
-# define SOCKET_BUFFER   2048
+# define SOCKET_BUFFER   8192
 
 # include "IRC_Headers.hpp"
 # include "IRC_Structs.hpp"

@@ -15,10 +15,9 @@ void IRC_ListCommand::execute(IRC_Message& message) {
 	else
 	{
 		std::cout << message.getParamSize() << std::endl;
-		for (size_t i = 0; i < message.getParamSize(); ++i)
-			std::cout << message.operator[](1) << std::endl;
-		//for (size_t i = 0; i < message.getParamSize(); ++i)
-		//	message.getServer().channelListByName(&message.getSourceUser(), message.operator[](i));
+		for (size_t i = 0; i < message.getParamSize(); ++i){
+			std::cout << message.operator[](i) << std::endl;
+			message.getServer().channelListByName(&message.getSourceUser(), message.operator[](i));}
 		message.reply(RPL_LISTEND);
 	}
 }
