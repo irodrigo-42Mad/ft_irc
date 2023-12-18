@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:04:15 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/05 09:26:55 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/18 13:41:15 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ struct IRC_Channel
   const std::string& getTopic() const;
   const IRC_User* getCreator() const;
   const usersSetType *getUsers() const;
+  int getNumUsers() const;
 
   void setTopic(const std::string&);
 
@@ -45,13 +46,11 @@ struct IRC_Channel
 private:
 	IRC_Server&			_server;
 	std::string			_channelName;
-	IRC_User*				_creator;
+	IRC_User*			_creator;
 	std::string			_topic;
 	std::string			_key;
-	int							_limit;
+	int					_limit;
 	usersSetType		_usersSet;
-
-
 };
 
 #endif

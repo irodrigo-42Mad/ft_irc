@@ -18,9 +18,11 @@ void IRC_UserCommand::execute(IRC_Message& message)
     if (!message.getSourceUser().getName().empty())
     {
 	    message.getSourceUser().setAccess(1);
-        std::cout << "pass: " << message.getSourceUser().getPass() << std::endl;
-        if (message.getSourceUser().getPass() != message.getServer().getPassword())
-            message.getServer().userQuit(&message.getSourceUser(), "Invalid server password");
+        message.getServer().sendMOTDMsg(&message.getSourceUser());
+
+        //std::cout << "pass: " << message.getSourceUser().getPass() << std::endl;
+        //if (message.getSourceUser().getPass() != message.getServer().getPassword())
+        //   message.getServer().userQuit(&message.getSourceUser(), "Invalid server password");
     }
 
         //ToDo: ¿aquí hay que mirar más cosas ...... Envío del ping y más ....?

@@ -34,6 +34,7 @@ SRCFILES	:= 	main.cpp						\
 				commands/IRC_KickCommand.cpp	\
 				commands/IRC_KillCommand.cpp	\
 				commands/IRC_ListCommand.cpp	\
+				commands/IRC_MOTDCommand.cpp	\
 				commands/IRC_NamesCommand.cpp	\
 				commands/IRC_NickCommand.cpp	\
 				commands/IRC_NoticeCommand.cpp	\

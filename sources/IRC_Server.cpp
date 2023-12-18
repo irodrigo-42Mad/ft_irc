@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/17 20:53:13 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/18 14:29:19 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,12 +114,14 @@ const std::string& IRC_Server::getServerName() const
     return (this->_serverName);
 }
 
-/*std::string IRC_Server::getMOTD() const
+std::string IRC_Server::getMOTD() const
 {
     return (this->_MOTD);
 }
 
-int IRC_Server::getServerFd() const
+
+
+/*int IRC_Server::getServerFd() const
 {
     return (this->_serverFd);
 }
@@ -207,7 +209,7 @@ void    IRC_Server::start()
                         std::cout << "pollserver: New connection from " << inet_ntop(remoteaddr.ss_family,
                             getInAddr((struct sockaddr *)&remoteaddr),
                             remoteIP, INET_ADDRSTRLEN) << " on socket " << newFd << std::endl;
-                        sendMOTDMsg(newFd); //¿qué hacemos si no se manda?
+                        //sendMOTDMsg(newFd); //¿qué hacemos si no se manda?
                     }
                 }
                 else                        // If not the listener, we're just a regular client
@@ -318,7 +320,13 @@ IRC_User* IRC_Server::findUserByFd(int fd) {
 	return it->second;
 }
 
+IRC_Channel* IRC_Server::findChannelByName(const std::string& name) {
+	IRC_Server::channelsNameIterator it = this->_channelsByName.find(name);
 
+	if (it == this->_channelsByName.end())
+		return (NULL);
+	return it->second;
+}
 
 
                             //aqui es donde se envian cosas entre ellos
@@ -424,13 +432,18 @@ void    IRC_Server::fillMOTDMsg(const char *filename)
 
     if (file.is_open())
     {
-        file.read(this->_MOTD, sizeof(this->_MOTD));
-        this->_MOTD[file.gcount()] = '\0';  //Make sure that the string ends with a null character
-        file.close();
         std::strncat(this->_MOTD, "Somos un equipo,\nvaliente y luchador,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
         std::strncat(this->_MOTD, "que defiende su IRC,\ncon el corazón.\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
         std::strncat(this->_MOTD, "Los años pasando,\ny seguimos aquí,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
-        std::strncat(this->_MOTD, "porque somos los currelas,\ny esto nunca va a morir ...\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        std::strncat(this->_MOTD, "porque somos los currelas,\ny esto nunca va a morir ...\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        std::strncat(this->_MOTD, "\0", sizeof(_MOTD) - std::strlen(_MOTD) - 1); 
+        //file.read(this->_MOTD, sizeof(this->_MOTD));
+        //this->_MOTD[file.gcount()] = '\0';  //Make sure that the string ends with a null character
+        file.close();
+        //std::strncat(this->_MOTD, "Somos un equipo,\nvaliente y luchador,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        //std::strncat(this->_MOTD, "que defiende su IRC,\ncon el corazón.\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        //std::strncat(this->_MOTD, "Los años pasando,\ny seguimos aquí,\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        //std::strncat(this->_MOTD, "porque somos los currelas,\ny esto nunca va a morir ...\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
     }
     else
         std::strncat(this->_MOTD, "Bienvenido al IRC de irodrigo e icastell\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
@@ -438,14 +451,29 @@ void    IRC_Server::fillMOTDMsg(const char *filename)
     //return (true);
 }
 
-int IRC_Server::sendMOTDMsg(int newClient)  //esto hay que leerlo de línea en línea e ir imprimiéndolo
+void IRC_Server::sendMOTDMsg(IRC_User* user)  //esto hay que leerlo de línea en línea e ir imprimiéndolo
 {
-    int totalSend = 0;
-
-    totalSend = send(newClient, this->_MOTD, sizeof(this->_MOTD), 0);
-    if (totalSend == -1)
-        return (ft_err_msg("Envío MOTD Fallido", ERR_CURA_SANA, totalSend));
-    return (totalSend);
+    std::string MOTD = this->_MOTD;
+    std::stringstream ss(MOTD);
+    std::string line;
+    
+    // inicio del MOTD
+    line = ":" + this->getServerName() + " " + RPL_MOTDSTART(user->getName(), this->getServerName());
+    user->sendMessage(line);
+    line = "";
+    //int i = 0;
+    
+    while (std::getline(ss, line))
+    {
+        //user->sendMessage(":" + this->getServerName() + " " + RPL_MOTD(user->getName(), line)); // message 372 per line
+        std::string msgline  = ":" + this->getServerName() + " " + RPL_MOTD(user->getName(), line);
+        //std::cout << "en la linea : " << i << ": " <<  line << std::endl;
+        user->sendMessage(msgline);
+        //i++;
+    }
+    // finish MOTD
+    line = ":" + this->getServerName() + " " + RPL_ENDOFMOTD(user->getName());
+    user->sendMessage(line);
 }
 
 IRC_Server::State 	IRC_Server::getState() const
@@ -488,6 +516,7 @@ void IRC_Server::_fillCommands() {
     this->_addCommand(new IRC_KickCommand);
     this->_addCommand(new IRC_KillCommand);
     this->_addCommand(new IRC_ListCommand);
+    this->_addCommand(new IRC_MOTDCommand);
     this->_addCommand(new IRC_NamesCommand);
 	this->_addCommand(new IRC_NickCommand);
     this->_addCommand(new IRC_NoticeCommand);
@@ -512,21 +541,15 @@ void IRC_Server::_runCommand(IRC_Message& message)
 	IRC_Server::commandTypeIterator it = this->_commandsByName.find(toUpper(message.getCmd()));
 	IRC_ACommand* command = it->second;
 
-    std::cout << "comando" << std::endl;
+    //std::cout << "comando" << std::endl;
 	if (it == this->_commandsByName.end())
     {
 		message.reply(ERR_UNKNOWNCOMMAND(message.getCmd()));
-        //std::cout << "comando '" << message.getCmd() << "' no existe\n";
-		//error comando no existe
 		return ;
 	}
-
 	if (message.getSourceUser().getAccess() < command->access)
     {
         message.reply(ERR_NOPRIVILEGES);
-        //std::cout << "privilegios insuficientes\n";
-        //message.getSourceUser().reply(macro(fdkjnfjkd sakfhdjk  ))
-        //error privillegios insuficientes
 		return ;
 	}
     // std::cout << command->params << std::endl;
@@ -537,8 +560,6 @@ void IRC_Server::_runCommand(IRC_Message& message)
             message.reply(ERR_NEEDMOREPARAMS(sourceEmpty, message.getCmd()));
         else
             message.reply(ERR_NEEDMOREPARAMS(message.getSourceUser().getName(), message.getCmd()));
-        std::cout << "parámetros insuficientes\n";
-		//error // parametros insuficientes
 		return ;
 	}
 	command->execute(message);
@@ -579,8 +600,29 @@ bool	IRC_Server::_checkClientTime(IRC_User *user)
     return (false);
 }
 
+void    IRC_Server::channelList(IRC_User* user)
+{
+    std::string line;
+    
+    for (channelsNameConstIterator it = this->_channelsByName.begin(); it != this->_channelsByName.end(); ++it)
+    {
+        IRC_Channel *channel = (*it).second;
+        //channel->getNumUsers();
+        line = ":" + this->getServerName() + " " + RPL_LIST(channel->getName(), "mode", channel->getTopic());
+        user->sendMessage(line);
+    }
+    line = ":" + this->getServerName() + " " + RPL_LISTEND;
+    user->sendMessage(line);
+}
 
-
+void    IRC_Server::channelListByName(IRC_User* user, std::string name)
+{
+    std::string line;
+    IRC_Channel *channel = this->findChannelByName(name);
+    
+    line = ":" + this->getServerName() + " " + RPL_LIST(channel->getName(), "mode", channel->getTopic());
+    user->sendMessage(line);
+}
 
 
 

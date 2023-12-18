@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/17 19:40:14 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/18 13:52:23 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ struct IRC_Server
 		//void				setServerFd(int serverSocket);
 		//void				setClients(struct pollfd* clients); // revisar esta funcion
 		//void 				setState(enum State myst);
-		//std::string		getMOTD() const;
+		std::string			getMOTD() const;
 		//int				getConnectedClientsNum() const;
 
 		// General irc functions
@@ -89,7 +89,7 @@ struct IRC_Server
 
 		// Server Display
 		void	fillMOTDMsg(const char* filename);
-		int		sendMOTDMsg(int newClient);
+		void	sendMOTDMsg(IRC_User* user);
 		void	handleMessage(int fd);
 		void	displayClient();
 
@@ -111,6 +111,8 @@ struct IRC_Server
 		IRC_Channel*	createChannel(const std::string& name, IRC_User* user);
 		void			deleteChannel(IRC_Channel* channel);
 		IRC_Channel*	findChannelByName(const std::string& name);
+		void			channelList(IRC_User* user);
+		void			channelListByName(IRC_User* user, std::string name);
 
 		IRC_User*		createUser();
 		void			deleteUser(IRC_User* user);

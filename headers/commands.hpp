@@ -3,6 +3,7 @@
 # include "commands/IRC_KickCommand.hpp"
 # include "commands/IRC_KillCommand.hpp"
 # include "commands/IRC_ListCommand.hpp"
+# include "commands/IRC_MOTDCommand.hpp"
 # include "commands/IRC_NamesCommand.hpp"
 # include "commands/IRC_NickCommand.hpp"
 # include "commands/IRC_NoticeCommand.hpp"
