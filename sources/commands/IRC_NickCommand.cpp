@@ -9,7 +9,7 @@ IRC_NickCommand::IRC_NickCommand()
 
 void IRC_NickCommand::execute(IRC_Message& message)
 {
-	std::string nickName = message.operator[](0);
+	std::string nickName = message[0];
 	std::string source = message.getSourceUser().getName();
 	IRC_User& sourceUser = message.getSourceUser();
 

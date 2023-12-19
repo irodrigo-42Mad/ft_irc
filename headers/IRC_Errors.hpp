@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 11:38:07 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/18 13:03:33 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/19 13:29:02 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define RPL_WELCOME(mask)                      "001 Welcome to the Internet Relay Network " + mask
 # define RPL_LIST(channel, mode, topic)			"322 " + channel + " " + mode + " :" + topic
 # define RPL_LISTEND							"323 :End of LIST"
+# define RPL_NOTOPIC(nickname, channel)			"331 " + nickname + " " + channel + " :No topic is set"
+# define RPL_TOPIC(nickname, channel, topic)	"332 " + nickname + " " + channel + " :" + topic
 # define RPL_MOTD(nickmame, text)				"372 " + nickmame + " :" + text
 # define RPL_MOTDSTART(nickname, server)		"375 " + nickname + " :- " + server + " Message of the day - "
 # define RPL_ENDOFMOTD(nickname)				"376 " + nickname + " :End of MOTD command"
@@ -35,7 +37,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 // error replies
 # define ERR_NOSUCHNICK(nickname)                		"401 " + nickname + " :No such nick/channel"
 # define ERR_NOSUCHSERVER(server)						"402 " + server + " :No such server"
-# define ERR_NOSUCHCHANNEL(channel)						"403 " + channel + " :No such channel"
+# define ERR_NOSUCHCHANNEL(nickname, channel)			"403 " + nickname + " " + channel + " :No such channel"
 # define ERR_CANNOTSENDTOCHAN(channel)					"404 " + channel + " :Cannot send to channel"
 # define ERR_TOOMANYCHANNELS(channel)					"405 " + channel + " :You have joined too many channels"
 # define ERR_NORECIPIENT(command)						"411 :No recipient given (" + command + ")"
@@ -45,7 +47,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_ERRONEUSNICKNAME(nickname, err_nickname)	"432 " + nickname + " " + err_nickname + " :Erroneous nickname"
 # define ERR_NICKNAMEINUSE(nickname)					"433 " + nickname + " :Nickname is already in use"
 # define ERR_USERNOTINCHANNEL(nickname, channel)		"441 " + nickname + " " + channel + " :They aren't on that channel"
-# define ERR_NOTONCHANNEL(channel)						"442 " + channel + " :You're not on that channel"
+# define ERR_NOTONCHANNEL(nickname, channel)			"442 " + nickname + channel + " :You're not on that channel"
 # define ERR_NEEDMOREPARAMS(nickname, command)			"461 " + nickname + " " + command + " :Not enough parameters"
 # define ERR_ALREADYREGISTRED			          		"462 :Unauthorized command (already registered)"	//ToDo: repasar esto
 # define ERR_PASSWDMISMATCH(source)						"464 :Password incorrect"

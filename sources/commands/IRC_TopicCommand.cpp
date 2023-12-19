@@ -7,10 +7,39 @@ IRC_TopicCommand::IRC_TopicCommand()
 {}
 
 void IRC_TopicCommand::execute(IRC_Message& message) {
+	const std::string& name = message[0];
+    IRC_Channel *channel = message.getServer().findChannelByName(name);
+	IRC_User& user = message.getSourceUser();
+	
+	if (!channel)
+	{
+        message.reply(ERR_NOSUCHCHANNEL(user.getName(), name));
+		return ;
+	}
 	if (message.getParamSize() == 1)
-	
-		if (message.operator[](0))
-	message.getServer().changeChannelTopic(message.getSourceUser(), message.operator[](0));
-	
-	std::cout << "TOPIC command executed" << std::endl;
+	{
+		if (channel->getTopic().empty())
+		{
+			message.reply(RPL_NOTOPIC(user.getName(), channel->getName()));
+		}
+		else
+		{
+			message.reply(RPL_TOPIC(user.getName(), channel->getName(), channel->getTopic()));
+		}
+		return ;
+	}
+    if (!user.isInChannel(channel))
+	{
+	    message.reply(ERR_NOTONCHANNEL(user.getName(), name));
+		return ;
+	}
+	if (channel->getCreator() != &user)
+	{
+		message.reply(ERR_CHANOPRIVSNEEDED(channel->getName()));
+		return ;
+	}
+	const std::string& topic = message[1];
+	message.getServer().changeChannelTopic(&user, channel, topic);
+	//advertir a todos los del canal incluido a mi.
+		//message.reply(RPL_TOPIC(user.getName(), channel->getName(), channel->getTopic()));
 }

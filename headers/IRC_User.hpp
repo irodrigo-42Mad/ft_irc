@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/17 20:10:46 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/19 10:14:59 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ struct IRC_User
 
 	void addReceiveData(char* buffer);
 
-	const channelsSetType getChannels() const;
-	IRC_Channel::usersSetType* getCommonUsersExcept(IRC_User*);
-	IRC_Channel::usersSetType* getCommonUsers();
+	const channelsSetType		getChannels() const;
+	IRC_Channel::usersSetType*	getCommonUsersExcept(IRC_User*);
+	IRC_Channel::usersSetType*	getCommonUsers();
 
 	int getFd() const;
 	int	getAccess() const;

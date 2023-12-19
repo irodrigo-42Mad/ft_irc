@@ -4,14 +4,14 @@
 
 #include <iostream>
 
-
 // _name = nickname;
 // _ident = user;
 // _realname = realname;
+
 IRC_User::IRC_User(struct pollfd* pollPosition)
 	: _pollPosition(pollPosition)
 	, _name("")
-	, _ident("")
+	, _ident("usuario por defecto")
 	, _realname("")
 	, _hostname("")
 	, _pass("")
@@ -19,7 +19,7 @@ IRC_User::IRC_User(struct pollfd* pollPosition)
 	, _registratedT(0)
 	, _timeout(0)
 {
-	std::cout << "User '" << this->_name << "' created" << std::endl;
+	std::cout << "User &" << this->_ident << "& created desde el constructor con un parámetro" << std::endl;
 }
 
 IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const std::string& ident, const std::string& realname)
@@ -31,7 +31,7 @@ IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const s
 	, _registratedT(0)
 	, _timeout(0)
 {
-	std::cout << "User '" << this->_name << "' created" << std::endl;
+	std::cout << "User &" << this->_ident << "& created desde el constructor con 4 parámetros" << std::endl;
 }
 
 IRC_User::~IRC_User()

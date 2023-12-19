@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/18 20:35:48 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/19 13:16:20 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ struct IRC_Server
 		IRC_Channel*	findChannelByName(const std::string& name);
 		void			channelList(IRC_User* user);
 		void			channelListByName(IRC_User* user, std::string name);
-		void			changeChannelTopic(IRC_User* user, std::string &name, std::string &topic);
+		bool   			changeChannelTopic(IRC_User* user, IRC_Channel* channel, const std::string &topic);
 
 		IRC_User*		createUser();
 		void			deleteUser(IRC_User* user);

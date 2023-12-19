@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/18 20:42:07 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/19 14:31:20 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -348,6 +348,15 @@ void IRC_Server::deleteUser(IRC_User* user)
     delete user;
 }
 
+IRC_Channel* IRC_Server::createChannel(const std::string& name, IRC_User* user)
+{
+    IRC_Channel* channel = new IRC_Channel(user, name);
+
+    this->_channelsByName[name] = channel;
+    return channel;
+}
+
+
 void IRC_Server::userQuit(IRC_User* user, const std::string& text)
 {
     const IRC_Channel::usersSetType* users = user->getCommonUsersExcept(user);
@@ -557,21 +566,19 @@ void    IRC_Server::channelListByName(IRC_User* user, std::string name)
     }
 }
 
-void    IRC_Server::changeChannelTopic(IRC_User* user, std::string &name, std::string &topic)
+bool    IRC_Server::changeChannelTopic(IRC_User* user, IRC_Channel* channel, const std::string &topic)
 {
-    IRC_Channel *channel = this->findChannelByName(name);
-
-    if (channel)
+    if (channel->getTopic() != topic)
     {
-        if (topic.empty())
-            channel->setTopic("");
-        else if (topic == "*")
-            user->sendMessage(channel->getTopic());
-        else
-            channel->setTopic(topic);
-        return ;
+     //   channel->setUserTopic(user->getName());
+     //   channel->setTimestampTopic(time(NULL));
+        channel->setTopic(topic);
+        //informar
+        //(todos -> :mask TOPIC canal :value)
+        channel->send(":" + user->getMask() + " TOPIC " + channel->getName() + " :" + topic);
+        return (true);
     }
-    //ToDo: escribimos mensaje de canal no existe
+    return (false);
 }
 
 // void                IRC_Server::sendMSG(std::string message, int type)

@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/18 19:42:16 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/19 14:42:55 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,23 +71,17 @@ void IRC_Message::_processCommand(std::string data)
         // get params
         std::stringstream line(buffer);
         std::string myparam;
-        bool isIn = false;
         while (line >> myparam && this->_params.size() < 15)
         {
-            //ToDo: preguntar a Raúl sobre la separación de elementos de un mensaje por más de un espacio (ver línea 51)
             position = myparam.find(":");
             if (position != std::string::npos)
             {
-                isIn = true;
-                break ;          
+                buffer.erase(0, 1);
+                this->_params.push_back(buffer.erase(buffer.length() - 2, 2));
+                break ;
             }
             this->_params.push_back(myparam);
             buffer.erase(0, (buffer.find(" ") + 1));
-        }
-        if (isIn)
-        {
-            buffer.erase(0, 1);
-            this->_params.push_back(buffer);
         }
         //std::cout << "num params: " << this->_params.size() << std::endl;
     }

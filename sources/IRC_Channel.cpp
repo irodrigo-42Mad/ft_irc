@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/18 20:32:58 by icastell         ###   ########.fr       */
+/*   Updated: 2023/12/19 17:08:32 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,15 @@
 #include "IRC_Structs.hpp"
 #include <iostream>
 
-IRC_Channel::IRC_Channel(IRC_Server &server, IRC_User* creator, std::string const &name)
-	: _server(server)
-	, _channelName(name)
+IRC_Channel::IRC_Channel(IRC_User* creator, std::string const &name)
+	: _channelName(name)
 	, _creator(creator)
+    , _topic("")
+    , _key("")
 {
     // Inicializar el modo del canal y otras propiedades del canal, según sea necesario.
-    this->_topic = "Bienvenido al canal " + name;
-    this->_key = ""; // Puedes establecer una clave si es necesario.
+   // this->_topic = "Bienvenido al canal " + name;
+    //this->_key = ""; // Puedes establecer una clave si es necesario.
     this->_limit = 0; // Puedes establecer un límite si es necesario.
     this->_usersSet.insert(creator); // Agregar el creador como miembro del canal
 
@@ -51,6 +52,18 @@ void    IRC_Channel::removeUser(IRC_User* userToDelete)
         std::cout << "Channel " << getName() << " deleted" << std::endl;
         delete this;
     }
+}
+
+const IRC_User *IRC_Channel::getCreator() const
+{
+    return (this->_creator);
+}
+
+void IRC_Channel::send(const std::string &msg)
+{
+    for (usersSetConstIterator it = this->_usersSet.begin(); it != this->_usersSet.end(); ++it){
+        std::cout << "mensaje: " << msg << "nombre usuario: " << (*it)->getName() << std::endl;
+        (*it)->sendMessage(msg);}
 }
 
 //FIX: La entidad mínima con la que deberíais trabajar es "IRC_User" ya que ella contiene el fd de cada usuarios.
