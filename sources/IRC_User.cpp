@@ -11,15 +11,16 @@
 IRC_User::IRC_User(struct pollfd* pollPosition)
 	: _pollPosition(pollPosition)
 	, _name("")
-	, _ident("usuario por defecto")
+	, _ident("")
 	, _realname("")
 	, _hostname("")
 	, _pass("")
 	, _access(0)
 	, _registratedT(0)
 	, _timeout(0)
+	, _deleteMarked(false)
 {
-	std::cout << "User &" << this->_ident << "& created desde el constructor con un parámetro" << std::endl;
+	std::cout << "User &" << this->_ident << "(" << this->_pollPosition->fd << ")" << " & created desde el constructor con un parámetro" << std::endl;
 }
 
 IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const std::string& ident, const std::string& realname)
@@ -30,13 +31,14 @@ IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const s
 	, _access(0)
 	, _registratedT(0)
 	, _timeout(0)
+	, _deleteMarked(false)
 {
 	std::cout << "User &" << this->_ident << "& created desde el constructor con 4 parámetros" << std::endl;
 }
 
 IRC_User::~IRC_User()
 {
-	std::cout << "User '" << this->_name << "' destroyed" << std::endl;
+	std::cout << "User '" << this->_name << "' destroyed (" << this->_pollPosition->fd << ")" << std::endl;
 }
 
 int	IRC_User::getFd() const
@@ -44,46 +46,78 @@ int	IRC_User::getFd() const
 	return (this->_pollPosition->fd);
 }
 
-const std::string	IRC_User::getMask() const {
+const std::string	IRC_User::getMask() const
+{
 	return (this->_name + "!" + this->_ident + "@" + this->_hostname);
 }
 
-void	IRC_User::setName(const std::string& value) {
+void IRC_User::setHost(const std::string& value)
+{
+	this->_hostname = value;
+}
+
+const std::string& IRC_User::getHost() const
+{
+	return (this->_hostname);
+}
+
+void	IRC_User::setName(const std::string& value)
+{
 	this->_name = value;
 }
 
-const std::string&	IRC_User::getName() const {
+const std::string&	IRC_User::getName() const
+{
 	return (this->_name);
 }
 
-int	IRC_User::getAccess() const {
+int	IRC_User::getAccess() const
+{
 	return (this->_access);
 }
 
-struct pollfd*	IRC_User::getPollPosition() {
+struct pollfd*	IRC_User::getPollPosition()
+{
 	return (this->_pollPosition);
 }
 
-bool	IRC_User::addChannel(IRC_Channel* channel) {
+bool	IRC_User::addChannel(IRC_Channel* channel)
+{
 	return (this->_channels.insert(channel).second);
 }
 
-bool	IRC_User::removeChannel(IRC_Channel* channel) {
+bool	IRC_User::removeChannel(IRC_Channel* channel)
+{
 	return (this->_channels.erase(channel));
 }
 
-bool	IRC_User::isInChannel(IRC_Channel* channel) {
+bool	IRC_User::isInChannel(IRC_Channel* channel)
+{
 	return (this->_channels.find(channel) != this->_channels.end());
 }
 
-const IRC_User::channelsSetType IRC_User::getChannels() const {
+const IRC_User::channelsSetType IRC_User::getChannels() const
+{
 	return (this->_channels);
 	//return std::set<IRC_Channel*>(this->_channels.begin(), this->_channels.end());
 }
 
-void	IRC_User::sendMessage(const std::string& message)
+void IRC_User::markForDelete()
 {
-	this->_outputBuffer += message + "\r\n";
+	this->_deleteMarked = true;
+}
+
+
+bool IRC_User::deleteMarked() const
+{
+	return (this->_deleteMarked);
+}
+
+void	IRC_User::send(const std::string& data)
+{
+	if (this->_deleteMarked)
+		return ;
+	this->_outputBuffer += data + "\r\n";
 	this->_pollPosition->events |= POLLOUT;
 /*
 	std::string bufferToSend = message + "\r\n";
@@ -110,11 +144,22 @@ void	IRC_User::sendMessage(const std::string& message)
 */
 }
 
+void	IRC_User::reply(const IRC_User* user, const std::string& data)
+{
+	this->send(":" + user->getMask() + " " + data);
+}
+
+void	IRC_User::reply(const IRC_Server* server, const std::string& data)
+{
+	this->send(":" + server->getServerName() + " " + data);
+}
+
 IRC_Channel::usersSetType* IRC_User::getCommonUsers()
 {
 	IRC_Channel::usersSetType* commonUsers = new IRC_Channel::usersSetType();
 
-	for (IRC_User::channelsSetIterator it = this->_channels.begin(); it != this->_channels.end(); ++it) {
+	for (IRC_User::channelsSetIterator it = this->_channels.begin(); it != this->_channels.end(); ++it)
+	{
 		const IRC_Channel::usersSetType* users = (*it)->getUsers();
 
 		commonUsers->insert(users->begin(), users->end());
@@ -148,11 +193,13 @@ const IRC_User::channelsSetType IRC_User::getCommonUsers() const {
 	// que tipo de contenido set tiene que generar channel, un * o un []
 }*/
 
-void IRC_User::addReceiveData(char* buffer) {
+void IRC_User::addReceiveData(char* buffer)
+{
 	// std::cout << this->_inputBuffer.size() << std::endl;
 	// std::cout << buffer << std::endl;
 	this->_inputBuffer += buffer;
-	if (this->_inputBuffer.size() > 4096) {
+	if (this->_inputBuffer.size() > 4096)
+	{
 		//desconectar al cliente por exceso de información recibida
 		std::cout << "desconexion necesaria" << std::endl;
 	}

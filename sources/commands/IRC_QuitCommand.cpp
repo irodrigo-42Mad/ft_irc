@@ -3,10 +3,16 @@
 # include "IRC_Errors.hpp"
 
 IRC_QuitCommand::IRC_QuitCommand()
-	: IRC_ACommand("QUIT", 1, 1)
+	: IRC_ACommand("QUIT", 0, 0)
 {}
 
 void IRC_QuitCommand::execute(IRC_Message& message)
 {
-	message.getServer().userQuit(&message.getSourceUser(), message.operator[](0));
+	IRC_Server& server = message.getServer();
+	IRC_User& user = message.getUser();
+
+	if (message.size() == 0)
+		server.quitUser(&user, "");
+	else if (message.size() == 0)
+		server.quitUser(&user, message[0]);
 }

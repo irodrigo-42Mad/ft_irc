@@ -11,7 +11,7 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 	const std::string& channelName = message[0];
 	IRC_Channel *channel = message.getServer().findChannelByName(message[0]);
 	IRC_Server& server = message.getServer();
-	IRC_User& user = message.getSourceUser();
+	IRC_User& user = message.getUser();
 	//IRC_Channel *newChannel;
 
 	if (!channel) // channel doesn't exist
@@ -20,23 +20,21 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 		channel = server.createChannel(channelName, &user);
 		//newChannel = new IRC_Channel(message.getServer(), &message.getSourceUser(), message.operator[](0));
 
-		server.addUserToChannel(&user, channel);
-		user.setAccess(2); // change user access level to operator
+		//El nivel de acceso afecta a todo el servidor. No debe ser cambiado por
+		//el hecho de entrar a un canal vacío. El canal, cuando se crea
+		//ya apunta quien es el creador. Esto es algo que se ha hecho por demostrar
+		//que sólo quien crea el canal tiene privilegios. Ahora, con la aparición
+		//de los modos de canal, esto no tiene sentido y se cambiará.
+		//user.setAccess(2); // change user access level to IRC Operator
 		//ToDo: RPL de canales
 	}
-	else
+
+	if (!user.isInChannel(channel))
 	{
-		if (!user.isInChannel(channel))
-		{
-			server.addUserToChannel(&user, channel);
-			//RPL a todos
-		}
-		// else
-		// {
-		// 	//RPL error a canal;
-		// }
+		server.addUserToChannel(&user, channel);
+		channel->send(":" + user.getMask() + " JOIN " + channel->getName());
 	}
-	
+
 	/*
 	//1 comprobar que el canal existe o no
 	//	    2 si no existe crearlo con el usuario

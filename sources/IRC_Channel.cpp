@@ -12,6 +12,7 @@
 
 #include "IRC_Channel.hpp"
 #include "IRC_User.hpp"
+#include "IRC_Server.hpp"
 #include "IRC_Structs.hpp"
 #include <iostream>
 
@@ -26,12 +27,14 @@ IRC_Channel::IRC_Channel(IRC_User* creator, std::string const &name)
     //this->_key = ""; // Puedes establecer una clave si es necesario.
     this->_limit = 0; // Puedes establecer un límite si es necesario.
     this->_usersSet.insert(creator); // Agregar el creador como miembro del canal
+    std::cout << "IRC_Channel constructor" << std::endl;
 
     // También puedes configurar otros modos de canal, como invitaciones, si es necesario.
 }
 
 IRC_Channel::~IRC_Channel() // destructor de canal, veremos a ver que debemos hacer aqui.
 {
+	std::cout << "IRC_Channel destructor" << std::endl;
 }
 
 bool    IRC_Channel::addUser(IRC_User* userToAdd)
@@ -44,7 +47,11 @@ void    IRC_Channel::removeUser(IRC_User* userToDelete)
     // Eliminar un usuario del canal
     this->_usersSet.erase(userToDelete);
 
-    // Resto del código de eliminación del usuario...
+  	/** problema, si no queda nadie más en el canal, necesítaríamos avisar al servidor
+  	 ** para que borre el canal de su lista. Eso no ocurrirá, por tanto, por el
+  	 ** principio de responsabilidad única, quien crea, destruye.
+  	 **
+  	// Resto del código de eliminación del usuario...
     if (this->_usersSet.empty())  // there are not users in channel
     {
         // erase channel
@@ -52,6 +59,17 @@ void    IRC_Channel::removeUser(IRC_User* userToDelete)
         std::cout << "Channel " << getName() << " deleted" << std::endl;
         delete this;
     }
+    */
+}
+
+bool IRC_Channel::hasUser(IRC_User* user)
+{
+	return (this->_usersSet.find(user) != this->_usersSet.end());
+}
+
+bool IRC_Channel::empty() const
+{
+	return (this->_usersSet.empty());
 }
 
 const IRC_User *IRC_Channel::getCreator() const
@@ -59,11 +77,23 @@ const IRC_User *IRC_Channel::getCreator() const
     return (this->_creator);
 }
 
-void IRC_Channel::send(const std::string &msg)
+void IRC_Channel::send(const std::string &data)
 {
-    for (usersSetConstIterator it = this->_usersSet.begin(); it != this->_usersSet.end(); ++it){
-        std::cout << "mensaje: " << msg << "nombre usuario: " << (*it)->getName() << std::endl;
-        (*it)->sendMessage(msg);}
+    for (usersSetConstIterator it = this->_usersSet.begin(); it != this->_usersSet.end(); ++it)
+    {
+        //std::cout << "mensaje: " << data << " nombre usuario: " << (*it)->getName() << std::endl;
+        (*it)->send(data);
+    }
+}
+
+void IRC_Channel::send(const IRC_User& user, const std::string& data)
+{
+	this->send(":" + user.getMask() + " " + data);
+}
+
+void IRC_Channel::send(const IRC_Server& server, const std::string& data)
+{
+	this->send(":" + server.getServerName() + " " + data);
 }
 
 //FIX: La entidad mínima con la que deberíais trabajar es "IRC_User" ya que ella contiene el fd de cada usuarios.

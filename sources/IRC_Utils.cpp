@@ -101,20 +101,20 @@ bool	checkNickname(const std::string &name)
 {
     if (name.length() > 9)
         return (false);
-	std::string allowedChar = SPECIALCHAR;
-    for (std::size_t i = 0; i < name.length(); ++i)
-	{
-        char currentChar = name[i];
-		if (i == 0)
+		std::string allowedChar = SPECIALCHAR;
+		for (std::size_t i = 0; i < name.length(); ++i)
 		{
-			if (!((currentChar >= 'a' && currentChar <= 'z') ||
-          		  (currentChar >= 'A' && currentChar <= 'Z') ||
-          		  (allowedChar.find(currentChar) != std::string::npos)))
-        		return (false);
-		}
+				char currentChar = name[i];
+				if (i == 0)
+				{
+					if (!((currentChar >= 'a' && currentChar <= 'z') ||
+								(currentChar >= 'A' && currentChar <= 'Z') ||
+							  (allowedChar.find(currentChar) != std::string::npos)))
+							return (false);
+				}
         // Permitir letras (mayúsculas y minúsculas), dígitos y letteres definidos en SPECIALCHAR
         if (!((currentChar >= 'a' && currentChar <= 'z') ||
-              (currentChar >= 'A' && currentChar <= 'Z') ||
+				      (currentChar >= 'A' && currentChar <= 'Z') ||
               (currentChar >= '0' && currentChar <= '9') ||
               (allowedChar.find(currentChar) != std::string::npos)))
             return (false);  // letter no permitido

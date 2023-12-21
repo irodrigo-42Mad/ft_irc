@@ -34,14 +34,18 @@ struct IRC_Channel
   	const usersSetType*	getUsers() const;
   	int getNumUsers() const;
 	
-  	void setTopic(const std::string&);
+  	void setTopic(const std::string& newTopic);
 	
-  	bool addUser(IRC_User*);
-  	bool hasUser(IRC_User*);
-  	void removeUser(IRC_User*);
+  	bool addUser(IRC_User* user);
+  	bool hasUser(IRC_User* user);
+  	void removeUser(IRC_User* user);
+
+  	bool empty() const;
 	
   	void sendExcept(const std::string&, IRC_User*);
   	void send(const std::string&);
+  	void send(const IRC_User& user, const std::string& data);
+  	void send(const IRC_Server& server, const std::string& data);
 
 private:
 	std::string			_channelName;

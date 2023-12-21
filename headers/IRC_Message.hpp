@@ -21,24 +21,28 @@ struct IRC_Server;
 
 struct IRC_Message
 {
-	IRC_Message(IRC_User* sourceUser, IRC_Server* server, const std::string& data);
-	const std::string&				getCmd() const;
-	IRC_User& 						getSourceUser() ;
-	const std::vector<std::string>&	getParams() const;
-	size_t							getParamSize() const;
-	IRC_Server& 					getServer();  
-	const std::string& 				operator[](int pos);
-	
-	void reply(const std::string& data);
+	typedef std::vector<std::string>		paramsType;
+	typedef paramsType::iterator				paramsIterator;
+	typedef paramsType::const_iterator	paramsConstIterator;
 
+	IRC_Message(IRC_User* sourceUser, IRC_Server* server, const std::string& data);
+
+	const std::string& 		operator[](int pos);
+	const std::string&		getCmd() const;
+	IRC_User& 						getUser();
+	const paramsType&			getParams() const;
+	IRC_Server& 					getServer();  
+	size_t								size() const;
+	bool									empty() const;
+	
 private:
 	std::string						_cmd;
-	IRC_User&						_sourceUser;
-	std::vector<std::string>		_params;
+	IRC_User&							_user;
+	paramsType						_params;
 	IRC_Server&						_server;
 	
-	void 		_processCommand(std::string command);
-	std::string	_lTrim(std::string data);
+	void									_processCommand(std::string command);
+	std::string						_lTrim(std::string data);
 };
 
 #endif

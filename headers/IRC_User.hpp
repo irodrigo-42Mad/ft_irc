@@ -19,6 +19,7 @@
 # include <set>
 # include <vector>
 # include <string>
+# include <ctime>
 
 struct IRC_Server;
 
@@ -47,23 +48,30 @@ struct IRC_User
 	int	getAccess() const;
 	struct pollfd*		getPollPosition();
 	const std::string&	getName() const;
-	const std::string	getMask() const;
-	const std::string	getUsers() const;  // habrá que crearlas
+	const std::string		getMask() const;
+	const std::string&  getHost() const;
+	//const std::string	getUsers() const;  // habrá que crearlas
 	const std::string&	getIdent() const;
 	const std::string&	getRealName() const;
 	const std::string&	getPass() const;
 	time_t				getUserTimeOut();
 
 
-	void	setFd(int);
-	void	setName(const std::string&);
-	void	setUserTimeout(time_t myTimeOut);
-	void	setIdent(const std::string&);
-	void	setRealName(const std::string&);
-	void	setAccess(int access);
-	void	setPass(const std::string&);
+	void setFd(int);
+	void setName(const std::string& value);
+	void setUserTimeout(time_t myTimeOut);
+	void setIdent(const std::string& value);
+	void setRealName(const std::string& value);
+	void setHost(const std::string& value);
+	void setAccess(int access);
+	void setPass(const std::string& value);
 
-	void	sendMessage(const std::string& message);
+	void send(const std::string& data);
+	void reply(const IRC_User* user, const std::string& data);
+	void reply(const IRC_Server* server, const std::string& data);
+
+	void markForDelete();
+	bool deleteMarked() const;
 //	void	errorReply(const std::string& reply);
 	//void	send(IRC_Message& message);
 
@@ -81,6 +89,7 @@ private:
 	time_t				_registratedT;				// moment that user has registered in server
 	time_t				_timeout;					// calculate timeout
 	time_t				_time;						// check last command time
+	bool					_deleteMarked;
 	
 	IRC_User(const IRC_User&);
 	IRC_User& operator=(const IRC_User&);

@@ -10,15 +10,15 @@ IRC_PassCommand::IRC_PassCommand()
 
 void IRC_PassCommand::execute(IRC_Message& message)
 {
-	//std::string nickname = message.getSourceUser().getName();
+		IRC_User& user = message.getUser();
     std::string password = message[0];
 
-    if (message.getSourceUser().getAccess() > 0)
+    if (message.getUser().getAccess() > 0)
     {
 		//if (nickname.empty())
 		//	nickname = "*";
-        message.reply(ERR_ALREADYREGISTRED);
+        user.send(ERR_ALREADYREGISTRED);
         return ;
     }
-	message.getSourceUser().setPass(password);
+	message.getUser().setPass(password);
 }

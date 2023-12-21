@@ -9,47 +9,43 @@ IRC_NickCommand::IRC_NickCommand()
 
 void IRC_NickCommand::execute(IRC_Message& message)
 {
-	std::string nickName = message[0];
-	std::string source = message.getSourceUser().getName();
-	IRC_User& sourceUser = message.getSourceUser();
+	std::string newName = message[0];
+	IRC_User& user = message.getUser();
+	IRC_Server& server = message.getServer();
 
-	std::string err_nickName = nickName;
+	//std::string err_nickName = nickName;
 	
 	// if (message.getParams().empty() || nickName.empty())
 	// {
 		// message.reply(ERR_NEEDMOREPARAMS(source, "NICK"));	//ToDo: Review: 431 or 461?
 		// return ;
 	// }
-	if (!checkNickname(nickName))
+	if (!checkNickname(newName))
 	{
-		message.reply(ERR_ERRONEUSNICKNAME(source, err_nickName));
+		user.send(ERR_ERRONEUSNICKNAME(user.getName(), newName));
 		return ;
 		//stetic verification
 	}
-	else if (toUpperNickname(source) == toUpperNickname(nickName))
+	else if (toUpperNickname(user.getName()) == toUpperNickname(newName))
 	{
 		//std::cout << "'" << source << "':'" << nickName << "'" << std::endl;
-		if (source == nickName)
+		if (user.getName() == newName)
 			return;
 	}
-	else if (message.getServer().findUserByName(nickName))
+	else if (message.getServer().findUserByName(newName))
 	{
-		message.reply(ERR_NICKNAMEINUSE(nickName));
+		user.send(ERR_NICKNAMEINUSE(newName));
 		return ;
 	}
 	//añadir el nickName
-	message.getServer().changeNameUser(&sourceUser, nickName);
-	if (sourceUser.getAccess() == 0)
+	message.getServer().changeNameUser(&user, newName);
+	if (server.setRegisteredUser(user))
 	{
-		if (!sourceUser.getIdent().empty())
-		{
-			std::cout << "ident " << sourceUser.getIdent() << std::endl;
-			sourceUser.setAccess(1);
-			//verificar que la contraseña es correcta: pass user == pass server?
-		}
+			//TODO: check password?
+      server.sendMOTDMsg(&user);
 	}
 	else
 		;//informar
 	
-	std::cout << "se ha cambiado el nick por " << nickName << std::endl;		//y si ha habido que crearlo también se crea?
+	std::cout << "se ha cambiado el nick por " << newName << std::endl;		//y si ha habido que crearlo también se crea?
 }

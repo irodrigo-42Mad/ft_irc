@@ -2,33 +2,35 @@
 # include "IRC_Server.hpp"
 # include "IRC_Errors.hpp"
 
+# include <iostream>
+
 IRC_UserCommand::IRC_UserCommand()
     : IRC_ACommand("USER", 4, 0)
 {}
 
 void IRC_UserCommand::execute(IRC_Message& message)
 {
-    if (message.getSourceUser().getAccess() > 0)
+		IRC_User& user = message.getUser();
+		IRC_Server& server = message.getServer();
+
+    if (user.getAccess() > 0)
     {
-        message.reply(ERR_ALREADYREGISTRED);
+        user.send(ERR_ALREADYREGISTRED);
         return ;
     }  
-    message.getSourceUser().setIdent(message[0]);
-    message.getSourceUser().setRealName(message[3]);
-    if (!message.getSourceUser().getName().empty())
+    user.setIdent(message[0]);
+    user.setRealName(message[3]);
+    if (server.setRegisteredUser(user))
     {
-	    message.getSourceUser().setAccess(1);
-        message.getServer().sendMOTDMsg(&message.getSourceUser());
-
-        //std::cout << "pass: " << message.getSourceUser().getPass() << std::endl;
-        //if (message.getSourceUser().getPass() != message.getServer().getPassword())
-        //   message.getServer().userQuit(&message.getSourceUser(), "Invalid server password");
+				//TODO: Check password?
+        server.sendMOTDMsg(&user);
     }
 
         //ToDo: ¿aquí hay que mirar más cosas ...... Envío del ping y más ....?
-
-    std::cout << "nick usuario = " << message.getSourceUser().getName() << std::endl;
-    std::cout << "| ident usuario = " << message.getSourceUser().getIdent();
-    std::cout << "| fd usuario = " << message.getSourceUser().getFd();
+		/*
+    std::cout << "nick usuario = " << user.getName() << std::endl;
+    std::cout << "| ident usuario = " << user.getIdent();
+    std::cout << "| fd usuario = " << user.getFd();
     std::cout << " desde IRC_UserCommand" << std::endl;
+    */
 }
