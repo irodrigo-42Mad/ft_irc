@@ -7,17 +7,22 @@ IRC_ListCommand::IRC_ListCommand()
 {}
 
 void IRC_ListCommand::execute(IRC_Message& message) {
+	IRC_Server& server = message.getServer();
+	IRC_User* user = &message.getUser();
+
 	// obtiene el listado de canales de un servidor de IRC
 	// ToDo: comprobar los parámetros porque es diferente la salida
-	
-	if (message.getParams().empty() || message.operator[](0).empty())
-		message.getServer().channelList(&message.getSourceUser());
+
+	if (message.empty())
+		server.channelList(user);
 	else
 	{
-		std::cout << message.getParamSize() << std::endl;
-		for (size_t i = 0; i < message.getParamSize(); ++i){
-			std::cout << message.operator[](i) << std::endl;
-			message.getServer().channelListByName(&message.getSourceUser(), message.operator[](i));}
-		message.reply(RPL_LISTEND);
+		std::cout << message.size() << std::endl;
+		for (size_t i = 0; i < message.size(); ++i)
+		{
+			std::cout << message[i] << std::endl;
+			server.channelListByName(user, message[i]);
+		}
+		user->send(RPL_LISTEND);
 	}
 }

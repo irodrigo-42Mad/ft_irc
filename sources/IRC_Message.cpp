@@ -18,12 +18,12 @@
 #include <sstream>
 
 void print_command(IRC_Message* msg) {
-    std::vector<std::string> params = msg->getParams();
+		IRC_Message::paramsType params = msg->getParams();
 
     std::cout << "cmd = " << msg->getCmd() << std::endl;
-    std::cout << "| params_count = " << msg->getParamSize();
+    std::cout << "| params_count = " << msg->size();
     std::cout << "| server_address = " << &msg->getServer();
-    std::cout << "| source_address = " << &msg->getSourceUser() << std::endl;
+    std::cout << "| source_address = " << &msg->getUser() << std::endl;
     
     for (size_t i = 0; i < params.size(); ++i)
         std::cout << "param[" << i << "] = " << params[i] << std::endl;
@@ -31,12 +31,12 @@ void print_command(IRC_Message* msg) {
     std::cout << std::endl;
 }
 
-IRC_Message::IRC_Message(IRC_User* sourceUser, IRC_Server* server, const std::string& data)
-		: _sourceUser(*sourceUser)
+IRC_Message::IRC_Message(IRC_User* user, IRC_Server* server, const std::string& data)
+		: _user(*user)
 		, _server(*server)
 {
     this->_processCommand(data);
-    print_command(this);
+    //print_command(this);
 	//aquí el parseo del mensaje del cliente
 }
 
@@ -89,24 +89,24 @@ void IRC_Message::_processCommand(std::string data)
         this->_cmd = buffer.erase(buffer.length() - 2, 2);
 }
 
-const std::vector<std::string>&	IRC_Message::getParams() const
+const IRC_Message::paramsType&	IRC_Message::getParams() const
 {
     return (this->_params);
 }
 
 const std::string& IRC_Message::getCmd() const
 {
-	return (this->_cmd);
+		return (this->_cmd);
 }
 
-size_t IRC_Message::getParamSize() const
+size_t IRC_Message::size() const
 {
-	return (this->_params.size());
+		return (this->_params.size());
 }
 
-IRC_User& IRC_Message::getSourceUser()
+IRC_User& IRC_Message::getUser()
 {
-	return (this->_sourceUser);
+		return (this->_user);
 }
 
 IRC_Server& IRC_Message::getServer()
@@ -119,9 +119,9 @@ const std::string& IRC_Message::operator[](int pos)
 	return (this->_params[pos]);
 }
 
-void IRC_Message::reply(const std::string& reply)
+bool IRC_Message::empty() const
 {
-    this->_sourceUser.sendMessage(":" + this->_server.getServerName() + " " + reply);
+	return (this->_params.empty());
 }
 
 std::string IRC_Message::_lTrim(std::string data)

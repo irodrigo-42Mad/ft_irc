@@ -8,5 +8,8 @@ IRC_MOTDCommand::IRC_MOTDCommand()
 
 void IRC_MOTDCommand::execute(IRC_Message& message)
 {
-    message.getServer().sendMOTDMsg(&message.getSourceUser());
+		IRC_Server& server = message.getServer();
+		IRC_User& user = message.getUser();
+
+    server.sendMOTDMsg(&user);
 }
