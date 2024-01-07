@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/19 14:31:20 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/07 20:13:16 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -677,6 +677,12 @@ bool   IRC_Server::changeChannelTopic(IRC_User* user, IRC_Channel* channel, cons
     }
     return (false);
 }
+
+const std::map<std::string, IRC_Channel*> &IRC_Server::getChannels() const
+{
+    return (this->_channelsByName);
+}
+
 
 // void                IRC_Server::sendMSG(std::string message, int type)
 // {

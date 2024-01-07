@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 11:38:07 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/19 13:29:02 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/07 18:22:02 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define RPL_LISTEND							"323 :End of LIST"
 # define RPL_NOTOPIC(nickname, channel)			"331 " + nickname + " " + channel + " :No topic is set"
 # define RPL_TOPIC(nickname, channel, topic)	"332 " + nickname + " " + channel + " :" + topic
+# define RPL_NAMREPLY(nickname, channel, names)	"353 " + nickname + " = " + channel + " :" + names
+# define RPL_ENDOFNAMES(nickname, channel)		"366 " + nickname + " " + channel + " :End of NAMES list"
 # define RPL_MOTD(nickmame, text)				"372 " + nickmame + " :" + text
 # define RPL_MOTDSTART(nickname, server)		"375 " + nickname + " :- " + server + " Message of the day - "
 # define RPL_ENDOFMOTD(nickname)				"376 " + nickname + " :End of MOTD command"

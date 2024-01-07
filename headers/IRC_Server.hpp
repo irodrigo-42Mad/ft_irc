@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/19 13:16:20 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/07 20:11:44 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ struct IRC_Server
 
 		typedef std::map<std::string, IRC_ACommand*>	commandsType;
 		typedef commandsType::iterator					commandsIterator;
-		typedef commandsType::const_iterator				commandConstIterator;
+		typedef commandsType::const_iterator			commandConstIterator;
 
 	public:
 
@@ -68,7 +68,10 @@ struct IRC_Server
 		const std::string&	getPort() const;
 		const std::string&	getPassword() const;
 		const std::string&	getServerName() const;
-		const std::string		getMOTD() const;
+		const std::string	getMOTD() const;
+		const std::map<std::string, IRC_Channel*> &getChannels() const;
+		
+		//const IRC_Server::channelsNameType	getChannelsList() const;
 		//int					getServerFd() const;
 		
 		IRC_Server::State 	getState() const;
@@ -101,13 +104,13 @@ struct IRC_Server
 		//user and channel management
 
 		IRC_Channel*	findChannelByName(const std::string& name);
-		void					channelList(IRC_User* user);
-		void					channelListByName(IRC_User* user, std::string name);
-		bool					changeChannelTopic(IRC_User* user, IRC_Channel* channel, const std::string &topic);
+		void			channelList(IRC_User* user);
+		void			channelListByName(IRC_User* user, std::string name);
+		bool			changeChannelTopic(IRC_User* user, IRC_Channel* channel, const std::string &topic);
 	
 		IRC_User*		findUserByName(const std::string& name);
 		IRC_User*		findUserByFd(int fd);
-		void				userPolloutByFd(int fd);
+		void			userPolloutByFd(int fd);
 		//int				findPollPosition(IRC_User* user);
 		
 		IRC_ACommand*	findCommandByName(const std::string& name);
@@ -135,7 +138,7 @@ struct IRC_Server
 		std::string				_host;
 		usersNameType			_usersByName;
 		usersFdType				_usersByFd;
-		channelsNameType	_channelsByName;
+		channelsNameType		_channelsByName;
 		commandsType			_commandsByName;
 		
 		struct pollfd			_pfds[MAX_CLIENTS];
@@ -150,10 +153,10 @@ struct IRC_Server
 		IRC_Server(const IRC_Server& copy);					// can not be instantiated by copy
 		IRC_Server &operator = (const IRC_Server& copy);	// can not be instantiated using = operator
 
-		void						_createPoll();
+		void			_createPoll();
 		struct pollfd*	_addToPfds(int newfd);
-		void						_delFromPfds(struct pollfd* pollPosition);
-		struct pollfd		_getPollfd();
+		void			_delFromPfds(struct pollfd* pollPosition);
+		struct pollfd	_getPollfd();
 
 		bool	_createServerSocket();
 		void	_fillCommands(void);
@@ -163,10 +166,10 @@ struct IRC_Server
 		void	_sendToUser(IRC_User* user);
 		void	_processUserCommand(IRC_User* user);
 		bool	_checkClientTime(IRC_User *user);
-		void  _handleDeletionAndDisconnect(IRC_User* user);
+		void  	_handleDeletionAndDisconnect(IRC_User* user);
 
 		IRC_User*			_createUser(int fd, struct sockaddr_storage* addrStorage);
-		void					_deleteUser(IRC_User* user);
+		void				_deleteUser(IRC_User* user);
 
 };
 
