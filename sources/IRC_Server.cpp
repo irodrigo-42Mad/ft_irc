@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/07 20:13:16 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/08 15:34:52 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # include "IRC_ACommand.hpp"
 # include "IRC_Message.hpp"
 # include "IRC_Utils.hpp"
+# include "IRC_User.hpp"
 # include <exception>
 # include "console.hpp"
 
@@ -181,7 +182,7 @@ void    IRC_Server::start()
                 {
                     if (this->_checkClientTime(user))
                     {
-
+                            std::cout << "me encuentro viendo el tiempo" << std::endl;
                     }
                     this->_readFromUser(user);
                 }   // END handle data from client
@@ -433,9 +434,19 @@ void IRC_Server::deleteChannel(IRC_Channel* channel)
 
 bool IRC_Server::setRegisteredUser(IRC_User& user)
 {
-	if (!user.getName().empty() && !user.getIdent().empty() && user.getAccess() == 0)
+	// ?? check pong valid value
+    if (!user.getName().empty() && !user.getIdent().empty() && user.getAccess() == 0)
 	{
-		//TODO: check password?  and.... return function can be boolean?
+		// creemos que tenemos que hacer esto aqui
+        // this->_checkClientTime(&user);
+        
+        
+        // ToDo: lanzar un ping, ya veremos como y contar tiempo
+        // if ping correcto y pong a tiempo setAccess = 1
+        // llamar a un pong
+
+
+        //TODO: check password?  and.... return function can be boolean?
 		user.setAccess(1);
 		return true;
 	}
@@ -553,7 +564,7 @@ void IRC_Server::_fillCommands() {
     this->_addCommand(new IRC_ListCommand);
     this->_addCommand(new IRC_MOTDCommand);
     this->_addCommand(new IRC_NamesCommand);
-		this->_addCommand(new IRC_NickCommand);
+	this->_addCommand(new IRC_NickCommand);
     this->_addCommand(new IRC_NoticeCommand);
     this->_addCommand(new IRC_OperCommand);
     this->_addCommand(new IRC_PartCommand);
@@ -608,29 +619,39 @@ bool	IRC_Server::_checkClientTime(IRC_User *user)
         if (user->getUserTimeOut() && user->_getTime() + PINGTOUT < time(NULL))
         {
             user->setUserTimeout(time(NULL) + GRALTIMEOUT);
+            // enviar el ping al usuario con PONG_STR
+           
+            // necesitamos un iterador para todos los usuarios cuyo tiempo se haya pasado
             // enviar a todos los usuarios un evento ping
             
         }
         else if (user->getUserTimeOut() && (user->getUserTimeOut() < time (NULL)))
         {
-            // cerrar usuarios por timeout
-            // reply  "ERROR :Closing link: (" + user->get_username() + "@" + user->get_host() + ") [Ping timeout]\r\n";
-            // send_all_user(REPLY);
-            // line = ":" + user->get_mask() + " QUIT :Ping timeout\r\n";
-            // eliminar el usuario de todos los canales e informar de ello
-            // eliminar la instancia y fd del usuario
+            user->send (ERR_PONG(user->getMask(), "[Ping timeout: " + std::to_string(PINGTOUT) + " seconds]"));
+            this->quitUser(user, "Ping timeout");
+            
+            // cerrar usuarios por timeout                                                                                ok
+            // reply  "ERROR :Closing link: (" + user->get_username() + "@" + user->get_host() + ") [Ping timeout]\r\n";  ok
+            // send_all_user(REPLY);                                                                                      revisar
+            // line = ":" + user->get_mask() + " QUIT :Ping timeout\r\n";                                                 ok
+            // eliminar el usuario de todos los canales e informar de ello                                                ok
+            // eliminar la instancia y fd del usuario                                                                     ok
             return (true);
         }
     }
-    else // user is not registered
+    else // user is not registered in IRC_Server.
     {
+        std::string message;
+        
         if ((user->_getRegTime() + UNREGTOUT) <= time(NULL))
         {
-            // reply "PONG ERROR [Registration timeout]\r\n"
-            // send_all user(REPLY);
-            // eliminar el usuario (no ha entrado en canales)
-            // eliminar instancia y fd del usuario
+            user->send (ERR_PONG(user->getMask(), "[Registration timeout]"));
+            this->_deleteUser(user);
             return (true);
+            // reply "PONG ERROR [Registration timeout]\r\n"  ok
+            // send_all user(REPLY);                          ok
+            // eliminar el usuario (no ha entrado en canales) ok
+            // eliminar instancia y fd del usuario            ok
         }
     }
     return (false);
@@ -682,6 +703,7 @@ const std::map<std::string, IRC_Channel*> &IRC_Server::getChannels() const
 {
     return (this->_channelsByName);
 }
+
 
 
 // void                IRC_Server::sendMSG(std::string message, int type)

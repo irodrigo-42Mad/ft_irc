@@ -20,6 +20,12 @@ void IRC_NickCommand::execute(IRC_Message& message)
 		// message.reply(ERR_NEEDMOREPARAMS(source, "NICK"));	//ToDo: Review: 431 or 461?
 		// return ;
 	// }
+
+	// en algun momento tenemos que comprobar si es el primer nick de todos, en este caso, deberemos comprobar si
+	// existe nickname, realname y se ha contestado correctamente a ping para consolidar al usuario y darle un realname
+
+
+
 	if (!checkNickname(newName))
 	{
 		user.send(ERR_ERRONEUSNICKNAME(user.getName(), newName));
@@ -39,13 +45,23 @@ void IRC_NickCommand::execute(IRC_Message& message)
 	}
 	//añadir el nickName
 	message.getServer().changeNameUser(&user, newName);
+	// ToDo: check valid nickname, valid realname, valid ping
+	// if toesto es true 
+
 	if (server.setRegisteredUser(user))
 	{
 			//TODO: check password?
+			
+			//ToDo: Welcome()
+
+			// ToDo: Revisar como calcular el tiempo de Timeout
       server.sendMOTDMsg(&user);
 	}
 	else
-		;//informar
+		// c1 gestionar el timeout y si no tiene realname salir
+		// c2 el nivel de acceso quiere cambiar el nickname no controla ping ni pong
+		
+		; //informar
 	
 	std::cout << "se ha cambiado el nick por " << newName << std::endl;		//y si ha habido que crearlo también se crea?
 }
