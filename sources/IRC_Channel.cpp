@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/19 17:08:32 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/08 17:55:49 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,16 @@ void IRC_Channel::send(const IRC_User& user, const std::string& data)
 void IRC_Channel::send(const IRC_Server& server, const std::string& data)
 {
 	this->send(":" + server.getServerName() + " " + data);
+}
+
+void    IRC_Channel::sendExcept(IRC_User* user, const std::string& data)
+{
+    for (usersSetConstIterator it = this->_usersSet.begin(); it != this->_usersSet.end(); ++it)
+    {
+         if (!user->getFd() || user->getFd() != (*it)->getFd())
+             //userFd || userFd != (*it)->getFd())
+            (*it)->send(":" + data);
+    }
 }
 
 //FIX: La entidad mínima con la que deberíais trabajar es "IRC_User" ya que ella contiene el fd de cada usuarios.

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Errors.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 11:38:07 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/08 11:33:01 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/01/08 19:29:56 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,9 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_PONG(mask, message)						"ERROR: Closing link: (" + mask + ") " + message // unregistered [Registration timeout] o bien registered [Ping timeout: 120 seconds]
 
 
+// other
+# define RPL_PRIVMSG(mask, name, message)				mask + " PRIVMSG " + name + " :" + message
+# define RPL_NOTICE(mask, name, message)				mask + " NOTICE " + name + " :" + message
 
 
 // #define ERR_FORBIDDEN()              					"403  :Cannot ban an operator"

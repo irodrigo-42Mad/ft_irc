@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:04:15 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/19 14:28:15 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/08 17:14:47 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ struct IRC_Channel
 
   	bool empty() const;
 	
-  	void sendExcept(const std::string&, IRC_User*);
+  	void sendExcept(IRC_User* user, const std::string& data);
   	void send(const std::string&);
   	void send(const IRC_User& user, const std::string& data);
   	void send(const IRC_Server& server, const std::string& data);

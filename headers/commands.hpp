@@ -1,4 +1,5 @@
 # include "commands/IRC_DieCommand.hpp"
+# include "commands/IRC_InviteCommand.hpp"
 # include "commands/IRC_JoinCommand.hpp"
 # include "commands/IRC_KickCommand.hpp"
 # include "commands/IRC_KillCommand.hpp"
