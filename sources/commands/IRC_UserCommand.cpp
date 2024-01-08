@@ -25,8 +25,13 @@ void IRC_UserCommand::execute(IRC_Message& message)
 				//TODO: Check password?
         server.sendMOTDMsg(user);
     }
+    else
+        ;
+       // si hay timeout nos desconectamos C1 si no tiene nickname
+       
 
-        //ToDo: ¿aquí hay que mirar más cosas ...... Envío del ping y más ....?
+
+
 		/*
     std::cout << "nick usuario = " << user.getName() << std::endl;
     std::cout << "| ident usuario = " << user.getIdent();
