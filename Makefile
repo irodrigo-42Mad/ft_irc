@@ -30,6 +30,7 @@ SRCFILES	= 	main.cpp						\
 				IRC_Channel.cpp 				\
 				IRC_Message.cpp					\
 				commands/IRC_DieCommand.cpp		\
+				commands/IRC_InviteCommand.cpp	\
 				commands/IRC_JoinCommand.cpp	\
 				commands/IRC_KickCommand.cpp	\
 				commands/IRC_KillCommand.cpp	\

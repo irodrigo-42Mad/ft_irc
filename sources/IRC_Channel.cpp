@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/19 17:08:32 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/08 17:55:49 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_Server& serve
 		this->sendExcept(exceptUser, ":" + server.getServerName() + " " + data + " :" + lastParameter);
 	}
 }
+
 //FIX: La entidad mínima con la que deberíais trabajar es "IRC_User" ya que ella contiene el fd de cada usuarios.
 // void    IRC_Channel::sendMessage(const std::string& str, int userFd)
 // {

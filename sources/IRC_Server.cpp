@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/08 15:34:52 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/01/08 19:38:03 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,10 +205,10 @@ void    IRC_Server::start()
                 }
                 else                        // If not the listener, we're just a regular client
                 {
-                    if (this->_checkClientTime(user))
-                    {
-                            std::cout << "me encuentro viendo el tiempo" << std::endl;
-                    }
+                    // if (this->_checkClientTime(user))
+                    // {
+                            // std::cout << "me encuentro viendo el tiempo" << std::endl;
+                    // }
                     this->_readFromUser(user);
                 }   // END handle data from client
             }       // END got ready-to-read from poll()
@@ -634,6 +634,7 @@ void IRC_Server::removeUserFromChannels(IRC_User& user)
 void IRC_Server::_fillCommands()
 {
     this->_addCommand(new IRC_DieCommand);
+    this->_addCommand(new IRC_InviteCommand);
     this->_addCommand(new IRC_JoinCommand);
     this->_addCommand(new IRC_KickCommand);
     this->_addCommand(new IRC_KillCommand);
