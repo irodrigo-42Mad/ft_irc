@@ -48,6 +48,7 @@ SRCFILES	:= 	main.cpp						\
 				commands/IRC_QuitCommand.cpp	\
 				commands/IRC_TopicCommand.cpp	\
 				commands/IRC_UserCommand.cpp	\
+				commands/IRC_WelcomeCommand.cpp	\
 								
 
 # SOURCES #

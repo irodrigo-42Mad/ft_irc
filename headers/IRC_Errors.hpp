@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 11:38:07 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/08 19:29:56 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/09 11:22:56 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 
 // replies
 # define RPL_WELCOME(mask)                      "001 Welcome to the Internet Relay Network " + mask
+# define RPL_YOURHOST(servername, version)		"002 Your host is " + servername + ", running version " + version
+# define RPL_CREATED(date)						"003 This server was created " + date
+# define RPL_MYINFO(servername, version)		"004 " + servername + " " + version + " itkol"
 # define RPL_LIST(channel, mode, topic)			"322 " + channel + " " + mode + " :" + topic
 # define RPL_LISTEND							"323 :End of LIST"
 # define RPL_NOTOPIC(nickname, channel)			"331 " + nickname + " " + channel + " :No topic is set"

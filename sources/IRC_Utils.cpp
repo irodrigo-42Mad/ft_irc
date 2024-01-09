@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:51:12 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/17 12:51:52 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/09 12:55:55 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,4 +235,17 @@ std::string	maxBufferTrim(std::string &rawLine, int maxSize)
 	}
 	rawLine.clear();
 	return (srtLine);
+}
+
+std::string tmToString(const std::tm& datetime)
+{
+    const int bufferSize = 20;  // Tamaño suficiente para almacenar la fecha y hora en formato común
+    char buffer[bufferSize];
+
+    // Formatear el std::tm como una cadena utilizando strftime
+    if (std::strftime(buffer, bufferSize, "%Y-%m-%d %H:%M:%S", &datetime) == 0) {
+        // Error al formatear
+        return "";  // O puedes manejar el error de alguna manera
+    }
+    return std::string(buffer);
 }

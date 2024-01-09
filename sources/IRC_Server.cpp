@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/08 19:38:03 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/09 13:14:59 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -493,7 +493,7 @@ void IRC_Server::fillMOTDMsg(const char *filename)
         std::strncat(this->_MOTD, "Bienvenido al IRC de irodrigo e icastell\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
 }
 
-void IRC_Server::sendMOTDMsg(IRC_User* user)  //esto hay que leerlo de línea en línea e ir imprimiéndolo
+void    IRC_Server::sendMOTDMsg(IRC_User* user)  //esto hay que leerlo de línea en línea e ir imprimiéndolo
 {
     std::string MOTD = this->_MOTD;
     std::stringstream ss(MOTD);
@@ -516,6 +516,20 @@ void IRC_Server::sendMOTDMsg(IRC_User* user)  //esto hay que leerlo de línea en
     // finish MOTD
     line = ":" + this->getServerName() + " " + RPL_ENDOFMOTD(user->getName());
     user->send(line);
+}
+
+void    IRC_Server::sendWelcomeMsg(IRC_User* user)
+{
+    std::string line;
+    
+    line = ":" + this->getServerName() + " " + RPL_WELCOME(user->getMask());
+    user->send(line);
+    line = ":" + this->getServerName() + " " + RPL_YOURHOST(this->getServerName(), _version);
+    user->send(line);
+    line = ":" + this->getServerName() + " " + RPL_CREATED(__TIME__ + " " + __DATE__);
+    user->send(line);
+    line = ":" + this->getServerName() + " " + RPL_MYINFO(this->getServerName(), _version);
+    user->send(line);  
 }
 
 IRC_Server::State 	IRC_Server::getState() const
@@ -576,6 +590,7 @@ void IRC_Server::_fillCommands() {
     this->_addCommand(new IRC_QuitCommand);
     this->_addCommand(new IRC_TopicCommand);
     this->_addCommand(new IRC_UserCommand);
+    this->_addCommand(new IRC_WelcomeCommand);
 }
 
 void IRC_Server::_addCommand(IRC_ACommand* command)
@@ -705,7 +720,10 @@ const std::map<std::string, IRC_Channel*> &IRC_Server::getChannels() const
     return (this->_channelsByName);
 }
 
-
+std::string	IRC_Server::getTimeStamp()
+{
+    return (tmToString(this->_myTimeStamp));
+}
 
 // void                IRC_Server::sendMSG(std::string message, int type)
 // {

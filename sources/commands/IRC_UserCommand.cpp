@@ -27,7 +27,7 @@ void IRC_UserCommand::execute(IRC_Message& message)
         //TODO: check password?
 		//ToDo: Welcome()
 		// ToDo: Revisar como calcular el tiempo de Timeout
-
+        server.sendWelcomeMsg(&user);
         server.sendMOTDMsg(&user);
     }
     else

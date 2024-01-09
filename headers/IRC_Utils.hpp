@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:49:23 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/14 17:43:11 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/09 12:56:04 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ bool		checkNickname(const std::string &name);
 
 // string functions
 std::string	convertStr(long num);
+std::string	tmToString(const std::tm& datetime);
 void		leftTrim(std::string& str);
 void		rightTrim(std::string& str);
 std::string	strReplace(std::string str, std::string strFind, std::string strReplace);

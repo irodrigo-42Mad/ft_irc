@@ -17,4 +17,5 @@
 # include "commands/IRC_QuitCommand.hpp"
 # include "commands/IRC_TopicCommand.hpp"
 # include "commands/IRC_UserCommand.hpp"
+# include "commands/IRC_WelcomeCommand.hpp"
 

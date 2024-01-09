@@ -55,7 +55,8 @@ void IRC_NickCommand::execute(IRC_Message& message)
 			//ToDo: Welcome()
 
 			// ToDo: Revisar como calcular el tiempo de Timeout
-      server.sendMOTDMsg(&user);
+		server.sendWelcomeMsg(&user);
+      	server.sendMOTDMsg(&user);
 	}
 	else
 		// c1 gestionar el timeout y si no tiene realname salir

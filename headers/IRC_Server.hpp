@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/07 20:11:44 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/09 13:14:50 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ struct IRC_Server
 		const std::string&	getServerName() const;
 		const std::string	getMOTD() const;
 		const std::map<std::string, IRC_Channel*> &getChannels() const;
+		std::string	getTimeStamp();
 		
 		//const IRC_Server::channelsNameType	getChannelsList() const;
 		//int					getServerFd() const;
@@ -88,6 +89,7 @@ struct IRC_Server
 		// Server Display
 		void	fillMOTDMsg(const char* filename);
 		void	sendMOTDMsg(IRC_User* user);
+		void	sendWelcomeMsg(IRC_User* user);
 		void	handleMessage(int fd);
 		void	displayClient();
 
@@ -146,7 +148,7 @@ struct IRC_Server
 		char							_MOTD[4096];
 		int								_connectedClientsNum;
 		
-		std::tm						_myTimeStamp;
+		//std::tm						_myTimeStamp;
 		bool							_die;
 		
 		IRC_Server();										// can not be instantiated without a port and password
