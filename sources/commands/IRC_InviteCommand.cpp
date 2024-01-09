@@ -5,7 +5,7 @@
 # include "IRC_Errors.hpp"
 
 IRC_InviteCommand::IRC_InviteCommand()
-	: IRC_ACommand("INVITE", 2, 1)
+	: IRC_ACommand("INVITE", 2, REGISTERED)
 {}
 
 void IRC_InviteCommand::execute(IRC_Message& message) {
@@ -19,17 +19,18 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
 	{
 		nickName = message[0];
 		IRC_User *invitedUser = server.findUserByName(nickName);
+	  (void)invitedUser;
 	}
 	
 
 	if (!channel)
     {
-        user.reply(&server, ERR_NOSUCHCHANNEL(nickname, message[1]));
+        user.reply(server, ERR_NOSUCHCHANNEL(nickName, message[1]));
         return ;
     }
-	if (!user.isInChannel(channel))
+	if (!user.isInChannel(*channel))
 	{
-        user.reply(&server, ERR_NOTONCHANNEL(nickname, channel->getName()));
+        user.reply(server, ERR_NOTONCHANNEL(nickName, channel->getName()));
         return ;
     }
 	//if (!clientinvited)
@@ -37,48 +38,7 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
     //    client->reply(ERR_NOSUCHNICK(client->get_nickname(), target));
     //    return;
     //}
-	channel->addUser(&user);	//hacer un nuevo mapa (multimap) para almacenar los usuarios invitados.
+	channel->addUser(user);	//hacer un nuevo mapa (multimap) para almacenar los usuarios invitados.
 	// invitación de un único uso
 	// si se sale de IRC te tienen que volver a invitar
-}
-
-
-// syntax: Invite <client> <channel>
-
-void    Invite::execute(Client* client, std::vector<std::string> args)
-{
-
-    if (args.size() >= 3 && (args[2][0] != ':' || args[2].size() > 1))
-    {
-        reason = "";
-
-        std::vector<std::string>::iterator it = args.begin();
-        std::vector<std::string>::iterator end = args.end();
-
-        while (it != end)
-        {
-            reason.append(*it + " ");
-            it++;
-        }
-    }
-	    Channel *channel = _srv->get_channel(name);
-		Client* clientinvited = _srv->get_client(target);
-
-    if (!clientinvited)
-    {
-        client->reply(ERR_NOSUCHNICK(client->get_nickname(), target));
-        return;
-    }
-	if (channel->is_ban_client(clientinvited))
-	{
-		client->reply(ERR_BANEDFROMCHAN(channel->get_name(), target));
-
-		return ;
-	}
-	if (channel->is_invited(clientinvited))
-	{
-		client->reply(ERR_ALREADYINVITED(client->get_nickname(), target, name));
-		return ;
-	}
-    channel->invite(client, clientinvited);
 }

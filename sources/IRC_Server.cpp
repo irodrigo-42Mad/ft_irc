@@ -19,6 +19,7 @@
 
 #include <signal.h>
 #include <exception>
+#include <sstream>
 
 bool IRC_Server::_forceDie = false;
 
@@ -702,7 +703,11 @@ bool	IRC_Server::_checkClientTime(IRC_User *user)
         else if (user->getUserTimeOut() && (user->getUserTimeOut() < time (NULL)))
         {
 						//TODO: enviar mensaje
-            user->send(ERR_PONG(user->getMask(), "[Ping timeout: " + std::to_string(PINGTOUT) + " seconds]"));
+					std::stringstream ss;
+
+					ss << "[Ping timeout: " << PINGTOUT << " seconds]";
+
+            user->send(ERR_PONG(user->getMask(), ss.str()));
             this->quitUser(*user, "Ping timeout");
             
             // cerrar usuarios por timeout                                                                                ok

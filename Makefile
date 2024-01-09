@@ -118,7 +118,7 @@ $(LIBCONSOLE):
 	make -C $(LIBCONSOLEPATH)
 
 test:		all
-	./$(NAME)
+	./$(NAME) 6667 "1234"
 
 clean:
 	@$(RM) $(OBJS)
