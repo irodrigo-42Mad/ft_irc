@@ -37,7 +37,9 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
     //    client->reply(ERR_NOSUCHNICK(client->get_nickname(), target));
     //    return;
     //}
-	channel->addUser(&user);
+	channel->addUser(&user);	//hacer un nuevo mapa (multimap) para almacenar los usuarios invitados.
+	// invitación de un único uso
+	// si se sale de IRC te tienen que volver a invitar
 }
 
 
