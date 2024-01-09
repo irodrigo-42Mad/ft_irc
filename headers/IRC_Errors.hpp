@@ -24,9 +24,9 @@
 int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 
 // replies
-# define RPL_WELCOME(mask)                      "001 Welcome to the Internet Relay Network " + mask
-# define RPL_LIST(channel, mode, topic)			"322 " + channel + " " + mode + " :" + topic
-# define RPL_LISTEND							"323 :End of LIST"
+# define RPL_WELCOME(nickname, mask)            "001 " + nickname + " :Welcome to the Internet Relay Network " + mask
+# define RPL_LIST(nickname, channel, mode, topic)					"322 " + nickname + " " + channel + " " + mode + " :" + topic
+# define RPL_LISTEND(nickname)							"323 " + nickname + " :End of LIST"
 # define RPL_NOTOPIC(nickname, channel)			"331 " + nickname + " " + channel + " :No topic is set"
 # define RPL_TOPIC(nickname, channel, topic)	"332 " + nickname + " " + channel + " :" + topic
 # define RPL_NAMREPLY(nickname, channel, names)	"353 " + nickname + " = " + channel + " :" + names
@@ -34,36 +34,34 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define RPL_MOTD(nickmame, text)				"372 " + nickmame + " :" + text
 # define RPL_MOTDSTART(nickname, server)		"375 " + nickname + " :- " + server + " Message of the day - "
 # define RPL_ENDOFMOTD(nickname)				"376 " + nickname + " :End of MOTD command"
-# define RPL_YOUAREOPER							"381 You are now an IRC operator"
+# define RPL_YOUAREOPER(nickname)							"381 " + nickname + " :You are now an IRC operator"
 
 // error replies
 # define ERR_NOSUCHNICK(nickname)                		"401 " + nickname + " :No such nick/channel"
-# define ERR_NOSUCHSERVER(server)						"402 " + server + " :No such server"
+# define ERR_NOSUCHSERVER(nickname, server)						"402 " + nickname + " " + server + " :No such server"
 # define ERR_NOSUCHCHANNEL(nickname, channel)			"403 " + nickname + " " + channel + " :No such channel"
-# define ERR_CANNOTSENDTOCHAN(channel)					"404 " + channel + " :Cannot send to channel"
-# define ERR_TOOMANYCHANNELS(channel)					"405 " + channel + " :You have joined too many channels"
-# define ERR_NORECIPIENT(command)						"411 :No recipient given (" + command + ")"
-# define ERR_NOTEXTTOSEND								"412 :No text to send"
-# define ERR_UNKNOWNCOMMAND(command)					"421 " + command + " :Unknown command"
+# define ERR_CANNOTSENDTOCHAN(nickname, channel)					"404 " + nickname + " " + channel + " :Cannot send to channel"
+# define ERR_TOOMANYCHANNELS(nickname, channel)					"405 " + nickname + " " + channel + " :You have joined too many channels"
+# define ERR_NORECIPIENT(nickname, command)						"411 " + nickname + " :No recipient given (" + command + ")"
+# define ERR_NOTEXTTOSEND(nickname)								"412 " + nickname + " :No text to send"
+# define ERR_UNKNOWNCOMMAND(nickname, command)					"421 " + nickname + " " + command + " :Unknown command"
 # define ERR_NONICKNAMEGIVEN(nickname)					"431 " + nickname + " :No nickname given"
-# define ERR_ERRONEUSNICKNAME(nickname, err_nickname)	"432 " + nickname + " " + err_nickname + " :Erroneous nickname"
+# define ERR_ERRONEOUSNICKNAME(nickname, err_nickname)	"432 " + nickname + " " + err_nickname + " :Erroneous nickname"
 # define ERR_NICKNAMEINUSE(nickname)					"433 " + nickname + " :Nickname is already in use"
 # define ERR_USERNOTINCHANNEL(nickname, channel)		"441 " + nickname + " " + channel + " :They aren't on that channel"
 # define ERR_NOTONCHANNEL(nickname, channel)			"442 " + nickname + channel + " :You're not on that channel"
 # define ERR_NEEDMOREPARAMS(nickname, command)			"461 " + nickname + " " + command + " :Not enough parameters"
-# define ERR_ALREADYREGISTRED			          		"462 :Unauthorized command (already registered)"	//ToDo: repasar esto
-# define ERR_PASSWDMISMATCH(source)						"464 :Password incorrect"
-# define ERR_CHANNELISFULL(channel)             		"471 " + channel + " :Cannot join channel (+l)"	//ToDo: ídem que el siguiente
-# define ERR_INVITEONLYCHAN(channel)					"473 " + channel + " :Cannot join channel (+i)"	//ToDo: repasar esto porque creo que tiene modos
-# define ERR_BANNEDFROMCHAN(channel)   					"474 " + channel + " :Cannot join channel (+b)"	//ToDo: ídem
-# define ERR_BADCHANNELKEY(channel)            			"475 " + channel + " :Cannot join channel (+k)"	//ToDo: ídem
-# define ERR_BADCHANMASK(channel)						"476 " + channel + " :Bad Channel Mask"			//ToDo: repasar
-# define ERR_NOPRIVILEGES								"481 :Permission Denied- You're not an IRC operator"
-# define ERR_CHANOPRIVSNEEDED(channel)					"482 " + channel + " :You're not channel operator"
-# define ERR_NOOPERHOST									"491 :No O-lines for your host"
+# define ERR_ALREADYREGISTRED(nickname)			          		"462 " + nickname + " :Unauthorized command (already registered)"	//ToDo: repasar esto
+# define ERR_PASSWDMISMATCH(nickname, source)						"464 " + nickname + " :Password incorrect"
+# define ERR_CHANNELISFULL(nickname, channel)             		"471 " + nickname + " " + channel + " :Cannot join channel (+l)"	//ToDo: ídem que el siguiente
+# define ERR_INVITEONLYCHAN(nickname, channel)					"473 " + nickname + " " + channel + " :Cannot join channel (+i)"	//ToDo: repasar esto porque creo que tiene modos
+# define ERR_BANNEDFROMCHAN(nickname, channel)   					"474 " + nickname + " " + channel + " :Cannot join channel (+b)"	//ToDo: ídem
+# define ERR_BADCHANNELKEY(nickname, channel)            			"475 " + nickname + " " + channel + " :Cannot join channel (+k)"	//ToDo: ídem
+# define ERR_BADCHANMASK(nickname, channel)						"476 " + nickname + " " + channel + " :Bad Channel Mask"			//ToDo: repasar
+# define ERR_NOPRIVILEGES(nickname)								"481 " + nickname + " :Permission Denied- You're not an IRC operator"
+# define ERR_CHANOPRIVSNEEDED(nickname, channel)					"482 " + nickname + " " + channel + " :You're not channel operator"
+# define ERR_NOOPERHOST(nickname)									"491 " + nickname + " :No O-lines for your host"
 # define ERR_PONG(mask, message)						"ERROR: Closing link: (" + mask + ") " + message // unregistered [Registration timeout] o bien registered [Ping timeout: 120 seconds]
-
-
 // other
 # define RPL_PRIVMSG(mask, name, message)				mask + " PRIVMSG " + name + " :" + message
 # define RPL_NOTICE(mask, name, message)				mask + " NOTICE " + name + " :" + message

@@ -6,19 +6,19 @@ static void	nicknamesList(IRC_User& user, IRC_Channel *channel)
 {
 	std::string names;
 
-	for (IRC_Channel::usersSetConstIterator it = (channel->getUsers())->begin(); it != (channel->getUsers())->end(); ++it)
+	for (IRC_Channel::usersConstIterator it = channel->getUsers().begin(); it != (channel->getUsers()).end(); ++it)
     {
-		if (channel->getCreator()->getName() == (*it)->getName())
+		if (channel->getCreator().getName() == (*it)->getName())
 			names += "@" + (*it)->getName();
 		else
 			names += (*it)->getName();
 		names += " ";
 	}
-	user.reply(&user, RPL_NAMREPLY(user.getName(), channel->getName(), names));
+	user.reply(user, RPL_NAMREPLY(user.getName(), channel->getName(), names));
 }
 
 IRC_NamesCommand::IRC_NamesCommand()
-	: IRC_ACommand("NAMES", 0, 1)
+	: IRC_ACommand("NAMES", 0, REGISTERED)
 {}
 
 void IRC_NamesCommand::execute(IRC_Message& message) {
@@ -71,6 +71,6 @@ void IRC_NamesCommand::execute(IRC_Message& message) {
 			// user.reply(&user, RPL_NAMREPLY(message.getUser().getName(), channel->getName(), names));
 		}
 	}
-	user.reply(&user, RPL_ENDOFNAMES(user.getName(), channelName));
+	user.reply(user, RPL_ENDOFNAMES(user.getName(), channelName));
 	//user.reply(&user, RPL_ENDOFNAMES(message.getUser().getName(), channelName));	//ToDo: ojo a cuando channelName es nulo => sin parámetros
 }

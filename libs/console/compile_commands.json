@@ -1,0 +1,19 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-Wextra",
+      "-Wall",
+      "-Werror",
+      "-I",
+      "./inc",
+      "-c",
+      "-o",
+      "src/console.o",
+      "src/console.cpp"
+    ],
+    "directory": "/home/rnavarre/isaac/libs/console",
+    "file": "/home/rnavarre/isaac/libs/console/src/console.cpp",
+    "output": "/home/rnavarre/isaac/libs/console/src/console.o"
+  }
+]

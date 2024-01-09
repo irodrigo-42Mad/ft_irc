@@ -4,7 +4,7 @@
 # include "IRC_Errors.hpp"
 
 IRC_PrivMsgCommand::IRC_PrivMsgCommand()
-	: IRC_ACommand("PRIVMSG", 2, 1)
+	: IRC_ACommand("PRIVMSG", 1, REGISTERED)
 {}
 
 void IRC_PrivMsgCommand::execute(IRC_Message& message) {
@@ -24,7 +24,7 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 		if (targetChannel)
 			targetChannel->sendExcept(&user, RPL_PRIVMSG(user.getMask(), targetChannel->getName(), textToBeSent));
 		else
-			user.reply(&server, ERR_NOSUCHCHANNEL(user.getName(), msgTarget));
+			user.reply(server, ERR_NOSUCHCHANNEL(user.getName(), msgTarget));
 	}
 	else
 	{
@@ -35,6 +35,6 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 			targetUser->send(RPL_PRIVMSG(":" + user.getMask(), targetUser->getName(), textToBeSent));
 		}
 		else
-			user.reply(&server, ERR_NOSUCHNICK(msgTarget));
+			user.reply(server, ERR_NOSUCHNICK(msgTarget));
 	}
 }

@@ -4,7 +4,7 @@
 # include "IRC_Errors.hpp"
 
 IRC_NoticeCommand::IRC_NoticeCommand()
-	: IRC_ACommand("NOTICE", 2, 1)
+	: IRC_ACommand("NOTICE", 1, REGISTERED)
 {}
 
 void IRC_NoticeCommand::execute(IRC_Message& message) {
@@ -24,7 +24,7 @@ void IRC_NoticeCommand::execute(IRC_Message& message) {
 		if (targetChannel)
 			targetChannel->sendExcept(&user, RPL_NOTICE(user.getMask(), targetChannel->getName(), textToBeSent));
 		else
-			user.reply(&server, ERR_NOSUCHCHANNEL(user.getName(), msgTarget));
+			user.reply(server, ERR_NOSUCHCHANNEL(user.getName(), msgTarget));
 	}
 	else
 	{
@@ -35,6 +35,6 @@ void IRC_NoticeCommand::execute(IRC_Message& message) {
 			targetUser->send(RPL_NOTICE(":" + user.getMask(), targetUser->getName(), textToBeSent));
 		}
 		else
-			user.reply(&server, ERR_NOSUCHNICK(msgTarget));
+			user.reply(server, ERR_NOSUCHNICK(msgTarget));
 	}
 }

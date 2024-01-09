@@ -1,9 +1,10 @@
-# include "commands/IRC_KickCommand.hpp"
+#include "commands/IRC_KickCommand.hpp"
+#include "console.hpp"
 
 IRC_KickCommand::IRC_KickCommand()
-	: IRC_ACommand("KICK", 3, 2)
+	: IRC_ACommand("KICK", 3, REGISTERED)
 {}
 
 void IRC_KickCommand::execute(IRC_Message& /*message*/) {
-	std::cout << "KICK command executed" << std::endl;
+		debug << "KICK command executed" << std::endl;
 }

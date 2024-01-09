@@ -1,11 +1,11 @@
-# include "commands/IRC_UserCommand.hpp"
-# include "IRC_Server.hpp"
-# include "IRC_Errors.hpp"
+#include "commands/IRC_UserCommand.hpp"
+#include "IRC_Server.hpp"
+#include "IRC_Errors.hpp"
 
-# include <iostream>
+#include <iostream>
 
 IRC_UserCommand::IRC_UserCommand()
-    : IRC_ACommand("USER", 4, 0)
+    : IRC_ACommand("USER", 4, UNREGISTERED)
 {}
 
 void IRC_UserCommand::execute(IRC_Message& message)
@@ -15,20 +15,15 @@ void IRC_UserCommand::execute(IRC_Message& message)
 
     if (user.getAccess() > 0)
     {
-        user.send(ERR_ALREADYREGISTRED);
+        user.reply(server, ERR_ALREADYREGISTRED(user.getName()));
         return ;
     }  
     user.setIdent(message[0]);
     user.setRealName(message[3]);
     if (server.setRegisteredUser(user))
     {
-		// igual a nickcommand
-
-        //TODO: check password?
-		//ToDo: Welcome()
-		// ToDo: Revisar como calcular el tiempo de Timeout
-
-        server.sendMOTDMsg(&user);
+				//TODO: Check password?
+        server.sendMOTDMsg(user);
     }
     else
         ;
