@@ -62,8 +62,6 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_CHANOPRIVSNEEDED(nickname, channel)					"482 " + nickname + " " + channel + " :You're not channel operator"
 # define ERR_NOOPERHOST(nickname)									"491 " + nickname + " :No O-lines for your host"
 # define ERR_PONG(mask, message)						"ERROR: Closing link: (" + mask + ") " + message // unregistered [Registration timeout] o bien registered [Ping timeout: 120 seconds]
-
-
 // other
 # define RPL_PRIVMSG(mask, name, message)				mask + " PRIVMSG " + name + " :" + message
 # define RPL_NOTICE(mask, name, message)				mask + " NOTICE " + name + " :" + message

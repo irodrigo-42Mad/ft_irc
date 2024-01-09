@@ -185,7 +185,6 @@ struct IRC_Server : public Console::IDisplayManager
 		IRC_User*			_createUser(int fd, struct sockaddr_storage* addrStorage);
 		void				_deleteUser(IRC_User* user);
 
-
 		void displayBottom(std::stringstream& ss, int width);
 
 		void _setSignals();

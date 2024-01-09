@@ -56,6 +56,7 @@ void IRC_NamesCommand::execute(IRC_Message& message) {
 		for (IRC_Server::channelsNameConstIterator it = server.getChannels().begin(); it != server.getChannels().end(); ++it)
     	{
         	IRC_Channel *channel = (*it).second;
+			
 			nicknamesList(user, channel);
 			// std::string names;  // User names of channel
 // 
