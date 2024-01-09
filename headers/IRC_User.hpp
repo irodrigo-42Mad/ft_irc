@@ -25,24 +25,29 @@ struct IRC_Server;
 
 struct IRC_User
 {
-	typedef std::vector<IRC_Channel*>		channelsVectorType;
-	typedef std::set<IRC_Channel*>			channelsSetType;
-	typedef channelsSetType::iterator		channelsSetIterator;
-	typedef channelsSetType::const_iterator	channelsSetConstIterator;
+	typedef std::vector<IRC_Channel*>					channelsVectorType;
+
+	typedef std::set<IRC_Channel*>						channelsType;
+	typedef channelsType::iterator						channelsIterator;
+	typedef channelsType::const_iterator			channelsConstIterator;
+
+	typedef IRC_Channel::usersType						usersType;
+	typedef IRC_Channel::usersIterator				usersIterator;
+	typedef IRC_Channel::usersConstIterator		usersConstIterator;
 
 	IRC_User(struct pollfd* pollPosition);
 	IRC_User(struct pollfd* pollPosition, const std::string& nick, const std::string& ident, const std::string& realname);
 	~IRC_User();
 
-	bool isInChannel(IRC_Channel*);
-	bool addChannel(IRC_Channel*);
-	bool removeChannel(IRC_Channel*);
+	bool isInChannel(IRC_Channel& channel);
+	bool addChannel(IRC_Channel& channel);
+	bool removeChannel(IRC_Channel& channel);
 
 	void addReceiveData(char* buffer);
 
-	const channelsSetType		getChannels() const;
-	IRC_Channel::usersSetType*	getCommonUsersExcept(IRC_User*);
-	IRC_Channel::usersSetType*	getCommonUsers();
+	const channelsType		getChannels() const;
+	usersType*	getCommonUsersExcept(const IRC_User& exceptUser);
+	usersType*	getCommonUsers();
 
 	int getFd() const;
 	int	getAccess() const;
@@ -67,8 +72,11 @@ struct IRC_User
 	void setPass(const std::string& value);
 
 	void send(const std::string& data);
-	void reply(const IRC_User* user, const std::string& data);
-	void reply(const IRC_Server* server, const std::string& data);
+	void send(const IRC_Server& server, const std::string& data);
+	void sendCommonUsers(const std::string& data);
+	void sendCommonUsersExcept(const IRC_User& exceptUser, const std::string& data);
+	void reply(const IRC_User& user, const std::string& data);
+	void reply(const IRC_Server& server, const std::string& data);
 
 	void markForDelete();
 	bool deleteMarked() const;
@@ -83,7 +91,7 @@ private:
 	std::string			_hostname;
 	std::string			_pass;
 	int					_access;
-	channelsSetType		_channels;
+	channelsType		_channels;
 	std::string			_inputBuffer;
 	std::string			_outputBuffer;
 	time_t				_registratedT;				// moment that user has registered in server
@@ -91,8 +99,8 @@ private:
 	time_t				_time;						// check last command time
 	bool					_deleteMarked;
 	
-	IRC_User(const IRC_User&);
-	IRC_User& operator=(const IRC_User&);
+	IRC_User(const IRC_User& copy);
+	IRC_User& operator=(const IRC_User& rhs);
 
 	void 	_resetTime(void);
 	time_t 	_getTime(void);

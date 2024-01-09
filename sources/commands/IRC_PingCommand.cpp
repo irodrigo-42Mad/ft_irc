@@ -1,25 +1,23 @@
-# include "commands/IRC_PingCommand.hpp"
+#include "commands/IRC_PingCommand.hpp"
+#include "console.hpp"
 
 IRC_PingCommand::IRC_PingCommand()
-	: IRC_ACommand("PING", 1, 2)
+	: IRC_ACommand("PING", 1, UNREGISTERED)
 {}
 
-void IRC_PingCommand::execute(IRC_Message& message) {
-	std::string ping = message.operator[](0);
+void IRC_PingCommand::execute(IRC_Message& message)
+{
+		std::string ping = message.operator[](0);
 
-	if (ping.empty())
-	{
-		// retornar Reply 461 y salir
-	}
+		if (ping.empty())
+		{
+				// retornar Reply 461 y salir
+		}
 
-	// enviar peticion de pong al usuario
-	// " PONG " + message.get_server().getServerName() + " :" + message.get_params()[0] + "\r\n";
-	
+		// enviar peticion de pong al usuario
+		// " PONG " + message.get_server().getServerName() + " :" + message.get_params()[0] + "\r\n";
 
-
-
-
-	std::cout << "PING command executed" << std::endl;
+		debug << "PING command executed" << std::endl;
 }
 
 /*

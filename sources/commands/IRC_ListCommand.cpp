@@ -1,14 +1,14 @@
-# include "commands/IRC_ListCommand.hpp"
-# include "IRC_Server.hpp"
-# include "IRC_Errors.hpp"
+#include "commands/IRC_ListCommand.hpp"
+#include "IRC_Server.hpp"
+#include "IRC_Errors.hpp"
 
 IRC_ListCommand::IRC_ListCommand()
-	: IRC_ACommand("LIST", 0, 1)
+	: IRC_ACommand("LIST", 0, REGISTERED)
 {}
 
 void IRC_ListCommand::execute(IRC_Message& message) {
 	IRC_Server& server = message.getServer();
-	IRC_User* user = &message.getUser();
+	IRC_User& user = message.getUser();
 
 	// obtiene el listado de canales de un servidor de IRC
 	// ToDo: comprobar los parámetros porque es diferente la salida
@@ -23,6 +23,6 @@ void IRC_ListCommand::execute(IRC_Message& message) {
 			std::cout << message[i] << std::endl;
 			server.channelListByName(user, message[i]);
 		}
-		user->send(RPL_LISTEND);
+		user.reply(server, RPL_LISTEND(user.getName()));
 	}
 }

@@ -1,6 +1,7 @@
 #include "IRC_User.hpp"
 #include "IRC_Channel.hpp"
 #include "IRC_Server.hpp"
+#include "console.hpp"
 
 #include <iostream>
 
@@ -10,7 +11,7 @@
 
 IRC_User::IRC_User(struct pollfd* pollPosition)
 	: _pollPosition(pollPosition)
-	, _name("")
+	, _name("*")
 	, _ident("")
 	, _realname("")
 	, _hostname("")
@@ -20,7 +21,7 @@ IRC_User::IRC_User(struct pollfd* pollPosition)
 	, _timeout(0)
 	, _deleteMarked(false)
 {
-	std::cout << "User &" << this->_ident << "(" << this->_pollPosition->fd << ")" << " & created desde el constructor con un parámetro" << std::endl;
+	debug << "User &" << this->_ident << "(" << this->_pollPosition->fd << ")" << " & created desde el constructor con un parámetro" << std::endl;
 }
 
 IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const std::string& ident, const std::string& realname)
@@ -33,13 +34,11 @@ IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const s
 	, _timeout(0)
 	, _deleteMarked(false)
 {
-	std::cout << "User &" << this->_ident << "& created desde el constructor con 4 parámetros" << std::endl;
+	debug << "User &" << this->_ident << "& created desde el constructor con 4 parámetros" << std::endl;
 }
 
 IRC_User::~IRC_User()
-{
-	std::cout << "User '" << this->_name << "' destroyed (" << this->_pollPosition->fd << ")" << std::endl;
-}
+{}
 
 int	IRC_User::getFd() const
 {
@@ -81,22 +80,22 @@ struct pollfd*	IRC_User::getPollPosition()
 	return (this->_pollPosition);
 }
 
-bool	IRC_User::addChannel(IRC_Channel* channel)
+bool	IRC_User::addChannel(IRC_Channel& channel)
 {
-	return (this->_channels.insert(channel).second);
+	return (this->_channels.insert(&channel).second);
 }
 
-bool	IRC_User::removeChannel(IRC_Channel* channel)
+bool	IRC_User::removeChannel(IRC_Channel& channel)
 {
-	return (this->_channels.erase(channel));
+	return (this->_channels.erase(&channel));
 }
 
-bool	IRC_User::isInChannel(IRC_Channel* channel)
+bool	IRC_User::isInChannel(IRC_Channel& channel)
 {
-	return (this->_channels.find(channel) != this->_channels.end());
+	return (this->_channels.find(&channel) != this->_channels.end());
 }
 
-const IRC_User::channelsSetType IRC_User::getChannels() const
+const IRC_User::channelsType IRC_User::getChannels() const
 {
 	return (this->_channels);
 	//return std::set<IRC_Channel*>(this->_channels.begin(), this->_channels.end());
@@ -144,36 +143,69 @@ void	IRC_User::send(const std::string& data)
 */
 }
 
-void	IRC_User::reply(const IRC_User* user, const std::string& data)
+void	IRC_User::reply(const IRC_User& user, const std::string& data)
 {
-	this->send(":" + user->getMask() + " " + data);
+	this->send(":" + user.getMask() + " " + data);
 }
 
-void	IRC_User::reply(const IRC_Server* server, const std::string& data)
+void	IRC_User::reply(const IRC_Server& server, const std::string& data)
 {
-	this->send(":" + server->getServerName() + " " + data);
+	this->send(":" + server.getServerName() + " " + data);
 }
 
-IRC_Channel::usersSetType* IRC_User::getCommonUsers()
+IRC_User::usersType* IRC_User::getCommonUsers()
 {
-	IRC_Channel::usersSetType* commonUsers = new IRC_Channel::usersSetType();
+	usersType* commonUsers = new IRC_Channel::usersType();
 
-	for (IRC_User::channelsSetIterator it = this->_channels.begin(); it != this->_channels.end(); ++it)
+	for (channelsIterator it = this->_channels.begin(); it != this->_channels.end(); ++it)
 	{
-		const IRC_Channel::usersSetType* users = (*it)->getUsers();
+		const usersType& users = (*it)->getUsers();
 
-		commonUsers->insert(users->begin(), users->end());
+		commonUsers->insert(users.begin(), users.end());
 	}
+	if (commonUsers->empty())
+	{
+		commonUsers->insert(this);
+	}
+
 	return (commonUsers);
 }
 
-IRC_Channel::usersSetType* IRC_User::getCommonUsersExcept(IRC_User* user) {
-	IRC_Channel::usersSetType* commonUsers = this->getCommonUsers();
+IRC_User::usersType* IRC_User::getCommonUsersExcept(const IRC_User& user)
+{
+	usersType* commonUsers = this->getCommonUsers();
 
-	commonUsers->erase(user);
+	commonUsers->erase(const_cast<IRC_User*>(&user));
 	return (commonUsers);
 }
 
+void IRC_User::sendCommonUsers(const std::string& data)
+{
+	usersType* commonUsers = this->getCommonUsers();
+
+	for (usersIterator it = commonUsers->begin(); it != commonUsers->end(); ++it)
+	{
+			(*it)->send(data);
+	}
+
+	delete commonUsers;
+}
+
+void IRC_User::sendCommonUsersExcept(const IRC_User &exceptUser, const std::string& data)
+{
+	usersType* commonUsers = this->getCommonUsersExcept(exceptUser);
+
+	for (usersIterator it = commonUsers->begin(); it != commonUsers->end(); ++it)
+	{
+			(*it)->send(data);
+	}
+	delete commonUsers;
+}
+
+void IRC_User::send(const IRC_Server& server, const std::string& data)
+{
+	this->send(":" + server.getServerName() + " " + data);
+}
 /*
 const IRC_User::channelsSetType IRC_User::getCommonUsers() const {
 

@@ -18,11 +18,11 @@
 NAME 		= ircserv
 
 # PROYECT PATHS #
-INCLUDES	:= headers/
-SRCPATH		:= sources/
+INCLUDES	= headers/
+SRCPATH		= sources/
 
 # USER FILES DEFINITION #
-SRCFILES	:= 	main.cpp						\
+SRCFILES	= 	main.cpp						\
 				IRC_Errors.cpp					\
 				IRC_Utils.cpp					\
 				IRC_Server.cpp					\
@@ -55,13 +55,26 @@ SOURCES		:= $(addprefix $(SRCPATH), $(SRCFILES))
 # DEPENDENCIES
 DEPENDENCIES = -MMD
 
+
+# LIBCONSOLE
+
+LIBPATH = ./libs
+LIBS += -L $(LIBCONSOLEPATH) -l $(LIBCONSOLENAME)
+INCLUDES += -I $(LIBCONSOLEPATH)/inc
+
+LIBCONSOLEPATH = $(LIBPATH)/$(LIBCONSOLENAME)
+LIBCONSOLENAME = console
+LIBCONSOLE = $(LIBCONSOLEPATH)/lib$(LIBCONSOLENAME).a
+
 # COMPILER AND FLAGS#
 CXX = clang++
 VERSION = --std=c++98 -pedantic
 CXXFLAGS = -Wall -Wextra -Werror $(VERSION) -I$(INCLUDES) $(DEPENDENCIES)
+LDFLAGS = $(LIBS)
 
 ifdef DEBUG
 	CXXFLAGS += -g3 -fsanitize=address
+	LDFLAGS += -fsanitize=address
 else
 	CXXFLAGS += -O3
 endif
@@ -88,9 +101,9 @@ RM = rm -rf
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(LIBCONSOLE)
 	@echo "$(BLUE)==========CREATING $(NAME)==========$(RESET)"
-	@$(CXX) $(CXXFLAGS) ${OBJS} -o $(NAME)
+	@$(CXX) $(OBJS) $(LDFLAGS) -o $(NAME)
 	@echo "$(WHITE)Done $(RESET)"
 	@echo "  $(CYAN) ;D $(RESET) success linked app file "
 	@echo "$(GREEN)==========WELLDONE==========$(RESET)"
@@ -99,6 +112,9 @@ $(NAME): $(OBJS)
 
 info:
 	$(info $(OBJS))
+
+$(LIBCONSOLE):
+	make -C $(LIBCONSOLEPATH)
 
 test:		all
 	./$(NAME)
