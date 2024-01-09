@@ -16,7 +16,7 @@
 #include "IRC_Structs.hpp"
 #include <iostream>
 
-IRC_Channel::IRC_Channel(IRC_User* creator, std::string const &name)
+IRC_Channel::IRC_Channel(std::string const &name, IRC_User& creator)
 	: _channelName(name)
 	, _creator(creator)
     , _topic("")
@@ -26,26 +26,26 @@ IRC_Channel::IRC_Channel(IRC_User* creator, std::string const &name)
    // this->_topic = "Bienvenido al canal " + name;
     //this->_key = ""; // Puedes establecer una clave si es necesario.
     this->_limit = 0; // Puedes establecer un límite si es necesario.
-    this->_usersSet.insert(creator); // Agregar el creador como miembro del canal
-    std::cout << "IRC_Channel constructor" << std::endl;
+    this->_users.insert(&creator); // Agregar el creador como miembro del canal
+		debug << "IRC_Channel constructor" << std::endl;
 
     // También puedes configurar otros modos de canal, como invitaciones, si es necesario.
 }
 
 IRC_Channel::~IRC_Channel() // destructor de canal, veremos a ver que debemos hacer aqui.
 {
-	std::cout << "IRC_Channel destructor" << std::endl;
+		debug << "IRC_Channel destructor" << std::endl;
 }
 
-bool    IRC_Channel::addUser(IRC_User* userToAdd)
+bool    IRC_Channel::addUser(IRC_User& userToAdd)
 {
-    return (this->_usersSet.insert(userToAdd).second);
+    return (this->_users.insert(&userToAdd).second);
 }
 
-void    IRC_Channel::removeUser(IRC_User* userToDelete)
+void    IRC_Channel::removeUser(IRC_User& userToDelete)
 {
     // Eliminar un usuario del canal
-    this->_usersSet.erase(userToDelete);
+    this->_users.erase(&userToDelete);
 
   	/** problema, si no queda nadie más en el canal, necesítaríamos avisar al servidor
   	 ** para que borre el canal de su lista. Eso no ocurrirá, por tanto, por el
@@ -62,48 +62,70 @@ void    IRC_Channel::removeUser(IRC_User* userToDelete)
     */
 }
 
-bool IRC_Channel::hasUser(IRC_User* user)
+bool IRC_Channel::hasUser(IRC_User& user)
 {
-	return (this->_usersSet.find(user) != this->_usersSet.end());
+	return (this->_users.find(&user) != this->_users.end());
 }
 
 bool IRC_Channel::empty() const
 {
-	return (this->_usersSet.empty());
+	return (this->_users.empty());
 }
 
-const IRC_User *IRC_Channel::getCreator() const
+const IRC_User& IRC_Channel::getCreator() const
 {
     return (this->_creator);
 }
 
-void IRC_Channel::send(const std::string &data)
+void IRC_Channel::sendExcept(const IRC_User* exceptUser, const std::string &data)
 {
-    for (usersSetConstIterator it = this->_usersSet.begin(); it != this->_usersSet.end(); ++it)
+		if (exceptUser)
+				this->_users.erase(const_cast<IRC_User*>(exceptUser));
+		this->send(data);
+		if (exceptUser)
+				this->_users.insert(const_cast<IRC_User*>(exceptUser));
+}
+
+void IRC_Channel::send(const IRC_User& user, const std::string& data, const std::string& lastParameter)
+{
+		this->sendExcept(NULL, user, data, lastParameter);
+}
+
+void IRC_Channel::send(const IRC_Server& server, const std::string& data, const std::string& lastParameter)
+{
+		this->sendExcept(NULL, server, data, lastParameter);
+}
+
+void IRC_Channel::send(const std::string& data)
+{
+    for (usersConstIterator it = this->_users.begin(); it != this->_users.end(); ++it)
     {
-        //std::cout << "mensaje: " << data << " nombre usuario: " << (*it)->getName() << std::endl;
         (*it)->send(data);
     }
 }
 
-void IRC_Channel::send(const IRC_User& user, const std::string& data)
+void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter)
 {
-	this->send(":" + user.getMask() + " " + data);
+		if (lastParameter.empty())
+		{
+				this->sendExcept(exceptUser, ":" + user.getMask() + " " + data);
+		}
+		else
+		{
+				this->sendExcept(exceptUser, ":" + user.getMask() + " " + data + " :" + lastParameter);
+		}
 }
 
-void IRC_Channel::send(const IRC_Server& server, const std::string& data)
+void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter)
 {
-	this->send(":" + server.getServerName() + " " + data);
-}
-
-void    IRC_Channel::sendExcept(IRC_User* user, const std::string& data)
-{
-    for (usersSetConstIterator it = this->_usersSet.begin(); it != this->_usersSet.end(); ++it)
-    {
-         if (!user->getFd() || user->getFd() != (*it)->getFd())
-             //userFd || userFd != (*it)->getFd())
-            (*it)->send(":" + data);
-    }
+	if (lastParameter.empty())
+	{
+		this->sendExcept(exceptUser, ":" + server.getServerName() + " " + data);
+	}
+	else
+	{
+		this->sendExcept(exceptUser, ":" + server.getServerName() + " " + data + " :" + lastParameter);
+	}
 }
 
 //FIX: La entidad mínima con la que deberíais trabajar es "IRC_User" ya que ella contiene el fd de cada usuarios.
@@ -150,14 +172,14 @@ const std::string& IRC_Channel::getName() const
     return (this->_channelName);
 }
 
-const IRC_Channel::usersSetType *IRC_Channel::getUsers() const
+const IRC_Channel::usersType& IRC_Channel::getUsers() const
 {
-    return (&this->_usersSet);
+    return (this->_users);
 }
 
 int IRC_Channel::getNumUsers() const
 {
-    return (this->_usersSet.size());
+    return (this->_users.size());
 }
 
 void IRC_Channel::setTopic(const std::string& topic)

@@ -3,6 +3,12 @@
 
 # include "IRC_Message.hpp"
 
+enum IRC_AccessLevel {
+	UNREGISTERED,
+	REGISTERED,
+	OPERATOR
+};
+
 	// IRC Commands
 
 //USER LEVEL FLAG: 0 UNREGISTERED, 1 REGISTERED, 2 OPERATOR
@@ -37,13 +43,13 @@ struct IRC_ACommand
 		size_t		params;
 		int			access;
 
-		IRC_ACommand(const std::string& cmd, int params, int access)
+		IRC_ACommand(const std::string& cmd, int params, IRC_AccessLevel access)
 			: cmd(cmd)
 		  	, params(params)
 			, access(access)
 		{}
 
-		~IRC_ACommand();
+		virtual ~IRC_ACommand() {}
 		virtual void execute(IRC_Message& message) = 0;
 
 	private:

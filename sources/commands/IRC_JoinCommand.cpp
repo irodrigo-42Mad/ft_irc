@@ -1,9 +1,9 @@
-# include "commands/IRC_JoinCommand.hpp"
-# include "IRC_Channel.hpp"
-# include "IRC_Server.hpp"
+#include "commands/IRC_JoinCommand.hpp"
+#include "IRC_Channel.hpp"
+#include "IRC_Server.hpp"
 
 IRC_JoinCommand::IRC_JoinCommand()
-	: IRC_ACommand("JOIN", 1, 1)
+	: IRC_ACommand("JOIN", 1, REGISTERED)
 {}
 
 void IRC_JoinCommand::execute(IRC_Message& message){
@@ -17,7 +17,7 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 	if (!channel) // channel doesn't exist
 	{
 		//std::cout << "new channel " << message.operator[](0) << "created" << std::endl;
-		channel = server.createChannel(channelName, &user);
+		channel = server.createChannel(channelName, user);
 		//newChannel = new IRC_Channel(message.getServer(), &message.getSourceUser(), message.operator[](0));
 
 		//El nivel de acceso afecta a todo el servidor. No debe ser cambiado por
@@ -29,9 +29,9 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 		//ToDo: RPL de canales
 	}
 
-	if (!user.isInChannel(channel))
+	if (!user.isInChannel(*channel))
 	{
-		server.addUserToChannel(&user, channel);
+		server.addUserToChannel(user, *channel);
 		channel->send(":" + user.getMask() + " JOIN " + channel->getName());
 	}
 

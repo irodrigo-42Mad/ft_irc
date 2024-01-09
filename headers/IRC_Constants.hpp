@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Constants.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:22:13 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/08 13:55:17 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/01/09 14:54:51 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@
 # define FIRST			1				//used to set first message send to client
 # define NORMALMSG		0				//normal messages to clients
 
-# define PINGTOUT		180000			//timeout over ping events
-# define UNREGTOUT		400000			//max timeout for register one user
-# define GRALTIMEOUT	90000			//general timeout tick control
+# define PINGTOUT		9			//timeout over ping events
+# define UNREGTOUT		9			//max timeout for register one user
+# define GRALTIMEOUT	9			//general timeout tick control
 # define PONG_STR		"Numantinos"	//Cadena de texto para pong
 
 # endif

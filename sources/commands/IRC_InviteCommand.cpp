@@ -5,7 +5,7 @@
 # include "IRC_Errors.hpp"
 
 IRC_InviteCommand::IRC_InviteCommand()
-	: IRC_ACommand("INVITE", 2, 1)
+	: IRC_ACommand("INVITE", 2, REGISTERED)
 {}
 
 void IRC_InviteCommand::execute(IRC_Message& message) {
@@ -24,12 +24,12 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
 
 	if (!channel)
     {
-        user.reply(&server, ERR_NOSUCHCHANNEL(message[0], message[1]));
+        user.reply(server, ERR_NOSUCHCHANNEL(nickName, message[1]));
         return ;
     }
-	if (!user.isInChannel(channel))
+	if (!user.isInChannel(*channel))
 	{
-        user.reply(&server, ERR_NOTONCHANNEL(message[0], channel->getName()));
+        user.reply(server, ERR_NOTONCHANNEL(nickName, channel->getName()));
         return ;
     }
 	//if (!clientinvited)
@@ -37,11 +37,10 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
     //    client->reply(ERR_NOSUCHNICK(client->get_nickname(), target));
     //    return;
     //}
-	channel->addUser(&user);	//hacer un nuevo mapa (multimap) para almacenar los usuarios invitados.
+	channel->addUser(user);	//hacer un nuevo mapa (multimap) para almacenar los usuarios invitados.
 	// invitación de un único uso
 	// si se sale de IRC te tienen que volver a invitar
 }
-
 
 // syntax: Invite <client> <channel>
 

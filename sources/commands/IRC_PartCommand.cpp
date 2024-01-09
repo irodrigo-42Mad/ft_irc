@@ -1,36 +1,34 @@
-# include "commands/IRC_PartCommand.hpp"
-# include "IRC_Server.hpp"
+#include "commands/IRC_PartCommand.hpp"
+#include "IRC_Server.hpp"
 
 IRC_PartCommand::IRC_PartCommand()
-	: IRC_ACommand("PART", 1, 1)
+	: IRC_ACommand("PART", 1, REGISTERED)
 {}
 
 void IRC_PartCommand::execute(IRC_Message& message)
 {
-	const std::string& channelName = message[0];
+		const std::string& channelName = message[0];
 
-	IRC_Server& server = message.getServer();
-	IRC_User& user = message.getUser();
-	IRC_Channel* channel = server.findChannelByName(channelName);
+		IRC_Server& server = message.getServer();
+		IRC_User& user = message.getUser();
+		IRC_Channel* channel = server.findChannelByName(channelName);
+		IRC_Response response;
+		std::string msg;
 
-	if (!channel)
-	{
-		user.send(ERR_NOSUCHCHANNEL(user.getName(), channelName));
-	}
-	else if (!channel->hasUser(&user))
-	{
-		user.send(ERR_NOTONCHANNEL(user.getName(), channelName));
-	}
-	else
-	{
-		if (message.size() == 2)
+		if (message.size() > 1)
+			msg = message[1];
+
+		if (!channel)
 		{
-			channel->send(user, "PART " + channel->getName() + " :" + message[1]);	
+				user.send(ERR_NOSUCHCHANNEL(user.getName(), channelName));
+				return ;
 		}
-		else
+
+		response = server.removeUserFromChannel(user, *channel, msg);
+
+		if (response == NOT_IN_CHANNEL)
 		{
-			channel->send(user, "PART " + channel->getName());
+				user.send(ERR_NOTONCHANNEL(user.getName(), channelName));
+				return ;
 		}
-		server.removeUserFromChannel(&user, channel);
-	}
 }
