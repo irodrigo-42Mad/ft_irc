@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:51:12 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/09 12:55:55 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/10 11:24:30 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,4 +248,21 @@ std::string tmToString(const std::tm& datetime)
         return "";  // O puedes manejar el error de alguna manera
     }
     return std::string(buffer);
+}
+
+std::string generateRandomText ()
+{
+    std::string asciiString;
+	
+	// Inicializar la semilla para obtener valores diferentes en cada ejecución
+    std::srand(std::time(0));
+    for (int i = 0; i < 10; ++i) 
+	{
+        char randomChar = static_cast<char>(rand() % 95 + 32);
+        asciiString += randomChar;
+    }
+	if (!asciiString.empty())
+		return (asciiString);
+	else
+		return ("");
 }

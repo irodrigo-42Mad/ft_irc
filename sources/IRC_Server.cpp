@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/09 14:54:27 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/10 11:22:05 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -705,6 +705,9 @@ void IRC_Server::_runCommand(IRC_Message& message)
 
 bool	IRC_Server::_checkClientTime(IRC_User *user)
 {
+    std::string random = generateRandomText();
+    std::cout << random << std::endl;
+
     if (user->getAccess() != 0)
     {
         if (user->_getTime() < time(NULL))
@@ -719,7 +722,8 @@ bool	IRC_Server::_checkClientTime(IRC_User *user)
         //else if (user->getUserTimeOut() && (user->getUserTimeOut() < time (NULL)))
         else if (user->getUserTimeOut() < time(NULL))
         {
-						//TODO: enviar mensaje
+            
+            			//TODO: enviar mensaje
 			std::stringstream ss;
 
 			ss << "[Ping timeout: " << PINGTOUT << " seconds]";
@@ -740,8 +744,9 @@ bool	IRC_Server::_checkClientTime(IRC_User *user)
         std::string message;
         if ((user->_getRegTime()) <= time(NULL))
         {
-            user->send(ERR_PONG(user->getMask(), "[Registration timeout]"));
-            this->quitUser(*user, "[Registration timeout]");
+            user->send(random);
+            //user->send(ERR_PONG(user->getMask(), "[Registration timeout]"));
+            this->quitUser(*user, user->getMask() + " [Registration timeout]");
             return (true);
             // reply "PONG ERROR [Registration timeout]\r\n"  ok
             // send_all user(REPLY);                          ok

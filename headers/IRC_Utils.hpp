@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:49:23 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/09 12:56:04 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/10 11:06:22 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,9 @@ std::string	tmToString(const std::tm& datetime);
 void		leftTrim(std::string& str);
 void		rightTrim(std::string& str);
 std::string	strReplace(std::string str, std::string strFind, std::string strReplace);
+
+//random generator functions
+std::string generateRandomText ();
 
 std::string strXtractWord(std::string &str);
 std::string	maxBufferTrim(std::string &rawLine, int maxSize);
