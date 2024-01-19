@@ -46,6 +46,7 @@ private:
 	void _setTerm(struct termios& term);
 	void _getTerm();
 	void _updatePosition();
+	void _restoreTerm();
 
 	static void _sigwinchHandler(int signal);
 

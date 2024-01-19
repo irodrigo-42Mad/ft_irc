@@ -19,6 +19,10 @@ Terminal::Terminal()
 
 Terminal::~Terminal()
 {
+		this->_restoreTerm();
+}
+
+void Terminal::_restoreTerm() {
 	  this->_setTerm(this->_originalTerm);
 }
 

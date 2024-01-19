@@ -18,41 +18,47 @@
 NAME 		= ircserv
 
 # PROYECT PATHS #
-INCLUDES	= headers/
-SRCPATH		= sources/
+INCLUDES		= headers/
+SRCPATH 		= sources/
+COMMANDSPATH 	= commands/
 
 # USER FILES DEFINITION #
-SRCFILES	= 	main.cpp						\
-				IRC_Errors.cpp					\
-				IRC_Utils.cpp					\
-				IRC_Server.cpp					\
-				IRC_User.cpp					\
-				IRC_Channel.cpp 				\
-				IRC_Message.cpp					\
-				commands/IRC_DieCommand.cpp		\
-				commands/IRC_InviteCommand.cpp	\
-				commands/IRC_JoinCommand.cpp	\
-				commands/IRC_KickCommand.cpp	\
-				commands/IRC_KillCommand.cpp	\
-				commands/IRC_ListCommand.cpp	\
-				commands/IRC_MOTDCommand.cpp	\
-				commands/IRC_NamesCommand.cpp	\
-				commands/IRC_NickCommand.cpp	\
-				commands/IRC_NoticeCommand.cpp	\
-				commands/IRC_OperCommand.cpp	\
-				commands/IRC_PartCommand.cpp	\
-				commands/IRC_PassCommand.cpp	\
-				commands/IRC_PingCommand.cpp	\
-				commands/IRC_PongCommand.cpp	\
-				commands/IRC_PrivMsgCommand.cpp	\
-				commands/IRC_QuitCommand.cpp	\
-				commands/IRC_TopicCommand.cpp	\
-				commands/IRC_UserCommand.cpp	\
-				commands/IRC_WelcomeCommand.cpp	\
+SRCFILES		= 	\
+					main.cpp						\
+					IRC_Errors.cpp					\
+					IRC_Utils.cpp					\
+					IRC_Server.cpp					\
+					IRC_User.cpp					\
+					IRC_Channel.cpp 				\
+					IRC_Message.cpp					\
+
+SRCCOMMANDS 	=  \
+					IRC_DieCommand.cpp				\
+					IRC_InviteCommand.cpp			\
+					IRC_JoinCommand.cpp				\
+					IRC_KickCommand.cpp				\
+					IRC_KillCommand.cpp				\
+					IRC_ListCommand.cpp				\
+					IRC_MOTDCommand.cpp				\
+					IRC_NamesCommand.cpp			\
+					IRC_NickCommand.cpp				\
+					IRC_NoticeCommand.cpp			\
+					IRC_OperCommand.cpp				\
+					IRC_PartCommand.cpp				\
+					IRC_PassCommand.cpp				\
+					IRC_PingCommand.cpp				\
+					IRC_PongCommand.cpp				\
+					IRC_PrivMsgCommand.cpp			\
+					IRC_QuitCommand.cpp				\
+					IRC_TopicCommand.cpp			\
+					IRC_UserCommand.cpp				\
+					IRC_WelcomeCommand.cpp			\
 								
 
 # SOURCES #
-SOURCES		:= $(addprefix $(SRCPATH), $(SRCFILES))
+SOURCES		:= $(addprefix $(SRCPATH), $(SRCFILES)  			\
+				 $(addprefix $(COMMANDSPATH), $(SRCCOMMANDS)) 	\
+			   )
 
 # DEPENDENCIES
 DEPENDENCIES = -MMD
@@ -64,19 +70,21 @@ LIBPATH = ./libs
 LIBS += -L $(LIBCONSOLEPATH) -l $(LIBCONSOLENAME)
 INCLUDES += -I $(LIBCONSOLEPATH)/inc
 
-LIBCONSOLEPATH = $(LIBPATH)/$(LIBCONSOLENAME)
 LIBCONSOLENAME = console
+LIBCONSOLEPATH = $(LIBPATH)/$(LIBCONSOLENAME)
 LIBCONSOLE = $(LIBCONSOLEPATH)/lib$(LIBCONSOLENAME).a
 
 # COMPILER AND FLAGS#
-CXX = clang++
-VERSION = --std=c++98 -pedantic
-CXXFLAGS = -Wall -Wextra -Werror $(VERSION) -I$(INCLUDES) $(DEPENDENCIES)
-LDFLAGS = $(LIBS)
+CXX 		= clang++
+VERSION 	= --std=c++98 -pedantic
+CXXFLAGS 	= -Wall -Wextra -Werror $(VERSION) -I$(INCLUDES) $(DEPENDENCIES)
+LDFLAGS 	= $(LIBS)
+SANITIZE 	= -fsanitize=address
+SYMBOLS 	= -g3
 
 ifdef DEBUG
-	CXXFLAGS += -g3 -fsanitize=address
-	LDFLAGS += -fsanitize=address
+	CXXFLAGS += $(SYMBOLS) $(SANITIZE)
+	LDFLAGS += $(SANITIZE)
 else
 	CXXFLAGS += -O3
 endif
@@ -96,7 +104,7 @@ DEPS = $(OBJS:.o=.d)
 
 .cpp.o:
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
-			@echo "$(RED)Compiling $(RESET) $(CXX) $(CXXFLAGS) $<. "
+	@echo "$(RED)Compiling $(RESET) $(CXX) $(CXXFLAGS) $<. "
 
 # CLEANING INSTRUCTION #
 RM = rm -rf
@@ -104,13 +112,13 @@ RM = rm -rf
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBCONSOLE)
-	@echo "$(BLUE)==========CREATING $(NAME)==========$(RESET)"
-	@$(CXX) $(OBJS) $(LDFLAGS) -o $(NAME)
-	@echo "$(WHITE)Done $(RESET)"
-	@echo "  $(CYAN) ;D $(RESET) success linked app file "
-	@echo "$(GREEN)==========WELLDONE==========$(RESET)"
-	@echo "Success creating $(YELLOW)$(NAME) $(RESET)app file"
-	@echo
+	echo "$(BLUE)==========CREATING $(NAME)==========$(RESET)"
+	$(CXX) $(OBJS) $(LDFLAGS) -o $(NAME)
+	echo "$(WHITE)Done $(RESET)"
+	echo "  $(CYAN) ;D $(RESET) success linked app file "
+	echo "$(GREEN)==========WELLDONE==========$(RESET)"
+	echo "Success creating $(YELLOW)$(NAME) $(RESET)app file"
+	echo
 
 info:
 	$(info $(OBJS))
@@ -118,23 +126,34 @@ info:
 $(LIBCONSOLE):
 	make -C $(LIBCONSOLEPATH)
 
-test:		all
+run:		debug
 	./$(NAME) 6667 "1234"
 
 clean:
-	@$(RM) $(OBJS)
-	@echo "$(GREEN)==========REMOVED==========$(RESET)"
-	@echo "Success normal cleaning"
-	@echo ""
+	$(RM) $(OBJS)
+	echo "$(GREEN)==========REMOVED==========$(RESET)"
+	echo "Success normal cleaning"
+	echo ""
 
-fclean: clean
-	@$(RM) ${NAME} ${DEPS}
-	@echo "$(GREEN)==========TOTALLY REMOVED==========$(RESET)"
-	@echo "Success deepest cleaning of $(YELLOW)$(NAME)$(RESET) app and objects"
-	@echo ""
+fclean: 	clean
+	$(RM) ${NAME} ${DEPS}
+	echo "$(GREEN)==========TOTALLY REMOVED==========$(RESET)"
+	echo "Success deepest cleaning of $(YELLOW)$(NAME)$(RESET) app and objects"
+	echo ""
 
-re : fclean all
+re: fclean all
+
+debug: CXXFLAGS += $(SANITIZE) $(SYMBOLS)
+debug: LDFLAGS += $(SANITIZE)
+debug: all
 
 -include	$(DEPS)
 
+print:
+	echo $(SOURCES)
+	echo $(LIBCONSOLE)
+	echo $(LIBCONSOLENAME)
+	echo $(LIBCONSOLEPATH)
+
 .PHONY: all clean fclean re test
+.SILENT: clean fclean $(NAME)

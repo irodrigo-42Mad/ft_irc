@@ -186,7 +186,7 @@ void    IRC_Server::start()
         for (int i = 0; i < this->_connectedClientsNum; ++i)    // Check if someone's ready to read
         {
 		    //if (this->_pfds[i].revents)
-			user = this->findUserByFd(this->_pfds[i].fd);
+						user = this->findUserByFd(this->_pfds[i].fd);
             if (this->_pfds[i].revents & POLLIN)             // We got one!!
             {
                 if (this->_pfds[i].fd == this->_serverFd)    // If listener is ready to read, handle new connection
@@ -212,16 +212,16 @@ void    IRC_Server::start()
             {
                 //std::cout << "me encuentro viendo el tiempo" << std::endl;
             }        
-			if (this->_pfds[i].revents & POLLOUT)
-			{
-				this->_sendToUser(user);
-				this->_handleDeletionAndDisconnect(user);
-			}
-		    if (IRC_Server::_forceDie) {
-			    IRC_Server::_forceDie = false;
-			    this->shutdown("Server stopped");
-		    }        
-		}						// END looping through file descriptors
+			      if (this->_pfds[i].revents & POLLOUT)
+			      {
+				        this->_sendToUser(user);
+				        this->_handleDeletionAndDisconnect(user);
+			      }
+		        if (IRC_Server::_forceDie) {
+			          IRC_Server::_forceDie = false;
+			          this->shutdown("Server stopped");
+		        }        
+		    }						// END looping through file descriptors
     }								// END for(;;)--and you thought it would never end!
 		terminal.clearCurrentRow();
 		terminal.showCursor();
