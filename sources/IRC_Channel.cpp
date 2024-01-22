@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Channel.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/08 17:55:49 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/22 19:34:06 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ bool IRC_Channel::empty() const
 	return (this->_users.empty());
 }
 
-const IRC_User& IRC_Channel::getCreator() const
+IRC_User& IRC_Channel::getCreator()
 {
     return (this->_creator);
 }

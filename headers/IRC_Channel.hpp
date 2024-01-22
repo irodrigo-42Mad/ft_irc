@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Channel.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:04:15 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/08 17:14:47 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/15 19:51:12 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ struct IRC_Channel
 
   	const std::string&	getName() const;
   	const std::string&	getTopic() const;
-  	const IRC_User&		getCreator() const;
+  	IRC_User&		getCreator();
   	const usersType&	getUsers() const;
   	int getNumUsers() const;
 	
@@ -42,20 +42,20 @@ struct IRC_Channel
 
   	bool empty() const;
 	
-  	void sendExcept(const IRC_User* exceptUser, const std::string& data);
   	void send(const std::string&);
   	void send(const IRC_User& user, const std::string& data, const std::string& lastParameter = "");
   	void send(const IRC_Server& server, const std::string& data, const std::string& lastParameter = "");
+  	void sendExcept(const IRC_User* exceptUser, const std::string& data);
   	void sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter = "");
   	void sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter = "");
 
 private:
 	std::string			_channelName;
-	IRC_User&				_creator;
+	IRC_User&			_creator;
 	std::string			_topic;
 	std::string			_key;
-	int							_limit;
-	usersType				_users;
+	int					_limit;
+	usersType			_users;
 };
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/10 11:22:05 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/01/22 20:31:50 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,10 +208,10 @@ void    IRC_Server::start()
                     this->_readFromUser(user);
                 }   // END handle data from client
             }       // END got ready-to-read from poll()
-            if (user && this->_checkClientTime(user))
+            /*if (user && this->_checkClientTime(user))
             {
                 //std::cout << "me encuentro viendo el tiempo" << std::endl;
-            }        
+            }*/       
 			if (this->_pfds[i].revents & POLLOUT)
 			{
 				this->_sendToUser(user);
@@ -322,46 +322,56 @@ void IRC_Server::_processUserCommand(IRC_User* user) {
 
 IRC_User* IRC_Server::findUserByName(const std::string& name)
 {
-		IRC_Server::usersNameIterator it = this->_usersByName.find(toUpperNickname(name));
+	IRC_Server::usersNameIterator it = this->_usersByName.find(toUpperNickname(name));
+    
+	if (it == this->_usersByName.end())
+	{
+		return (NULL);
+	}
+	return (it->second);
+}
 
-		if (it == this->_usersByName.end())
-		{
-				return (NULL);
-		}
-		return (it->second);
+bool    IRC_Server::findInvitedUserToAChannel(const std::string& nickname, const std::string& channelName)
+{
+    for (IRC_Server::invitedChannelsNameConstIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
+    {
+        if (toUpperNickname((*it).first) == toUpperNickname(nickname) && (*it).second->getName() == channelName)
+            return (true);
+    }
+    return (false);
 }
 
 IRC_User* IRC_Server::findUserByFd(int fd)
 {
-		IRC_Server::usersFdIterator it = this->_usersByFd.find(fd);
-
-		if (it == this->_usersByFd.end())
-		{
-				return (NULL);
-		}
-		return (it->second);
+	IRC_Server::usersFdIterator it = this->_usersByFd.find(fd);
+    
+	if (it == this->_usersByFd.end())
+	{
+		return (NULL);
+	}
+	return (it->second);
 }
 
 IRC_Channel* IRC_Server::findChannelByName(const std::string& name)
 {
-		IRC_Server::channelsNameIterator it = this->_channelsByName.find(name);
+	IRC_Server::channelsNameIterator it = this->_channelsByName.find(name);
 
-		if (it == this->_channelsByName.end())
-		{
-				return (NULL);
-		}
-		return (it->second);
+	if (it == this->_channelsByName.end())
+	{
+		return (NULL);
+	}
+	return (it->second);
 }
 
 IRC_ACommand* IRC_Server::findCommandByName(const std::string& name)
 {
-		IRC_Server::commandsNameIterator it = this->_commandsByName.find(toUpper(name));
+	IRC_Server::commandsNameIterator it = this->_commandsByName.find(toUpper(name));
 
-		if (it == this->_commandsByName.end())
-		{
-				return (NULL);
-		}
-		return (it->second);
+	if (it == this->_commandsByName.end())
+	{
+		return (NULL);
+	}
+	return (it->second);
 }
 
 void    IRC_Server::userPolloutByFd(int fd)
@@ -391,35 +401,35 @@ struct pollfd* IRC_Server::_addToPfds(int newfd)
     this->_pfds[pos].fd = newfd;
     this->_pfds[pos].events = POLLIN; // Verificar lectura disponible
     ++this->_connectedClientsNum;
-		return this->_pfds + pos;
+	return this->_pfds + pos;
 }
 
 void IRC_Server::send(const std::string& data)
 {
-		for (usersFdIterator it = this->_usersByFd.begin(); it != this->_usersByFd.end(); ++it)
-		{
-				it->second->send(data);
-		}
+	for (usersFdIterator it = this->_usersByFd.begin(); it != this->_usersByFd.end(); ++it)
+	{
+			it->second->send(data);
+	}
 }
 
 void IRC_Server::send(const IRC_Server& server, const std::string& data)
 {
-		this->send(":" + server.getServerName() + " " + data);
+	this->send(":" + server.getServerName() + " " + data);
 }
 
 void IRC_Server::send(const IRC_User& user, const std::string& data)
 {
-		this->send(":" + user.getMask() + " " + data);
+	this->send(":" + user.getMask() + " " + data);
 }
 
 void IRC_Server::shutdown(const std::string& msg)
 {
-		for (usersFdIterator it = this->_usersByFd.begin(); it != this->_usersByFd.end(); ++it)
-		{
-			this->quitUser(*it->second, msg);
-			//this->send("ERROR :Closing Link: " + it->second->getName() + "@" + it->second->getHost() + " (" + msg + ")");
-		}
-		this->_die = true;
+	for (usersFdIterator it = this->_usersByFd.begin(); it != this->_usersByFd.end(); ++it)
+	{
+		this->quitUser(*it->second, msg);
+		//this->send("ERROR :Closing Link: " + it->second->getName() + "@" + it->second->getHost() + " (" + msg + ")");
+	}
+	this->_die = true;
 }
 
 void IRC_Server::_delFromPfds(struct pollfd* pollPosition)
@@ -427,8 +437,8 @@ void IRC_Server::_delFromPfds(struct pollfd* pollPosition)
     // Copy the one from the end over this one
     struct pollfd* last = this->_pfds + this->_connectedClientsNum - 1;
 
-		*pollPosition = *last;
-		--this->_connectedClientsNum;
+	*pollPosition = *last;
+	--this->_connectedClientsNum;
 }
 
 IRC_User* IRC_Server::_createUser(int fd, struct sockaddr_storage* addrStorage)
@@ -438,27 +448,27 @@ IRC_User* IRC_Server::_createUser(int fd, struct sockaddr_storage* addrStorage)
 
     if (!pollPosition)
     	return (NULL);
-		IRC_User* user = new IRC_User(pollPosition);
+	IRC_User* user = new IRC_User(pollPosition);
 
-		inet_ntop(addrStorage->ss_family, getInAddr((struct sockaddr *)addrStorage), remoteIP, INET_ADDRSTRLEN);
-		user->setHost(remoteIP);
-		this->_usersByFd[fd] = user;
+	inet_ntop(addrStorage->ss_family, getInAddr((struct sockaddr *)addrStorage), remoteIP, INET_ADDRSTRLEN);
+	user->setHost(remoteIP);
+	this->_usersByFd[fd] = user;
 
-		debug << "New connection accepted (" << fd << ")" << std::endl;
+	debug << "New connection accepted (" << fd << ")" << std::endl;
 	
 //		co << "paco paco" << "porras porras" << 44 << std::endl;
 		//Console::dd << "New connection accepted. FD: " << fd;
-		return (user);
+	return (user);
 }
 
 void IRC_Server::_deleteUser(IRC_User* user)
 {
-		this->_usersByFd.erase(user->getFd());
-		if (user->getName() != "*")
-		{
-				this->_usersByName.erase(toUpperNickname(user->getName()));
-		}
-		debug << "User " << user->getMask() << " destroyed (" << user->getFd() << ")" << std::endl;
+	this->_usersByFd.erase(user->getFd());
+	if (user->getName() != "*")
+	{
+		this->_usersByName.erase(toUpperNickname(user->getName()));
+	}
+	debug << "User " << user->getMask() << " destroyed (" << user->getFd() << ")" << std::endl;
     ::close(user->getFd());
 		this->_delFromPfds(user->getPollPosition());
     delete user;
@@ -479,7 +489,6 @@ void IRC_Server::deleteChannel(IRC_Channel& channel)
 		log << "Channel " << channel.getName() << " deleted" << std::endl;
 		delete &channel;
 }
-
 
 bool IRC_Server::setRegisteredUser(IRC_User& user)
 {
@@ -506,7 +515,7 @@ bool IRC_Server::quitUser(IRC_User& user, const std::string& text)
 {
     std::string reply = user.getMask() + " QUIT :" + text;
     
-		user.sendCommonUsersExcept(user, user.getMask() + " QUIT :" + text);
+	user.sendCommonUsersExcept(user, user.getMask() + " QUIT :" + text);
     this->removeUserFromChannels(user);
     user.send("ERROR : Closing link: (" + text + ")");
     user.markForDelete();
@@ -515,7 +524,7 @@ bool IRC_Server::quitUser(IRC_User& user, const std::string& text)
 
 bool IRC_Server::killUser(const IRC_User& user, IRC_User& targetUser, const std::string& text)
 {
-		return this->quitUser(targetUser, "Killed by " + user._name + ": " + text);
+	return this->quitUser(targetUser, "Killed by " + user._name + ": " + text);
 }
 
 void IRC_Server::fillMOTDMsg(const char *filename)
@@ -584,18 +593,18 @@ IRC_Response IRC_Server::changeNameUser(IRC_User& user, const std::string& nickn
 {
 		if (!checkNickname(nickname))
 		{
-				return (ERRONEOUS_NICK);
+			return (ERRONEOUS_NICK);
 		}
 		if (user._name == nickname)
 		{
-				return (NONE);
+			return (NONE);
 		}
 		if (toUpperNickname(user._name) != toUpperNickname(nickname))
 		{
-				if (this->findUserByName(nickname))
-				{
-						return (NICK_IN_USE);
-				}
+			if (this->findUserByName(nickname))
+			{
+				return (NICK_IN_USE);
+			}
 		}
 		this->_usersByName.erase(toUpperNickname(user._name));
 		this->_usersByName[toUpperNickname(nickname)] = &user;
@@ -611,7 +620,7 @@ IRC_Response IRC_Server::changeNameUser(IRC_User& user, const std::string& nickn
 IRC_Response IRC_Server::addUserToChannel(IRC_User& user, IRC_Channel& channel)
 {
 		if (user.isInChannel(channel))
-				return (ALREADY_IN_CHANNEL);
+			return (ALREADY_IN_CHANNEL);
 		user.addChannel(channel);
 		channel.addUser(user);
 		return (SUCCESS);
@@ -621,16 +630,15 @@ IRC_Response IRC_Server::removeUserFromChannel(IRC_User& user, IRC_Channel& chan
 {
 		if (!user.isInChannel(channel))
 		{
-				return (NOT_IN_CHANNEL);
+			return (NOT_IN_CHANNEL);
 		}
-
 		channel.send(user, "PART " + channel.getName(), msg);
 		user.removeChannel(channel);
 		channel.removeUser(user);
 
 		if (channel.empty())
 		{
-				this->deleteChannel(channel);
+			this->deleteChannel(channel);
 		}
 		return (SUCCESS);
 }
@@ -641,7 +649,7 @@ void IRC_Server::removeUserFromChannels(IRC_User& user)
 
 		for (channelsIterator it = channels.begin(); it != channels.end(); ++it)
 		{
-				removeUserFromChannel(user, **it);
+			removeUserFromChannel(user, **it);
 		}
 }
 
@@ -680,7 +688,6 @@ void IRC_Server::_runCommand(IRC_Message& message)
 	IRC_User& user = message.getUser();
 
     user.setUserTimeout(time(NULL) + GRALTIMEOUT);
-
 	if (message.getCmd().empty())
 		  return ;
 	if (!command)
@@ -826,6 +833,24 @@ const IRC_Server::channelsNameType &IRC_Server::getChannels() const
 {
     return (this->_channelsByName);
 }
+
+void	IRC_Server::insertInvitedUser(std::string& nickname, IRC_Channel& channel)
+{
+    this->_invitedByName.insert(std::make_pair(nickname, &channel));
+    for (IRC_Server::invitedChannelsNameConstIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
+    {
+        std::cout << "pareja: " << it->first << ", " << it->second->getName() << std::endl;
+    } 
+}
+
+/*IRC_Channel* IRC_Server::createChannel(const std::string& name, IRC_User& user)
+{
+    IRC_Channel* channel = new IRC_Channel(name, user);
+
+    this->_channelsByName[name] = channel;
+		log << "User " << user.getMask() << " created the channel " << name << std::endl;
+    return channel;
+}*/
 /*
 std::string	IRC_Server::getTimeStamp()
 {
