@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/09 14:05:24 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/22 12:51:03 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ struct IRC_Server : public Console::IDisplayManager
 		IRC_Response changeNameUser(IRC_User& user, const std::string& name);
 		IRC_Response addUserToChannel(IRC_User& user, IRC_Channel& channel);
 		IRC_Response removeUserFromChannel(IRC_User& user, IRC_Channel& channel, const std::string& msg = "");
+		IRC_Response kickUserFromChannel(IRC_User& user, IRC_Channel& channel, const std::string& msg= "");
 		void removeUserFromChannels(IRC_User& user);
 		void shutdown(const std::string& msg);
 
