@@ -28,7 +28,8 @@ void IRC_KickCommand::execute(IRC_Message& message)
 			user.send(ERR_USERNOTINCHANNEL(user.getName(), channelName));
 			return ;
 		}
-		if (!user.getAccess() == OPERATOR)
+		
+		if (!(user.getAccess() == OPERATOR))
 		{
 			user.send(ERR_CHANOPRIVSNEEDED(user.getName(), channelName));
 			return ;

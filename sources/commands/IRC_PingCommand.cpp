@@ -1,4 +1,5 @@
 #include "commands/IRC_PingCommand.hpp"
+#include "IRC_Server.hpp"
 #include "console.hpp"
 
 IRC_PingCommand::IRC_PingCommand()
@@ -7,12 +8,11 @@ IRC_PingCommand::IRC_PingCommand()
 
 void IRC_PingCommand::execute(IRC_Message& message)
 {
-		std::string ping = message.operator[](0);
+		IRC_Server &server = message.getServer();
+		IRC_User &user = message.getUser();
+		std::string data = message[0];
 
-		if (ping.empty())
-		{
-				// retornar Reply 461 y salir
-		}
+		server.pong(&user, data);
 
 		// enviar peticion de pong al usuario
 		// " PONG " + message.get_server().getServerName() + " :" + message.get_params()[0] + "\r\n";

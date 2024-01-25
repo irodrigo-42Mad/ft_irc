@@ -5,6 +5,7 @@
 
 enum IRC_AccessLevel {
 	UNREGISTERED,
+	PENDING,
 	REGISTERED,
 	OPERATOR
 };

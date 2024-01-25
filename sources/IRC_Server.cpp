@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/10 11:22:05 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:34:18 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -481,9 +481,12 @@ void IRC_Server::deleteChannel(IRC_Channel& channel)
 }
 
 
-bool IRC_Server::setRegisteredUser(IRC_User& user)
+bool IRC_Server::setPendingUser(IRC_User& user)
 {
-	if (user.getName() != "*" && !user.getIdent().empty() && user.getAccess() == 0)
+    std::string random = generateRandomText();
+    //std::cout << random << std::endl;
+
+	if (user.getName() != "*" && !user.getIdent().empty() && user.getAccess() == UNREGISTERED)
 	{
 		// creemos que tenemos que hacer esto aqui
         // this->_checkClientTime(&user);
@@ -495,8 +498,10 @@ bool IRC_Server::setRegisteredUser(IRC_User& user)
 
 
         //TODO: check password?  and.... return function can be boolean?
-		user.setAccess(1);
-		log << "User " << user.getMask() << " registered" << std::endl;
+		user.setAccess(PENDING);
+        user._pingText = random;
+        this->ping(&user, random);
+		log << "User " << user.getMask() << " pending" << std::endl;
 		return true;
 	}
 	return false;
@@ -673,54 +678,71 @@ void IRC_Server::_addCommand(IRC_ACommand* command)
 {
 	this->_commandsByName[command->cmd] = command;
 }
+//:server_name NUMERIC target 
 
 void IRC_Server::_runCommand(IRC_Message& message)
 {
 	IRC_ACommand* command = this->findCommandByName(message.getCmd());
 	IRC_User& user = message.getUser();
 
-    user.setUserTimeout(time(NULL) + GRALTIMEOUT);
+    user.resetIdle();
 
 	if (message.getCmd().empty())
-		  return ;
+	    return ;
 	if (!command)
-  {
-			user.send(*this, ERR_UNKNOWNCOMMAND(user.getName(), message.getCmd()));
-			//Console::log(user.getName() + ": unknown command '" + message.getCmd() + "'");
-			return ;
+    {
+		user.send(*this, ERR_UNKNOWNCOMMAND(user.getName(), message.getCmd()));
+		//Console::log(user.getName() + ": unknown command '" + message.getCmd() + "'");
+		return ;
 	}
+
 	if (user.getAccess() < command->access)
-  {
-      user.send(*this, ERR_NOPRIVILEGES(user.getName()));
-			return ;
+    {
+        if (command->access == OPERATOR)
+            user.send(*this, ERR_NOPRIVILEGES(user.getName()));
+        else
+            user.send(*this, ERR_NOTREGISTERED(user.getName(), command->cmd));
+		return ;
 	}
     // std::cout << command->params << std::endl;
 	if (message.size() < command->params)
-  {
-      user.send(*this, ERR_NEEDMOREPARAMS(user.getName(), message.getCmd()));
-			return ;
+    {
+        user.send(*this, ERR_NEEDMOREPARAMS(user.getName(), message.getCmd()));
+		return ;
 	}
 	command->execute(message);
 }
 
 bool	IRC_Server::_checkClientTime(IRC_User *user)
 {
-    std::string random = generateRandomText();
-    std::cout << random << std::endl;
-
-    if (user->getAccess() != 0)
+    if (user->getAccess() <= PENDING) // user is not registered in IRC_Server.
     {
-        if (user->_getTime() < time(NULL))
+        std::string message;
+        if (user->getPingTimeout() <= time(NULL))
         {
-            user->setUserTimeout(time(NULL) + GRALTIMEOUT);
+            //user->send(random);
+            //user->send(ERR_PONG(user->getMask(), "[Registration timeout]"));
+            this->quitUser(*user, user->getMask() + " [Registration timeout]");
+            return (true);
+            // reply "PONG ERROR [Registration timeout]\r\n"  ok
+            // send_all user(REPLY);                          ok
+            // eliminar el usuario (no ha entrado en canales) ok
+            // eliminar instancia y fd del usuario            ok
+        }
+    }
+    else
+    {
+        if (!user->getPingTimeout() && user->getIdleTime() < time(NULL))
+        {
+            this->ping(user, this->getServerName());
+            user->setPingTimeout(PINGTOUT);
             // enviar el ping al usuario con PONG_STR
            
             // necesitamos un iterador para todos los usuarios cuyo tiempo se haya pasado
             // enviar a todos los usuarios un evento ping
             
         }
-        //else if (user->getUserTimeOut() && (user->getUserTimeOut() < time (NULL)))
-        else if (user->getUserTimeOut() < time(NULL))
+        else if (user->getPingTimeout() && user->getPingTimeout() < time(NULL))
         {
             
             			//TODO: enviar mensaje
@@ -737,21 +759,6 @@ bool	IRC_Server::_checkClientTime(IRC_User *user)
             // eliminar el usuario de todos los canales e informar de ello                                                ok
             // eliminar la instancia y fd del usuario                                                                     ok
             return (true);
-        }
-    }
-    else // user is not registered in IRC_Server.
-    {
-        std::string message;
-        if ((user->_getRegTime()) <= time(NULL))
-        {
-            user->send(random);
-            //user->send(ERR_PONG(user->getMask(), "[Registration timeout]"));
-            this->quitUser(*user, user->getMask() + " [Registration timeout]");
-            return (true);
-            // reply "PONG ERROR [Registration timeout]\r\n"  ok
-            // send_all user(REPLY);                          ok
-            // eliminar el usuario (no ha entrado en canales) ok
-            // eliminar instancia y fd del usuario            ok
         }
     }
     return (false);
@@ -826,6 +833,39 @@ const IRC_Server::channelsNameType &IRC_Server::getChannels() const
 {
     return (this->_channelsByName);
 }
+
+IRC_Response IRC_Server::kickUserFromChannel(IRC_User& user, IRC_Channel& channel, const std::string& msg)
+{
+    if (!user.isInChannel(channel))
+    {
+        return (NOT_IN_CHANNEL);
+    }
+
+    if (msg.empty())
+        channel.send(user, "KICK " + channel.getName(), "");
+    else
+        channel.send(user, "KICK " + channel.getName(), msg);
+    
+    user.removeChannel(channel);
+    channel.removeUser(user);
+
+    if (channel.empty())
+    {
+            this->deleteChannel(channel);
+    }
+    return (SUCCESS);
+}
+
+void IRC_Server::ping(IRC_User *sender, std::string const &message)
+{
+    sender->send("PING :" + message);
+}
+
+void IRC_Server::pong(IRC_User *sender, std::string const &message)
+{
+    sender->reply(*this, "PONG " + this->getServerName() + " :" + message);
+}
+
 /*
 std::string	IRC_Server::getTimeStamp()
 {

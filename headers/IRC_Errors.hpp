@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Errors.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 11:38:07 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/09 13:55:41 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:20:39 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_NICKNAMEINUSE(nickname)					"433 " + nickname + " :Nickname is already in use"
 # define ERR_USERNOTINCHANNEL(nickname, channel)		"441 " + nickname + " " + channel + " :They aren't on that channel"
 # define ERR_NOTONCHANNEL(nickname, channel)			"442 " + nickname + channel + " :You're not on that channel"
+# define ERR_NOTREGISTERED(nickname, command)			"451 " + nickname + " " + command + " :You have not registered"
 # define ERR_NEEDMOREPARAMS(nickname, command)			"461 " + nickname + " " + command + " :Not enough parameters"
 # define ERR_ALREADYREGISTRED(nickname)			        "462 " + nickname + " :Unauthorized command (already registered)"	//ToDo: repasar esto
 # define ERR_PASSWDMISMATCH(nickname, source)			"464 " + nickname + " :Password incorrect"

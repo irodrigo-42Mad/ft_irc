@@ -23,17 +23,10 @@ void IRC_NickCommand::execute(IRC_Message& message)
 	{
 		user.send(ERR_NICKNAMEINUSE(newName));
 	}
-	else
-  {
-		if (server.setRegisteredUser(user))
-		{
-			//TODO: check password?
-			
-			//ToDo: Welcome()
-
-			// ToDo: Revisar como calcular el tiempo de Timeout
-			server.sendWelcomeMsg(user);
-      		server.sendMOTDMsg(user);
-		}
+	else if (user.getAccess() == UNREGISTERED)
+  	{
+		server.setPendingUser(user);
+		//	server.sendWelcomeMsg(user);
+      	//	server.sendMOTDMsg(user);
 	}
 }

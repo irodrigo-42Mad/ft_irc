@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/22 12:51:03 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/01/25 13:04:12 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,8 +132,9 @@ struct IRC_Server : public Console::IDisplayManager
 		void					send(const std::string& data);
 		void					send(const IRC_Server& server, const std::string& data);
 		void					send(const IRC_User& user, const std::string& data);
+		
 
-		bool setRegisteredUser(IRC_User& user);
+		bool setPendingUser(IRC_User& user);
 		bool quitUser(IRC_User& User, const std::string& message);
 		bool killUser(const IRC_User& User, IRC_User& targetUser, const std::string& message);
 		IRC_Response changeNameUser(IRC_User& user, const std::string& name);
@@ -142,7 +143,9 @@ struct IRC_Server : public Console::IDisplayManager
 		IRC_Response kickUserFromChannel(IRC_User& user, IRC_Channel& channel, const std::string& msg= "");
 		void removeUserFromChannels(IRC_User& user);
 		void shutdown(const std::string& msg);
-
+		void ping(IRC_User *sender, std::string const &ping);
+		void pong(IRC_User *sender, std::string const &message);
+		
 	private:
 		int								_serverFd;
 		std::string				_port;

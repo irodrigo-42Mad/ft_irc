@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_User.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/19 10:14:59 by icastell         ###   ########.fr       */
+/*   Updated: 2024/01/25 14:03:34 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,10 @@ struct IRC_User
 	const std::string&	getIdent() const;
 	const std::string&	getRealName() const;
 	const std::string&	getPass() const;
-	time_t				getUserTimeOut();
+	time_t				getPingTimeout();
+	time_t				getIdleTime();
+	time_t 				getLoginTime();
+	const std::string&	getPingText() const;
 
 
 	void setFd(int);
@@ -70,6 +73,8 @@ struct IRC_User
 	void setHost(const std::string& value);
 	void setAccess(int access);
 	void setPass(const std::string& value);
+	void setPingTimeout(time_t value);
+	void setIdleTime(time_t value);
 
 	void send(const std::string& data);
 	void send(const IRC_Server& server, const std::string& data);
@@ -78,6 +83,8 @@ struct IRC_User
 	void reply(const IRC_User& user, const std::string& data);
 	void reply(const IRC_Server& server, const std::string& data);
 
+	void resetIdle(void);
+	void disablePingTimeout(void);
 	void markForDelete();
 	bool deleteMarked() const;
 //	void	errorReply(const std::string& reply);
@@ -94,15 +101,15 @@ private:
 	channelsType		_channels;
 	std::string			_inputBuffer;
 	std::string			_outputBuffer;
-	time_t				_registratedT;				// moment that user has registered in server
-	time_t				_timeout;					// calculate timeout
-	time_t				_time;						// check last command time
-	bool					_deleteMarked;
+	time_t				_pingTimeout;					// calculate timeout
+	time_t				_idleTime;						// check last command time
+	time_t				_loginTime;				// moment that user has registered in server
+	bool				_deleteMarked;
+	std::string			_pingText;
 	
 	IRC_User(const IRC_User& copy);
 	IRC_User& operator=(const IRC_User& rhs);
 
-	void 	_resetTime(void);
 	time_t 	_getTime(void);
 	time_t	_getRegTime(void);
 

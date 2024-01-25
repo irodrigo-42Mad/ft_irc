@@ -17,9 +17,9 @@ IRC_User::IRC_User(struct pollfd* pollPosition)
 	, _hostname("")
 	, _pass("")
 	, _access(0)
-	, _registratedT(time(NULL) + UNREGTOUT)
-	, _timeout(0)
-	, _time(time(NULL) + GRALTIMEOUT)
+	, _pingTimeout(time(NULL) + REGTOUT)
+	, _idleTime(time(NULL) + IDLETOUT)
+	, _loginTime(time(NULL))
 	, _deleteMarked(false)
 {
 	debug << "User &" << this->_ident << "(" << this->_pollPosition->fd << ")" << " & created desde el constructor con un parámetro" << std::endl;
@@ -31,8 +31,9 @@ IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const s
 	, _ident(ident)
 	, _realname(realname)
 	, _access(0)
-	, _registratedT(0)
-	, _timeout(0)
+	, _pingTimeout(time(NULL) + REGTOUT)
+	, _idleTime(time(NULL) + IDLETOUT)
+	, _loginTime(time(NULL))
 	, _deleteMarked(false)
 {
 	debug << "User &" << this->_ident << "& created desde el constructor con 4 parámetros" << std::endl;
@@ -239,30 +240,40 @@ void IRC_User::addReceiveData(char* buffer)
 	// std::cout << this->_inputBuffer << std::endl;
 }
 
-time_t IRC_User::getUserTimeOut()
+time_t IRC_User::getPingTimeout()
 {
-	return (this->_timeout);
+	return (this->_pingTimeout);
 }
 
-void IRC_User::setUserTimeout(time_t myTimeOut)
+void IRC_User::setPingTimeout(time_t myTimeOut)
 {
-	this->_timeout = myTimeOut;
+	this->_pingTimeout = time(NULL) + myTimeOut;
 }
 
 // reseting time of user commands for server controls
-void IRC_User::_resetTime(void)
+void IRC_User::resetIdle(void)
 {
-	this->_time = time(NULL);
+	this->_idleTime = time(NULL) + IDLETOUT;
 }
 
-time_t IRC_User::_getTime(void)
+void IRC_User::disablePingTimeout(void)
 {
-	return (this->_time);
+	this->_pingTimeout = 0;
 }
 
-time_t IRC_User::_getRegTime(void)
+void IRC_User::setIdleTime(time_t value)
 {
-	return (this->_registratedT);
+	this->_idleTime = value;
+}
+
+time_t IRC_User::getIdleTime(void)
+{
+	return (this->_idleTime);
+}
+
+time_t IRC_User::getLoginTime(void)
+{
+	return (this->_loginTime);
 }
 
 const std::string&	IRC_User::getIdent() const
@@ -273,6 +284,11 @@ const std::string&	IRC_User::getIdent() const
 const std::string&	IRC_User::getRealName() const
 {
 	return (this->_realname);
+}
+
+const std::string& 	IRC_User::getPingText() const
+{
+	return (this->_pingText);
 }
 
 void	IRC_User::setIdent(const std::string& ident)
