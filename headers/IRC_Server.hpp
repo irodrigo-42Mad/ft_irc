@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/25 13:04:12 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/01/26 12:41:13 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,10 @@ struct IRC_Server : public Console::IDisplayManager
 		typedef std::map<std::string, IRC_Channel*>	channelsNameType;		//map<channelName, channel*>
 		typedef channelsNameType::iterator			channelsNameIterator;
 		typedef channelsNameType::const_iterator	channelsNameConstIterator;
+
+		typedef std::multimap<std::string, IRC_Channel*>	invitedChannelsNameType;		//multimap<nickname, channel*>
+		typedef invitedChannelsNameType::iterator			invitedChannelsNameIterator;
+		typedef invitedChannelsNameType::const_iterator		invitedChannelsNameConstIterator;
 
 		typedef std::map<std::string, IRC_ACommand*>	commandsNameType;
 		typedef commandsNameType::iterator					commandsNameIterator;
@@ -124,6 +128,8 @@ struct IRC_Server : public Console::IDisplayManager
 		void			userPolloutByFd(int fd);
 		//int				findPollPosition(IRC_User* user);
 		
+		bool    		findInvitedUserToAChannel(const std::string& nickname, const std::string& channelName);
+		
 		IRC_ACommand*	findCommandByName(const std::string& name);
 
 		IRC_Channel*	createChannel(const std::string& name, IRC_User& user);
@@ -143,6 +149,9 @@ struct IRC_Server : public Console::IDisplayManager
 		IRC_Response kickUserFromChannel(IRC_User& user, IRC_Channel& channel, const std::string& msg= "");
 		void removeUserFromChannels(IRC_User& user);
 		void shutdown(const std::string& msg);
+		//invited user management
+		void	insertInvitedUser(std::string& nickname, IRC_Channel& channel);
+
 		void ping(IRC_User *sender, std::string const &ping);
 		void pong(IRC_User *sender, std::string const &message);
 		
@@ -157,6 +166,7 @@ struct IRC_Server : public Console::IDisplayManager
 		usersType					_opers;
 		channelsNameType	_channelsByName;
 		commandsNameType	_commandsByName;
+		invitedChannelsNameType	_invitedByName;
 		
 		struct pollfd			_pfds[MAX_CLIENTS];
 		

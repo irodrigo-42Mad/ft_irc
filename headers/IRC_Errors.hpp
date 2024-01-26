@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 11:38:07 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/25 14:20:39 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/01/26 12:17:10 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define RPL_LISTEND(nickname)							"323 " + nickname + " :End of LIST"
 # define RPL_NOTOPIC(nickname, channel)					"331 " + nickname + " " + channel + " :No topic is set"
 # define RPL_TOPIC(nickname, channel, topic)			"332 " + nickname + " " + channel + " :" + topic
+# define RPL_INVITING(nickname, channel)				"341 " + nickname + " " + channel + " : Invited"	//ToDo: el mensaje de confirmación me lo he inventado. No sé si lleva. Probarlo.
 # define RPL_NAMREPLY(nickname, channel, names)			"353 " + nickname + " = " + channel + " :" + names
 # define RPL_ENDOFNAMES(nickname, channel)				"366 " + nickname + " " + channel + " :End of NAMES list"
 # define RPL_MOTD(nickmame, text)						"372 " + nickmame + " :" + text
@@ -53,6 +54,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_NICKNAMEINUSE(nickname)					"433 " + nickname + " :Nickname is already in use"
 # define ERR_USERNOTINCHANNEL(nickname, channel)		"441 " + nickname + " " + channel + " :They aren't on that channel"
 # define ERR_NOTONCHANNEL(nickname, channel)			"442 " + nickname + channel + " :You're not on that channel"
+# define ERR_USERONCHANNEL(nickname, channel)			"443 " + nickname + channel + " :is already on channel"
 # define ERR_NOTREGISTERED(nickname, command)			"451 " + nickname + " " + command + " :You have not registered"
 # define ERR_NEEDMOREPARAMS(nickname, command)			"461 " + nickname + " " + command + " :Not enough parameters"
 # define ERR_ALREADYREGISTRED(nickname)			        "462 " + nickname + " :Unauthorized command (already registered)"	//ToDo: repasar esto

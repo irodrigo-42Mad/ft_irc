@@ -9,35 +9,47 @@ IRC_InviteCommand::IRC_InviteCommand()
 {}
 
 void IRC_InviteCommand::execute(IRC_Message& message) {
-	std::string nickName;
+	std::string nickName = message[0];
 	IRC_User& user = message.getUser();
 	IRC_Server& server = message.getServer();
 	IRC_Channel *channel = server.findChannelByName(message[1]);
 	std::string reason = "No reason specified!";
-
-	if (!message.empty())
-	{
-		nickName = message[0];
-		//IRC_User *invitedUser = server.findUserByName(nickName);
-	}
 	
-
 	if (!channel)
     {
         user.reply(server, ERR_NOSUCHCHANNEL(nickName, message[1]));
         return ;
     }
-	if (!user.isInChannel(*channel))
+
+	if (toUpperNickname(user.getName()) != toUpperNickname(channel->getCreator().getName()))
 	{
-        user.reply(server, ERR_NOTONCHANNEL(nickName, channel->getName()));
+		user.reply(server, ERR_CHANOPRIVSNEEDED(nickName, channel->getName()));
+		return ;
+	}
+	
+	IRC_User	*invitedUser = server.findUserByName(nickName);
+
+	if (!invitedUser)
+	{
+		user.reply(server, ERR_NOSUCHNICK(nickName));
+		return ;
+	}
+
+	if (invitedUser->isInChannel(*channel))
+	{
+        user.reply(server, ERR_USERONCHANNEL(nickName, channel->getName()));
         return ;
     }
-	//if (!clientinvited)
-    //{
-    //    client->reply(ERR_NOSUCHNICK(client->get_nickname(), target));
-    //    return;
-    //}
-	channel->addUser(user);	//hacer un nuevo mapa (multimap) para almacenar los usuarios invitados.
+	std::cout << "hola" << std::endl;
+	// meter al invitedUser al multimap siempre que no esté y comunicar que ha sido invitdo
+	std::cout << server.findInvitedUserToAChannel(nickName, channel->getName()) << std::endl;
+	if (!server.findInvitedUserToAChannel(nickName, channel->getName())){
+		std::cout << "hasta aquí" << std::endl;
+		server.insertInvitedUser(nickName, *channel);}
+
+	invitedUser->reply(server, RPL_INVITING(nickName, channel->getName()));
+	
+	//channel->addUser(user);	//hacer un nuevo mapa (multimap) para almacenar los usuarios invitados.
 	// invitación de un único uso
 	// si se sale de IRC te tienen que volver a invitar
 }

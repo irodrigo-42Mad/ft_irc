@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/25 14:34:18 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/01/26 12:39:36 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,6 +329,16 @@ IRC_User* IRC_Server::findUserByName(const std::string& name)
 				return (NULL);
 		}
 		return (it->second);
+}
+
+bool    IRC_Server::findInvitedUserToAChannel(const std::string& nickname, const std::string& channelName)
+{
+    for (IRC_Server::invitedChannelsNameConstIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
+    {
+        if (toUpperNickname((*it).first) == toUpperNickname(nickname) && (*it).second->getName() == channelName)
+            return (true);
+    }
+    return (false);
 }
 
 IRC_User* IRC_Server::findUserByFd(int fd)
@@ -827,6 +837,15 @@ void IRC_Server::_sigintHandler(int)
 void IRC_Server::_setSignals()
 {
 		signal(SIGINT, IRC_Server::_sigintHandler);
+}
+
+void	IRC_Server::insertInvitedUser(std::string& nickname, IRC_Channel& channel)
+{
+    this->_invitedByName.insert(std::make_pair(nickname, &channel));
+    for (IRC_Server::invitedChannelsNameConstIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
+    {
+        std::cout << "pareja: " << it->first << ", " << it->second->getName() << std::endl;
+    } 
 }
 
 const IRC_Server::channelsNameType &IRC_Server::getChannels() const
