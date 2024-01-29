@@ -76,15 +76,19 @@ USER <username> 0 * <realname>
 ```bash
 PONG server
 ```
-From this moment we can create channels, send private messages, and using normaly IRC clients.
+From this moment we can create channels, send private messages, and using normaly IRC clients with basic command use.
 
 ## Commands handle
 
 ```
-- PASS
+- PASS 
 - NICK
 - USER
+- MOTD
 - JOIN
+- WELCOME
+- INVITE
+- TOPIC
 - PING
 - PONG
 - MOTD
@@ -94,9 +98,26 @@ From this moment we can create channels, send private messages, and using normal
 - NAMES
 - PART
 - OPER
+- KICK
+- KILL
 - DIE
 - QUIT
 ```
+## Internal functions explained
+
+- IRC_Server
+
+- IRC_Channel
+
+- IRC_User
+
+- IRC_Message
+
+- IRC_Utils
+
+- IRC_Errors
+
+
 
 ## Built With
 
@@ -122,3 +143,4 @@ Version 1.0
 ## Acknowledgments
 
 * To the 42 Network students and specially to @icastell, @fballest, @rnavarre and @ccardozom colaborators and testers of this proyect.
+
