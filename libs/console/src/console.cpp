@@ -21,7 +21,7 @@ Console::Console(std::ostream& os, const std::string& tag, int color, LogLevel l
 		, _colorSet(false)
 		, _logLevel(logLevel)
 {
-		this->_os.rdbuf(terminal.getCustomBuffer());
+		//this->_os.rdbuf(terminal.getCustomBuffer());
 }
 
 Console& Console::operator<<(Manipulator manip)
