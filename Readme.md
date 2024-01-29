@@ -81,27 +81,92 @@ From this moment we can create channels, send private messages, and using normal
 ## Commands handle
 
 ```
-- PASS 
+- PASS
+**
+
 - NICK
+**
+
 - USER
+**
+
 - MOTD
+*
+
+*
+
 - JOIN
+*
+```bash
+JOIN <#channel> [password]
+```
+If the channel is protected with a password, it is necessary to include it in the order. If the channel does not exist, it will be created for us and we will enter it as a single user.
+*
+
 - WELCOME
+*
+
+*
+
 - INVITE
+*Send an invitation to the specified nick to join the channel we have specified. It is necessary to have channel operator status to be able to execute this command. If the channel is in +i mode (see /MODE command) only users who have been previously invited can access it.*
+
 - TOPIC
+**
+
 - PING
+**
+
 - PONG
+**
+
 - MOTD
+**
+
 - NOTICE
+**
+
 - PRIVMSG
+**
+
 - LIST
+**
+
 - NAMES
+**
+
 - PART
+**
+
 - OPER
+**
+
 - KICK
+*
+```bash
+Kick <#canal> [razón]
+```
+Este comando solo puede ser empleado por aquellos usuarios que tengan estatus de operador del canal. Provoca la inmediata expulsión del nick especificado del canal que se indique, esta expulsión podrá ir acompañada de un mensaje.
+*
+
 - KILL
-- DIE
+*
+```bash
+KILL <client> <comment>
+```
+Forcibly removes <client> from the network. This command may only be issued by IRC operators. Defined in RFC 1459.
+*
+
 - QUIT
+*
+It sends the IRC server a command that causes our immediate disconnection from IRC.
+*
+
+- DIE
+*
+Instructs the server to shut down. This command may only be issued by IRC server operators.
+*
+
 ```
 ## Internal functions explained
 
