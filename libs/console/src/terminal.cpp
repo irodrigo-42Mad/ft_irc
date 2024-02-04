@@ -14,7 +14,7 @@ Terminal::Terminal()
 		this->_currentTerm = this->_originalTerm;
 
 	  signal(SIGWINCH, Terminal::_sigwinchHandler);
-	  Terminal::_sigwinchHandler(0);
+		Terminal::_updateWinSize();
 }
 
 Terminal::~Terminal()
@@ -112,12 +112,17 @@ void Terminal::restoreCursorPosition()
 
 void Terminal::_sigwinchHandler(int /*signal*/)
 {
-   	struct winsize size;
+		terminal._updateWinSize();
+}
+
+void Terminal::_updateWinSize()
+{
+		struct winsize size;
 
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-		terminal._limits.col = size.ws_col;
-		terminal._limits.row = size.ws_row;
-		terminal._updatePosition();
+		this->_limits.col = size.ws_col;
+		this->_limits.row = size.ws_row;
+		this->_updatePosition();
 }
 
 int Terminal::getColumns() const
