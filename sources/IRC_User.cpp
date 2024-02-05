@@ -146,12 +146,58 @@ void	IRC_User::send(const std::string& data)
 
 void	IRC_User::reply(const IRC_User& user, const std::string& data)
 {
-	this->send(":" + user.getMask() + " " + data);
+	//this->send(":" + user.getMask() + " " + data);
+	this->sendLimitedMessage(":" + user.getMask() + " ", data);
 }
 
 void	IRC_User::reply(const IRC_Server& server, const std::string& data)
 {
-	this->send(":" + server.getServerName() + " " + data);
+	//this->send(":" + server.getServerName() + " " + data);
+	this->sendLimitedMessage(":" + server.getServerName() + " ", data);
+}
+
+void	IRC_User::sendLimitedMessage(const std::string& header, const std::string& data)
+{
+	std::string message = header + data;
+	std::size_t messageLength = message.size();
+    //size_t i = 1;
+
+    if (messageLength <= 510)
+	{
+        // La cadena es corta, imprímela completa
+        this->send(message);
+        //std::cout << message << std::endl;
+    }
+	else
+	{
+		size_t		headerLength = header.size();
+        std::cout << "headerLength: " << headerLength << std::endl;
+
+        // Imprime bloques de 5100 caracteres sin cortar palabras con la cabecera
+        std::size_t initIndex = 0; //header.length() + 1;
+        while (initIndex < messageLength) {
+            std::size_t endIndex = std::min(initIndex + 510 - headerLength, messageLength);
+			//std::cout << finBloque << std::endl;
+            // Retrocede hasta encontrar un espacio si estamos en medio de una palabra
+            while (endIndex < messageLength && endIndex > initIndex && data[endIndex] != ' ') {
+                --endIndex;
+            }
+
+            std::size_t blockLength = endIndex - initIndex;
+            message = header + data.substr(initIndex, blockLength);
+			//message = header + std::string(data[initIndex], blockLength);
+			//std::cout << "Mensaje " << i << ": " << message << ", longitud = " << message.size() << std::endl;
+            this->send(message);
+			//printf("%s", message.c_str());
+			//std::cout << cabecera << " ";
+            //std::cout.write(message + initIndex, blockLength);
+            //std::cout << std::endl;
+
+            // Avanza al siguiente bloque
+            initIndex = endIndex + 1;
+            //i++;
+        }
+    }
 }
 
 IRC_User::usersType* IRC_User::getCommonUsers()
@@ -205,7 +251,7 @@ void IRC_User::sendCommonUsersExcept(const IRC_User &exceptUser, const std::stri
 
 void IRC_User::send(const IRC_Server& server, const std::string& data)
 {
-	this->send(":" + server.getServerName() + " " + data);
+	this->send(":" + server.getServerName() + " " + data);//ToDo: ojo con lo de los mensajes de logitud máxima aquí
 }
 /*
 const IRC_User::channelsSetType IRC_User::getCommonUsers() const {

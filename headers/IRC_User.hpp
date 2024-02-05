@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_User.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/19 10:14:59 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/01 19:29:07 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ struct IRC_User
 	void sendCommonUsersExcept(const IRC_User& exceptUser, const std::string& data);
 	void reply(const IRC_User& user, const std::string& data);
 	void reply(const IRC_Server& server, const std::string& data);
+	void	sendLimitedMessage(const std::string& header, const std::string& data);
 
 	void markForDelete();
 	bool deleteMarked() const;

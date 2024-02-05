@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/22 19:34:06 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/05 19:45:16 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,21 +79,21 @@ IRC_User& IRC_Channel::getCreator()
 
 void IRC_Channel::sendExcept(const IRC_User* exceptUser, const std::string &data)
 {
-		if (exceptUser)
-				this->_users.erase(const_cast<IRC_User*>(exceptUser));
-		this->send(data);
-		if (exceptUser)
-				this->_users.insert(const_cast<IRC_User*>(exceptUser));
+	if (exceptUser)
+		this->_users.erase(const_cast<IRC_User*>(exceptUser));
+	this->send(data);
+	if (exceptUser)
+		this->_users.insert(const_cast<IRC_User*>(exceptUser));
 }
 
 void IRC_Channel::send(const IRC_User& user, const std::string& data, const std::string& lastParameter)
 {
-		this->sendExcept(NULL, user, data, lastParameter);
+	this->sendExcept(NULL, user, data, lastParameter);
 }
 
 void IRC_Channel::send(const IRC_Server& server, const std::string& data, const std::string& lastParameter)
 {
-		this->sendExcept(NULL, server, data, lastParameter);
+	this->sendExcept(NULL, server, data, lastParameter);
 }
 
 void IRC_Channel::send(const std::string& data)
@@ -106,14 +106,14 @@ void IRC_Channel::send(const std::string& data)
 
 void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter)
 {
-		if (lastParameter.empty())
-		{
-				this->sendExcept(exceptUser, ":" + user.getMask() + " " + data);
-		}
-		else
-		{
-				this->sendExcept(exceptUser, ":" + user.getMask() + " " + data + " :" + lastParameter);
-		}
+	if (lastParameter.empty())
+	{
+		this->sendExcept(exceptUser, ":" + user.getMask() + " " + data);
+	}
+	else
+	{
+		this->sendExcept(exceptUser, ":" + user.getMask() + " " + data + " :" + lastParameter);
+	}
 }
 
 void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter)

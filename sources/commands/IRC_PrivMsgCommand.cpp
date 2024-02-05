@@ -21,6 +21,7 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 	if (msgTarget.at(0) == '#')
 	{
 		IRC_Channel *targetChannel = server.findChannelByName(msgTarget);
+
 		if (targetChannel)
 			targetChannel->sendExcept(&user, RPL_PRIVMSG(user.getMask(), targetChannel->getName(), textToBeSent));
 		else
@@ -29,10 +30,12 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 	else
 	{
 		IRC_User *targetUser = server.findUserByName(msgTarget);
+		
 		if (targetUser)
 		{
 			// ToDo: revisar si es en todos los canales o solo en uno. Duda!!!!!!
-			targetUser->send(RPL_PRIVMSG(":" + user.getMask(), targetUser->getName(), textToBeSent));
+			//targetUser->send(RPL_PRIVMSG(":" + user.getMask(), targetUser->getName(), textToBeSent));
+			targetUser->sendLimitedMessage(":" + user.getMask() + " PRIVMSG " + targetUser->getName() + " :", textToBeSent);
 		}
 		else
 			user.reply(server, ERR_NOSUCHNICK(msgTarget));

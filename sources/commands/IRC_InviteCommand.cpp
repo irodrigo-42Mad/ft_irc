@@ -40,12 +40,10 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
         user.reply(server, ERR_USERONCHANNEL(nickName, channel->getName()));
         return ;
     }
-	std::cout << "hola" << std::endl;
 	// meter al invitedUser al multimap siempre que no esté y comunicar que ha sido invitdo
 	std::cout << server.findInvitedUserToAChannel(nickName, channel->getName()) << std::endl;
-	if (!server.findInvitedUserToAChannel(nickName, channel->getName())){
-		std::cout << "hasta aquí" << std::endl;
-		server.insertInvitedUser(nickName, *channel);}
+	if (!server.findInvitedUserToAChannel(nickName, channel->getName()))
+		server.insertInvitedUser(nickName, *channel);
 
 	invitedUser->reply(server, RPL_INVITING(nickName, channel->getName()));
 	
