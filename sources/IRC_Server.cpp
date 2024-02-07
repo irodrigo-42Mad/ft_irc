@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/22 20:31:50 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/07 18:19:55 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -542,7 +542,7 @@ void IRC_Server::fillMOTDMsg(const char *filename)
         std::strncat(this->_MOTD, "porque somos los currelas,\ny esto nunca va a morir ...\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
     }
     else
-        std::strncat(this->_MOTD, "Bienvenido al IRC de irodrigo e icastell\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
+        std::strncat(this->_MOTD, "Bienvenido al IRC de irodrigo, icastell y pcosta-j\n\n", sizeof(_MOTD) - std::strlen(_MOTD) - 1);
 }
 
 void IRC_Server::sendMOTDMsg(IRC_User& user)  //esto hay que leerlo de línea en línea e ir imprimiéndolo

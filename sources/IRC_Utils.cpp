@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Utils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:51:12 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/10 11:24:30 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/07 18:01:00 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,4 +265,24 @@ std::string generateRandomText ()
 		return (asciiString);
 	else
 		return ("");
+}
+
+size_t  secondColonPosition(const std::string& data)
+{
+    std::size_t firstColonPosition = data.find(":");
+    
+    if (firstColonPosition != std::string::npos)
+    {
+        // Buscar la segunda ocurrencia del carácter después de la primera posición
+        std::size_t secondColonPosition = data.find(":", firstColonPosition + 1);
+
+        if (secondColonPosition != std::string::npos)
+        {
+            // Se encontró la segunda ocurrencia, devuelve la posición
+            return (secondColonPosition);
+        }
+    }
+
+    // Si no se encuentra la segunda ocurrencia, devuelve -1
+    return (-1);
 }

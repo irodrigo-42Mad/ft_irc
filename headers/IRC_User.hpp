@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/01 19:29:07 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/07 17:58:54 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,13 @@ struct IRC_User
 	void setAccess(int access);
 	void setPass(const std::string& value);
 
-	void send(const std::string& data);
-	void send(const IRC_Server& server, const std::string& data);
-	void sendCommonUsers(const std::string& data);
-	void sendCommonUsersExcept(const IRC_User& exceptUser, const std::string& data);
-	void reply(const IRC_User& user, const std::string& data);
-	void reply(const IRC_Server& server, const std::string& data);
-	void	sendLimitedMessage(const std::string& header, const std::string& data);
+	void	send(const std::string& data);
+	void	send(const IRC_Server& server, const std::string& data);
+	void	sendCommonUsers(const std::string& data);
+	void	sendCommonUsersExcept(const IRC_User& exceptUser, const std::string& data);
+	void	reply(const IRC_User& user, const std::string& data);
+	void	reply(const IRC_Server& server, const std::string& data);
+	void	sendLimitedMessage(const std::string& data);
 
 	void markForDelete();
 	bool deleteMarked() const;

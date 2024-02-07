@@ -35,7 +35,7 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 		{
 			// ToDo: revisar si es en todos los canales o solo en uno. Duda!!!!!!
 			//targetUser->send(RPL_PRIVMSG(":" + user.getMask(), targetUser->getName(), textToBeSent));
-			targetUser->sendLimitedMessage(":" + user.getMask() + " PRIVMSG " + targetUser->getName() + " :", textToBeSent);
+			targetUser->sendLimitedMessage(RPL_PRIVMSG(":" + user.getMask(), targetUser->getName(), textToBeSent));
 		}
 		else
 			user.reply(server, ERR_NOSUCHNICK(msgTarget));

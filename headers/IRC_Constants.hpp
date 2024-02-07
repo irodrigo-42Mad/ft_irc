@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Constants.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:22:13 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/09 14:54:51 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/07 17:52:07 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,7 @@
 # define UNREGTOUT		9			//max timeout for register one user
 # define GRALTIMEOUT	9			//general timeout tick control
 # define PONG_STR		"Numantinos"	//Cadena de texto para pong
+
+# define MSGLENGTH		510			//number of chars that are going to sent in one message
 
 # endif
