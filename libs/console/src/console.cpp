@@ -52,7 +52,7 @@ void Console::displayBottom()
 		Console::_displayManager->displayBottom(ss, terminal.getColumns());
 		terminal.setCursorBottom();
 		terminal.clearCurrentRow();
-		std::cout << ss.str().substr(0, terminal.getColumns()) << '\r';
+		std::cout << ss.str().substr(0, terminal.getColumns() - 1) << '\r';
 		terminal.restoreCursorPosition();
 		std::cout << std::flush;
 }

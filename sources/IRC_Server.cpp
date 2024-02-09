@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/26 12:39:36 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/09 14:23:19 by rnavarre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,11 +177,13 @@ void    IRC_Server::start()
 				Console::displayBottom();
 
         int poll_count = poll(this->_pfds, this->_connectedClientsNum, 200);
-        if (poll_count < 0 && !this->_forceDie)
+		(void)poll_count;
+/*        if (poll_count < 0 && !this->_forceDie)
         {
 						error << "Server::start fatal server error" << std::endl;
 						this->_die = true;
         }
+*/
         // Run through the existing connections looking for data to read
         for (int i = 0; i < this->_connectedClientsNum; ++i)    // Check if someone's ready to read
         {
@@ -813,7 +815,7 @@ bool   IRC_Server::changeChannelTopic(IRC_User& user, IRC_Channel& channel, cons
     return (false);
 }
 
-void	IRC_Server::displayBottom(std::stringstream& ss, int /*width*/)
+void	IRC_Server::displayBottom(std::stringstream& ss, int width)
 {
 		struct tm *timeinfo;
 		time_t		timestamp = std::difftime(std::time(NULL), this->_startTime);
@@ -828,6 +830,7 @@ void	IRC_Server::displayBottom(std::stringstream& ss, int /*width*/)
 		ss << "[ Open channels: " << this->_channelsByName.size() << " ]  ";
 		ss << "[ Load commands: " << this->_commandsByName.size() << " ]  ";
 		ss << "[ Uptime: " << buffer << " ]";
+		ss << "(" << width << ")";
 }
 
 void IRC_Server::_sigintHandler(int)

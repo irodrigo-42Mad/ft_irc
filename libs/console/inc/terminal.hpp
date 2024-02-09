@@ -13,42 +13,42 @@ struct Position
 
 struct Terminal
 {
-	Terminal();
-  ~Terminal();
+		Terminal();
+		~Terminal();
 
-  void enableEcho();
-  void disableEcho();
-  void hideCursor();
-  void showCursor();
-  void setCursorBottom();
-  void setCursorTop();
-  void restoreCursorPosition();
-  void clearCurrentRow();
+		void enableEcho();
+		void disableEcho();
+		void hideCursor();
+		void showCursor();
+		void setCursorBottom();
+		void setCursorTop();
+		void restoreCursorPosition();
+		void clearCurrentRow();
 
-  int getRows() const;
-  int getColumns() const;
+		int getRows() const;
+		int getColumns() const;
 
-  void increment(int number);
+		void increment(int number);
 
-  Position getCursorPosition() const;
-  void setCursorPosition(Position position);
+		Position getCursorPosition() const;
+		void setCursorPosition(Position position);
 
-  CustomBuffer* getCustomBuffer();
+		CustomBuffer* getCustomBuffer();
+ 		void _updateWinSize();
 
 private:
-	struct termios	_originalTerm;
-	struct termios	_currentTerm;
-	Position				_currentPos;
-	Position				_limits;
+		struct termios	_originalTerm;
+		struct termios	_currentTerm;
+		Position				_currentPos;
+		Position				_limits;
 
-	CustomBuffer		_customBuffer;
+		CustomBuffer		_customBuffer;
 
-	void _setTerm(struct termios& term);
-	void _getTerm();
-	void _updatePosition();
-  void _updateWinSize();
+		void _setTerm(struct termios& term);
+		void _getTerm();
+		void _updatePosition();
 
-	static void _sigwinchHandler(int signal);
+		static void _sigwinchHandler(int signal);
 
 };
 

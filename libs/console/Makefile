@@ -22,10 +22,17 @@ WARNFLAGS 		= 	-Wextra -Wall -Werror
 
 DEPFLAGS 		= 	-MMD
 
+SANITIZE 		= 	-fsanitize=address
+
 all: 		$(NAME)
 
 $(NAME): 	$(OBJS)
 	$(AR) $(NAME) $(OBJS)
+
+
+debug:		CXXFLAGS += $(SANITIZE) -g3
+debug: 		LDFLAGS += $(SANITIZE)
+debug:		all
 
 fclean: 	clean
 	$(RM) $(NAME)

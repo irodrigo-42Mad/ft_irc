@@ -13,13 +13,13 @@ Terminal::Terminal()
 		this->_getTerm();
 		this->_currentTerm = this->_originalTerm;
 
-	  signal(SIGWINCH, Terminal::_sigwinchHandler);
+		signal(SIGWINCH, Terminal::_sigwinchHandler);
 		Terminal::_updateWinSize();
 }
 
 Terminal::~Terminal()
 {
-	  this->_setTerm(this->_originalTerm);
+		this->_setTerm(this->_originalTerm);
 }
 
 void Terminal::enableEcho()
@@ -36,12 +36,12 @@ void Terminal::disableEcho()
 
 void Terminal::_getTerm()
 {
-	  tcgetattr(STDIN_FILENO, &this->_originalTerm);
+		tcgetattr(STDIN_FILENO, &this->_originalTerm);
 }
 
 void Terminal::_setTerm(struct termios& term)
 {
-	 tcsetattr(STDIN_FILENO, TCSANOW, &term);
+		tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 
 void Terminal::_updatePosition()
@@ -88,7 +88,7 @@ void Terminal::setCursorBottom()
 
 		position.col = 0;
 		position.row = this->_limits.row - 1;
-	  this->setCursorPosition(position);
+		this->setCursorPosition(position);
 }
 
 Position Terminal::getCursorPosition() const
@@ -107,7 +107,7 @@ Position Terminal::getCursorPosition() const
 
 void Terminal::restoreCursorPosition()
 {
-	  this->setCursorPosition(this->_currentPos);
+		this->setCursorPosition(this->_currentPos);
 }
 
 void Terminal::_sigwinchHandler(int /*signal*/)
@@ -122,17 +122,18 @@ void Terminal::_updateWinSize()
 		ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 		this->_limits.col = size.ws_col;
 		this->_limits.row = size.ws_row;
+//		std::cout << "size col " << size.ws_col << " row " << size.ws_row << std::endl;
 		this->_updatePosition();
 }
 
 int Terminal::getColumns() const
 {
-		return this->_currentPos.col;
+		return this->_limits.col;
 }
 
 int Terminal::getRows() const
 {
-		return this->_currentPos.row;
+		return this->_limits.row;
 }
 
 void Terminal::increment(int number)
@@ -144,5 +145,5 @@ void Terminal::increment(int number)
 	  if (this->_currentPos.row >= this->_limits.row)
 	  {
 			this->_currentPos.row = this->_limits.row;
-		}
+	  }
 }
