@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:22:13 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/25 14:08:13 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/09 13:43:41 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@
 # define FIRST			1				//used to set first message send to client
 # define NORMALMSG		0				//normal messages to clients
 
-# define PINGTOUT		9				//timeout over ping events
-# define REGTOUT		20				//max timeout for register one user
-# define IDLETOUT		15				//general timeout tick control
-# define PONG_STR		"Numantinos"	//Cadena de texto para pong
+# define PINGTOUT		9000				//timeout over ping events
+# define REGTOUT		9000				//max timeout for register one user
+# define IDLETOUT		9000				//general timeout tick control
+//# define PONG_STR		"Numantinos"	//Cadena de texto para pong
 
 # endif

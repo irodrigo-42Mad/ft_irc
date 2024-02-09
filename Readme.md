@@ -96,12 +96,9 @@ From this moment we can create channels, send private messages, and using normal
 *
 
 - JOIN
-*
-```bash
-JOIN <#channel> [password]
-```
-If the channel is protected with a password, it is necessary to include it in the order. If the channel does not exist, it will be created for us and we will enter it as a single user.
-*
+	JOIN <#channel> [password]
+
+<italic>If the channel is protected with a password, it is necessary to include it in the order. If the channel does not exist, it will be created for us and we will enter it as a single user.</italic>
 
 - WELCOME
 *

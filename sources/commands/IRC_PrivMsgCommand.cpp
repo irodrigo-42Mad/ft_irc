@@ -4,7 +4,7 @@
 # include "IRC_Errors.hpp"
 
 IRC_PrivMsgCommand::IRC_PrivMsgCommand()
-	: IRC_ACommand("PRIVMSG", 1, REGISTERED)
+	: IRC_ACommand("PRIVMSG", 2, REGISTERED)
 {}
 
 void IRC_PrivMsgCommand::execute(IRC_Message& message) {
@@ -13,6 +13,11 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 	IRC_User& user = message.getUser();
 	IRC_Server& server = message.getServer();
 
+	if (message[1].empty())
+	{
+		user.reply(user, ERR_NOTEXTTOSEND(user.getName()));
+		return ;
+	}
 	
 	// ToDo:	¿los dos usuarios deben estar en el mismo canal para enviarse mensajes?
 	//			¿qué diferencia hay entre el comando privmsg y notice?

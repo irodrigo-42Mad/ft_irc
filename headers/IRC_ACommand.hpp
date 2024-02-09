@@ -10,10 +10,11 @@ enum IRC_AccessLevel {
 	OPERATOR
 };
 
-	// IRC Commands
+// IRC Commands
 
-//USER LEVEL FLAG: 0 UNREGISTERED, 1 REGISTERED, 2 OPERATOR
+// USER LEVEL FLAG: 0 UNREGISTERED, 1 PENDING 2 REGISTERED, 3 OPERATOR
 
+// HAY QUE MODIFICAR LOS VALORES DE ESTO
 //void				cmdPass(IRC_Message& message); // 1 UNREGISTERED
 //void				cmdNick(IRC_Message& message); // 1 UNREGISTERED
 //void				cmdUser(IRC_Message& message); // 5 UNREGISTERED

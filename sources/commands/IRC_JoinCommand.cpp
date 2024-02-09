@@ -33,6 +33,7 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 	{
 		server.addUserToChannel(user, *channel);
 		channel->send(":" + user.getMask() + " JOIN " + channel->getName());
+		//TODO: falta enviar names al entrar en el canal.
 	}
 
 	/*
