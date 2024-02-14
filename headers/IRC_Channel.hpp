@@ -94,8 +94,8 @@ struct IRC_Channel
 		bool hasPrivate();
 		bool unsetPrivate();
 
-		const std::string getModes() const;
-		std::vector<std::string> setModes(const std::vector<std::string>& modes);
+		std::string getModes() const;
+		std::string setModes(const std::vector<std::string>& modes);
 
   	bool empty() const;
 	

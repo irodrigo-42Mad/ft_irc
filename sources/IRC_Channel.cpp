@@ -403,14 +403,14 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 			;
 	}
 	
-	for (std::vector::iterator it = result_param.begin(); it != result_param.end(); ++it)
+	for (std::vector<std::string>::iterator it = result_param.begin(); it != result_param.end(); ++it)
 	{
-		result_mode + " " + *it;
+		result_mode += " " + *it;
 	}
 	return (result_mode);
 }
 
-const std::string IRC_Channel::getModes() const
+std::string IRC_Channel::getModes() const
 {
 	std::string modes;
 	std::string params;
