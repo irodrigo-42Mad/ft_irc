@@ -7,12 +7,12 @@ static void	nicknamesList(IRC_User& user, IRC_Channel *channel)
 	std::string names;
 
 	for (IRC_Channel::usersConstIterator it = channel->getUsers().begin(); it != (channel->getUsers()).end(); ++it)
-    {
-		if (channel->getCreator().getName() == (*it)->getName())
-			names += "@" + (*it)->getName();
-		else
-			names += (*it)->getName();
-		names += " ";
+  {
+		if (channel->isOperator(**it)) //channel->getCreator().getName() == (*it)->getName())
+			names += "@";
+		if (channel->isVoice(**it))
+			names += "+";
+		names += (*it)->getName() + " ";
 	}
 	user.reply(user, RPL_NAMREPLY(user.getName(), channel->getName(), names));
 }
