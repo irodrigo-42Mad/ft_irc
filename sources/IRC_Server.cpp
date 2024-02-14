@@ -783,24 +783,31 @@ bool	IRC_Server::_checkClientTime(IRC_User *user)
 
 void    IRC_Server::channelList(IRC_User& user)
 {
+		std::ostringstream oss;
     std::string line;
     
     for (channelsNameConstIterator it = this->_channelsByName.begin(); it != this->_channelsByName.end(); ++it)
     {
         IRC_Channel *channel = (*it).second;
-        user.reply(*this, RPL_LIST(user.getName(), channel->getName(), "mode", channel->getTopic()));
+
+				oss << channel->getNumUsers();
+        user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[ModeList]" + channel->getTopic()));
+        oss.clear();
     }
     user.reply(*this, RPL_LISTEND(user.getName()));
 }
 
 void    IRC_Server::channelListByName(IRC_User& user, std::string name)
 {
+		std::ostringstream oss;
     std::string line;
     IRC_Channel *channel = this->findChannelByName(name);
     
     if (channel)
     {
-        user.reply(*this, RPL_LIST(user.getName(), channel->getName(), "mode", channel->getTopic()));
+				oss << channel->getNumUsers();
+        user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[ModeList]" + channel->getTopic()));
+        oss.clear();
     }
 }
 
