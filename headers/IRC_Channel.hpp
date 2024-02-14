@@ -13,7 +13,9 @@
 #ifndef IRC_CHANNEL_HPP
 # define IRC_CHANNEL_HPP
 
+# include <ctime>
 # include <string>
+# include <vector>
 # include <set>
 
 struct IRC_Server;
@@ -21,26 +23,81 @@ struct IRC_User;
 
 struct IRC_Channel
 {
-	typedef std::set<IRC_User*>			usersType;
-	typedef usersType::iterator			usersIterator;
+	typedef std::set<std::string>			bansType;
+	typedef bansType::iterator				bansIterator;
+	typedef bansType::const_iterator	bansConstIterator;
+
+	typedef std::set<IRC_User*>				usersType;
+	typedef usersType::iterator			  usersIterator;
 	typedef usersType::const_iterator	usersConstIterator;
+
 
 	IRC_Channel(const std::string& name, IRC_User& user);
 	~IRC_Channel();
 
   	const std::string&	getName() const;
   	const std::string&	getTopic() const;
-  	const IRC_User&		getCreator() const;
+//  	const IRC_User&		getCreator() const;
   	const usersType&	getUsers() const;
   	int 				getNumUsers() const;
 	
-  	void 				setTopic(const std::string& newTopic);
-	
-  	bool 				addUser(IRC_User& user);
-  	bool 				hasUser(IRC_User& user);
-  	void 				removeUser(IRC_User& user);
+		time_t getCreationTime() const;
 
-  	bool 				empty() const;
+  	void setTopic(const std::string& newTopic);
+	
+  	bool addUser(IRC_User& user);
+  	bool hasUser(const IRC_User& user);
+  	void removeUser(IRC_User& user);
+
+  	bool addOperator(IRC_User& user);
+  	bool isOperator(const IRC_User& user);
+  	bool removeOperator(IRC_User& user);
+
+  	bool addVoice(IRC_User& user);
+  	bool isVoice(const IRC_User& user);
+  	bool removeVoice(IRC_User& user);
+
+  	bool setInvite();
+  	bool hasInvite();
+  	bool unsetInvite();
+
+  	bool setKey(const std::string& value);
+  	bool hasKey();
+  	bool unsetKey(const std::string& value);
+  	bool isSameKey(const std::string& value);
+
+  	bool setNoExternalMessages();
+		bool hasNoExternalMessages();
+  	bool unsetNoExternalMessages();
+
+		bool addBan(const std::string& mask);
+		bool isBanned(const IRC_User& user);
+		bool removeBan(const std::string& mask);
+
+		bool setTopicProtection();
+		bool hasTopicProtection();
+		bool unsetTopicProtection();
+
+		bool setLimit(int value);
+		bool hasLimit();
+		bool unsetLimit();
+
+		bool setModerate();
+		bool hasModerate();
+		bool unsetModerate();
+
+		bool setSecret();
+		bool hasSecret();
+		bool unsetSecret();
+
+		bool setPrivate();
+		bool hasPrivate();
+		bool unsetPrivate();
+
+		const std::string getModes() const;
+		std::string setModes(const std::vector<std::string>& modes);
+
+  	bool empty() const;
 	
   	void 				sendExcept(const IRC_User* exceptUser, const std::string& data);
   	void 				send(const std::string&);
@@ -54,12 +111,23 @@ struct IRC_Channel
   	void 				sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter);
 
 private:
+	usersType				_users;
+	usersType				_operUsers;
+	usersType				_voiceUsers;
+	bansType				_bans;
+
+	time_t					_creationTime;
 	std::string			_channelName;
-	IRC_User&			_creator;
 	std::string			_topic;
 	std::string			_key;
-	int					_limit;
-	usersType			_users;
+	int							_limit;
+	bool						_private;
+	bool						_secret;
+	bool						_moderate;
+	bool						_noExternalMessages;
+	bool						_invite;
+	bool						_topicProtection;
+
 };
 
 #endif

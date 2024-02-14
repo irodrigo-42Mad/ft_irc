@@ -31,6 +31,8 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define RPL_ISUPPORT(nickname, tokens)							"005 " + nickname + " " + tokens + " :are supported by this server"
 # define RPL_LIST(nickname, channel, mode, topic)		"322 " + nickname + " " + channel + " " + mode + " :" + topic
 # define RPL_LISTEND(nickname)							"323 " + nickname + " :End of LIST"
+# define RPL_CHANNELMODEIS(nickname, channel, mode_data)		"324 " + nickname + " " + channel + " " + mode_data
+# define RPL_CREATIONTIME(nickname, channel, creation_time)	"329 " + nickname + " " + channel + " :" + creation_time
 # define RPL_NOTOPIC(nickname, channel)					"331 " + nickname + " " + channel + " :No topic is set"
 # define RPL_TOPIC(nickname, channel, topic)			"332 " + nickname + " " + channel + " :" + topic
 # define RPL_INVITING(nickname, channel)				"341 " + nickname + " " + channel + " : Invited"	//ToDo: el mensaje de confirmación me lo he inventado. No sé si lleva. Probarlo.
@@ -68,6 +70,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_NOPRIVILEGES(nickname)						"481 " + nickname + " :Permission Denied- You're not an IRC operator"
 # define ERR_CHANOPRIVSNEEDED(nickname, channel)		"482 " + nickname + " " + channel + " :You're not channel operator"
 # define ERR_NOOPERHOST(nickname)						"491 " + nickname + " :No O-lines for your host"
+# define ERR_USERSDONTMATH(nickname)				"502 " + nickname + " :Cannot change mode for other users"
 # define ERR_PONG(mask, message)						"ERROR: Closing link: (" + mask + ") " + message // unregistered [Registration timeout] o bien registered [Ping timeout: 120 seconds]
 // other
 # define RPL_PRIVMSG(mask, name, message)				mask + " PRIVMSG " + name + " :" + message

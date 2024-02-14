@@ -16,12 +16,12 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
 	std::string reason = "No reason specified!";
 	
 	if (!channel)
-    {
-        user.reply(server, ERR_NOSUCHCHANNEL(nickName, message[1]));
-        return ;
-    }
+  {
+		user.reply(server, ERR_NOSUCHCHANNEL(nickName, message[1]));
+    return ;
+  }
 
-	if (toUpperNickname(user.getName()) != toUpperNickname(channel->getCreator().getName()))
+	if (!channel->isOperator(user)) //toUpperNickname(user.getName()) != toUpperNickname(channel->getCreator().getName()))
 	{
 		user.reply(server, ERR_CHANOPRIVSNEEDED(nickName, channel->getName()));
 		return ;

@@ -34,7 +34,7 @@ void IRC_TopicCommand::execute(IRC_Message& message) {
 			  user.reply(server, ERR_NOTONCHANNEL(user.getName(), name));
 				return ;
 		}
-		if (&channel->getCreator() != &user)
+		if (channel->isOperator(user)) //&channel->getCreator() != &user)
 		{
 				user.reply(server, ERR_CHANOPRIVSNEEDED(user.getName(), channel->getName()));
 				return ;
