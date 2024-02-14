@@ -12,6 +12,7 @@
 
 #include "IRC_Server.hpp"
 #include "IRC_ACommand.hpp"
+#include "IRC_Errors.hpp"
 #include "IRC_Message.hpp"
 #include "IRC_Utils.hpp"
 #include "IRC_Response.hpp"
@@ -508,6 +509,12 @@ bool IRC_Server::setPendingUser(IRC_User& user)
 
 
         //TODO: check password?  and.... return function can be boolean?
+    if (this->_password != user.getPass())
+    {
+    	user.reply(*this, ERR_PASSWDMISMATCH(user.getName()));
+    	this->quitUser(user, "Password incorrect");
+    	return false;
+    }
 		user.setAccess(PENDING);
         user._pingText = random;
         this->ping(&user, random);
@@ -670,7 +677,7 @@ void IRC_Server::_fillCommands()
     this->_addCommand(new IRC_ListCommand);
     this->_addCommand(new IRC_MOTDCommand);
     this->_addCommand(new IRC_NamesCommand);
-	this->_addCommand(new IRC_NickCommand);
+		this->_addCommand(new IRC_NickCommand);
     this->_addCommand(new IRC_NoticeCommand);
     this->_addCommand(new IRC_OperCommand);
     this->_addCommand(new IRC_PartCommand);

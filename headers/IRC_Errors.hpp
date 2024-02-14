@@ -58,7 +58,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_NOTREGISTERED(nickname, command)			"451 " + nickname + " " + command + " :You have not registered"
 # define ERR_NEEDMOREPARAMS(nickname, command)			"461 " + nickname + " " + command + " :Not enough parameters"
 # define ERR_ALREADYREGISTRED(nickname)			        "462 " + nickname + " :Unauthorized command (already registered)"	//ToDo: repasar esto
-# define ERR_PASSWDMISMATCH(nickname, source)			"464 " + nickname + " :Password incorrect"
+# define ERR_PASSWDMISMATCH(nickname)							"464 " + nickname + " :Password incorrect"
 # define ERR_CHANNELISFULL(nickname, channel)           "471 " + nickname + " " + channel + " :Cannot join channel (+l)"	//ToDo: ídem que el siguiente
 # define ERR_INVITEONLYCHAN(nickname, channel)			"473 " + nickname + " " + channel + " :Cannot join channel (+i)"	//ToDo: repasar esto porque creo que tiene modos
 # define ERR_BANNEDFROMCHAN(nickname, channel)   		"474 " + nickname + " " + channel + " :Cannot join channel (+b)"	//ToDo: ídem
