@@ -14,6 +14,12 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 	IRC_User& user = message.getUser();
 	//IRC_Channel *newChannel;
 
+	if (channelName[0] != '#')
+	{
+		user.reply(server, ERR_BADCHANMASK(user.getName(), channelName));		
+		return ;
+	}
+
 	if (!channel) // channel doesn't exist
 	{
 		//std::cout << "new channel " << message.operator[](0) << "created" << std::endl;

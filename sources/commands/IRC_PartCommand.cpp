@@ -16,7 +16,9 @@ void IRC_PartCommand::execute(IRC_Message& message)
 		std::string msg;
 
 		if (message.size() > 1)
+		{
 			msg = message[1];
+		}
 
 		if (!channel)
 		{
