@@ -706,6 +706,7 @@ void IRC_Server::_fillCommands()
     this->_addCommand(new IRC_KickCommand);
     this->_addCommand(new IRC_KillCommand);
     this->_addCommand(new IRC_ListCommand);
+    this->_addCommand(new IRC_ModeCommand);
     this->_addCommand(new IRC_MOTDCommand);
     this->_addCommand(new IRC_NamesCommand);
 		this->_addCommand(new IRC_NickCommand);
