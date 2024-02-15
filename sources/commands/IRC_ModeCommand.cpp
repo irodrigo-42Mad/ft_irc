@@ -39,7 +39,7 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 		user.reply(server, ERR_NOSUCHCHANNEL(user.getName(), message[0]));
 		return ;
 	}
-	if (message.size() == 2) //empty modelist parameter
+	if (message.size() == 1) //empty modelist parameter
 	{
 		creationTime += targetChannel->getCreationTime();
 		user.reply(server, RPL_CHANNELMODEIS(user.getName(), targetChannel->getName(), targetChannel->getModes()));
@@ -50,13 +50,10 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 	else //modifying chan modes
 	{
 	  std::vector<std::string> modes(message.getParams().begin() + 1, message.getParams().end());
+		std::string response;
 
-		if (targetChannel->isOperator(user)) // check if sender user is oper in this channel
-		{
-			targetChannel->setModes(modes);
-		}
-		//TODO: process modelist
-		debug << "Processing modelist '" << modes << "' of " << targetChannel << std::endl;
+		response = targetChannel->setModes(modes);
+		debug << "Processing modelist '" << response << "' of " << targetChannel << std::endl;
 	}
 }
 
