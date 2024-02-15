@@ -27,14 +27,14 @@ IRC_Channel::IRC_Channel(std::string const &name, IRC_User& creator)
     //this->_key = ""; // Puedes establecer una clave si es necesario.
     this->_limit = 0; // Puedes establecer un límite si es necesario.
     this->_users.insert(&creator); // Agregar el creador como miembro del canal
-		debug << "IRC_Channel constructor" << std::endl;
+		Console::debug << "IRC_Channel constructor" << std::endl;
 
     // También puedes configurar otros modos de canal, como invitaciones, si es necesario.
 }
 
 IRC_Channel::~IRC_Channel() // destructor de canal, veremos a ver que debemos hacer aqui.
 {
-		debug << "IRC_Channel destructor" << std::endl;
+		Console::debug << "IRC_Channel destructor" << std::endl;
 }
 
 bool    IRC_Channel::addUser(IRC_User& userToAdd)

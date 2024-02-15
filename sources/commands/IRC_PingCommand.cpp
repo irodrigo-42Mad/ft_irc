@@ -17,7 +17,7 @@ void IRC_PingCommand::execute(IRC_Message& message)
 		// enviar peticion de pong al usuario
 		// " PONG " + message.get_server().getServerName() + " :" + message.get_params()[0] + "\r\n";
 
-		debug << "PING command executed" << std::endl;
+		Console::debug << "PING command executed" << std::endl;
 }
 
 /*

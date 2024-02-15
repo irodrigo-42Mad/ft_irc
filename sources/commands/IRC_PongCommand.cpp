@@ -27,5 +27,5 @@ void IRC_PongCommand::execute(IRC_Message &message) {
 		}
 	}
 	user.disablePingTimeout();
-	debug << "PONG command executed" << std::endl;
+	Console::debug << "PONG command executed" << std::endl;
 }

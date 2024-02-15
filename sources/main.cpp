@@ -47,6 +47,7 @@ int	main(int argc, char *argv[])
 	irc.start();    		 	// lanzaremos el bucle del pool
 	srvState = irc.getState();  // comprobamos que no está caido en cada ejecución
 
+	std::cout << "Status: " << srvState << std::endl;
 /*	while (srvState != IRC_Server::DIE)
 	{
 		try {

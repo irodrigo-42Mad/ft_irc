@@ -14,26 +14,26 @@ struct Position
 struct Terminal
 {
 	Terminal();
-  ~Terminal();
+	~Terminal();
 
-  void enableEcho();
-  void disableEcho();
-  void hideCursor();
-  void showCursor();
-  void setCursorBottom();
-  void setCursorTop();
-  void restoreCursorPosition();
-  void clearCurrentRow();
+	void enableEcho();
+	void disableEcho();
+	void hideCursor();
+	void showCursor();
+	void setCursorBottom();
+	void setCursorTop();
+	void restoreCursorPosition();
+	void clearCurrentRow();
 
-  int getRows() const;
-  int getColumns() const;
+	int getRows() const;
+	int getColumns() const;
 
-  void increment(int number);
+	void increment(int number);
 
-  Position getCursorPosition() const;
-  void setCursorPosition(Position position);
+	Position getCursorPosition() const;
+	void setCursorPosition(Position position);
 
-  CustomBuffer* getCustomBuffer();
+	CustomBuffer* getCustomBuffer();
 
 private:
 	struct termios	_originalTerm;

@@ -22,7 +22,7 @@ IRC_User::IRC_User(struct pollfd* pollPosition)
 	, _loginTime(time(NULL))
 	, _deleteMarked(false)
 {
-	debug << "User &" << this->_ident << "(" << this->_pollPosition->fd << ")" << " & created desde el constructor con un parámetro" << std::endl;
+	Console::debug << "User &" << this->_ident << "(" << this->_pollPosition->fd << ")" << " & created desde el constructor con un parámetro" << std::endl;
 }
 
 IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const std::string& ident, const std::string& realname)
@@ -36,7 +36,7 @@ IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const s
 	, _loginTime(time(NULL))
 	, _deleteMarked(false)
 {
-	debug << "User &" << this->_ident << "& created desde el constructor con 4 parámetros" << std::endl;
+	Console::debug << "User &" << this->_ident << "& created desde el constructor con 4 parámetros" << std::endl;
 }
 
 IRC_User::~IRC_User()

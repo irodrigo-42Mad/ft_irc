@@ -8,5 +8,5 @@ IRC_OperCommand::IRC_OperCommand()
 
 void IRC_OperCommand::execute(IRC_Message& /*message*/)
 {
-		debug << "OPER command executed" << std::endl;
+	Console::debug << "OPER command executed" << std::endl;
 }

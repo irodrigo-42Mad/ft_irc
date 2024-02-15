@@ -35,16 +35,16 @@ IRC_Server::IRC_Server(char *port, const std::string &password)
     , _connectedClientsNum(0)
     , _die(false)
 {
-		Console::setLogLevel(LOGLEVEL_DEBUG);
-		Console::setDisplayManager(this);
+		Console::Console::setLogLevel(Console::LOGLEVEL_DEBUG);
+		Console::Console::setDisplayManager(this);
 		this->_setSignals();
 
     if (!_createServerSocket()) {
-			error << "no es posible inicializar el socket" << std::endl;
+			Console::error << "no es posible inicializar el socket" << std::endl;
 			return ;
     }
 		if (!listen(10)) {
-			error << "No se puede abrir el puerto" << std::endl;
+			Console::error << "No se puede abrir el puerto" << std::endl;
 			return ;
 		}
 
@@ -123,7 +123,7 @@ bool IRC_Server::_createServerSocket()
 bool IRC_Server::listen(int backlog)
 {
     // If we got here, it means we didn't get bound
-		debug << "listener: " << this->_serverFd << std::endl;
+		Console::debug << "listener: " << this->_serverFd << std::endl;
     if (::listen(this->_serverFd, backlog) == -1)
         return (false);
     return (true);
@@ -170,30 +170,30 @@ void    IRC_Server::start()
 		terminal.disableEcho();
 		terminal.hideCursor();
 
-		log << "Server started (" << this->_host << ":" << this->_port << ")" << std::endl;
+		Console::log << "Server started (" << this->_host << ":" << this->_port << ")" << std::endl;
 
-		// Main loop
-    while (!this->_die || !this->_usersByFd.empty())
-    {
-				Console::displayBottom();
+	// Main loop
+	while (!this->_die || !this->_usersByFd.empty())
+	{
+		Console::Console::displayBottom();
 
-        int poll_count = poll(this->_pfds, this->_connectedClientsNum, 200);
-        if (poll_count < 0 && !this->_forceDie)
+        	int poll_count = poll(this->_pfds, this->_connectedClientsNum, 200);
+        	if (poll_count < 0 && !this->_forceDie)
+        	{
+			Console::error << "Server::start fatal server error" << std::endl;
+			this->_die = true;
+        	}
+        	// Run through the existing connections looking for data to read
+        	for (int i = 0; i < this->_connectedClientsNum; ++i)    // Check if someone's ready to read
         {
-						error << "Server::start fatal server error" << std::endl;
-						this->_die = true;
-        }
-        // Run through the existing connections looking for data to read
-        for (int i = 0; i < this->_connectedClientsNum; ++i)    // Check if someone's ready to read
-        {
-		    //if (this->_pfds[i].revents)
-			user = this->findUserByFd(this->_pfds[i].fd);
-            if (this->_pfds[i].revents & POLLIN)             // We got one!!
-            {
-                if (this->_pfds[i].fd == this->_serverFd)    // If listener is ready to read, handle new connection
-                {
-                    addrlen = sizeof(remoteaddr);
-                    newFd = accept(this->_serverFd, (struct sockaddr *)&remoteaddr, &addrlen);
+	//if (this->_pfds[i].revents)
+	user = this->findUserByFd(this->_pfds[i].fd);
+	if (this->_pfds[i].revents & POLLIN)             // We got one!!
+	{
+		if (this->_pfds[i].fd == this->_serverFd)    // If listener is ready to read, handle new connection
+		{
+			addrlen = sizeof(remoteaddr);
+			newFd = accept(this->_serverFd, (struct sockaddr *)&remoteaddr, &addrlen);
                     if (newFd == -1)
                         ft_err_msg("can not allocate socket client information", ERR_STILL_SAVED, 2);
                         //perror("accept");
@@ -273,10 +273,10 @@ void IRC_Server::_readFromUser(IRC_User* user)
     if (nbytes <= 0)        // Got error or connection closed by client
     {
         if (nbytes == 0)    // Connection closed
-            debug << "pollserver: Socket " << user->getFd() << " hung up" << std::endl;
+            Console::debug << "pollserver: Socket " << user->getFd() << " hung up" << std::endl;
         else
         {
-						error << "Can not receive client data" << std::endl;
+						Console::error << "Can not receive client data" << std::endl;
 						this->_die = true;
 						return ;
         }
@@ -455,7 +455,7 @@ IRC_User* IRC_Server::_createUser(int fd, struct sockaddr_storage* addrStorage)
 		user->setHost(remoteIP);
 		this->_usersByFd[fd] = user;
 
-		debug << "New connection accepted (" << fd << ")" << std::endl;
+		Console::debug << "New connection accepted (" << fd << ")" << std::endl;
 	
 //		co << "paco paco" << "porras porras" << 44 << std::endl;
 		//Console::dd << "New connection accepted. FD: " << fd;
@@ -469,7 +469,7 @@ void IRC_Server::_deleteUser(IRC_User* user)
 		{
 				this->_usersByName.erase(toUpperNickname(user->getName()));
 		}
-		debug << "User " << user->getMask() << " destroyed (" << user->getFd() << ")" << std::endl;
+		Console::debug << "User " << user->getMask() << " destroyed (" << user->getFd() << ")" << std::endl;
     ::close(user->getFd());
 		this->_delFromPfds(user->getPollPosition());
     delete user;
@@ -480,14 +480,14 @@ IRC_Channel* IRC_Server::createChannel(const std::string& name, IRC_User& user)
     IRC_Channel* channel = new IRC_Channel(name, user);
 
     this->_channelsByName[name] = channel;
-		log << "User " << user.getMask() << " created the channel " << name << std::endl;
+		Console::log << "User " << user.getMask() << " created the channel " << name << std::endl;
     return channel;
 }
 
 void IRC_Server::deleteChannel(IRC_Channel& channel)
 {
 		this->_channelsByName.erase(channel.getName());	
-		log << "Channel " << channel.getName() << " deleted" << std::endl;
+		Console::log << "Channel " << channel.getName() << " deleted" << std::endl;
 		delete &channel;
 }
 
@@ -518,7 +518,7 @@ bool IRC_Server::setPendingUser(IRC_User& user)
 		user.setAccess(PENDING);
         user._pingText = random;
         this->ping(&user, random);
-		log << "User " << user.getMask() << " pending" << std::endl;
+		Console::log << "User " << user.getMask() << " pending" << std::endl;
 		return true;
 	}
 	return false;
@@ -621,7 +621,7 @@ IRC_Response IRC_Server::changeNameUser(IRC_User& user, const std::string& nickn
 		if (user._name != "*")
 		{
 				user.sendCommonUsers(":" + user.getMask() + " NICK " + nickname);
-				log << "User " << user._name << " change nick to " << nickname << std::endl;			
+				Console::log << "User " << user._name << " change nick to " << nickname << std::endl;			
 		}
 		user.setName(nickname);
 		return (SUCCESS);

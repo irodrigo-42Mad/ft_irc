@@ -5,6 +5,9 @@
 
 # include <iostream>
 
+namespace Console
+{
+
 enum LogLevel {
 	LOGLEVEL_NONE,
 	LOGLEVEL_LOG,
@@ -81,5 +84,7 @@ extern Console debug;
 extern Console log;
 extern Console warning;
 extern Console error;
+
+} //namespace Console
 
 #endif

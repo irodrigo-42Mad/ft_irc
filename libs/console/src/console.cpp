@@ -5,6 +5,9 @@
 #include <sstream>
 #include <sys/ioctl.h>
 
+namespace Console
+{
+
 LogLevel Console::logLevel = LOGLEVEL_NONE;
 
 Console debug = Console(std::cout, "DEBUG", 36, LOGLEVEL_DEBUG);
@@ -78,4 +81,6 @@ void Console::_timestamp()
 
 		strftime(buffer, sizeof(buffer), "%H:%M:%S", timeinfo);
 		this->_os << "[" << buffer << " " << this->_tag + "] ";
-} 
+}
+
+} // namespace Console 

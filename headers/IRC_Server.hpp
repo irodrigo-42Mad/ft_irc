@@ -29,7 +29,7 @@
 
 struct IRC_Message;
 
-struct IRC_Server : public Console::IDisplayManager
+struct IRC_Server : public Console::Console::IDisplayManager
 {
 		typedef std::map<std::string, IRC_User*>	usersNameType;			//map<nick, user*>
 		typedef usersNameType::iterator				usersNameIterator;
