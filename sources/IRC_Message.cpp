@@ -17,33 +17,33 @@
 #include <iostream>
 #include <sstream>
 
-void print_command(IRC_Message* msg) {
-		IRC_Message::paramsType params = msg->getParams();
+void print_command(IRC_Message* msg)
+{
+	IRC_Message::paramsType params = msg->getParams();
 
-    std::cout << "cmd = " << msg->getCmd() << std::endl;
-    std::cout << "| params_count = " << msg->size();
-    std::cout << "| server_address = " << &msg->getServer();
-    std::cout << "| source_address = " << &msg->getUser() << std::endl;
+	std::cout << "cmd = " << msg->getCmd() << std::endl;
+	std::cout << "| params_count = " << msg->size();
+	std::cout << "| server_address = " << &msg->getServer();
+	std::cout << "| source_address = " << &msg->getUser() << std::endl;
     
-    for (size_t i = 0; i < params.size(); ++i)
-        std::cout << "param[" << i << "] = " << params[i] << std::endl;
+	for (size_t i = 0; i < params.size(); ++i)
+		std::cout << "param[" << i << "] = " << params[i] << std::endl;
     
-    std::cout << std::endl;
+	std::cout << std::endl;
 }
 
 IRC_Message::IRC_Message(IRC_User* user, IRC_Server* server, const std::string& data)
-		: _user(*user)
-		, _server(*server)
+	: _user(*user)
+	, _server(*server)
 {
-    this->_processCommand(data);
-    //print_command(this);
+	this->_processCommand(data);
+	//print_command(this);
 	//aquí el parseo del mensaje del cliente
 }
 
-void IRC_Message::_processCommand(std::string data)
+void IRC_Message::_processCommand(std::string buffer)
 {
-    std::string buffer = data;
-    size_t position;
+	size_t position;
 
     /*
         :prefix comando parámetros -> FORMATO MENSAJE IRC
@@ -77,7 +77,7 @@ void IRC_Message::_processCommand(std::string data)
             if (position != std::string::npos)
             {
                 buffer.erase(0, 1);
-                this->_params.push_back(buffer.erase(buffer.length() - 2, 2));
+                this->_params.push_back(buffer.erase(buffer.length(), 2));
                 break ;
             }
             this->_params.push_back(myparam);
@@ -86,7 +86,7 @@ void IRC_Message::_processCommand(std::string data)
         //std::cout << "num params: " << this->_params.size() << std::endl;
     }
     else
-        this->_cmd = buffer.erase(buffer.length() - 2, 2);
+        this->_cmd = buffer.erase(buffer.length(), 2);
 }
 
 const IRC_Message::paramsType&	IRC_Message::getParams() const

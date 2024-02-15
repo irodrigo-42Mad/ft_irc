@@ -74,46 +74,50 @@ bool IRC_Channel::empty() const
 
 const IRC_User& IRC_Channel::getCreator() const
 {
-    return (this->_creator);
+	return (this->_creator);
 }
 
 void IRC_Channel::sendExcept(const IRC_User* exceptUser, const std::string &data)
 {
-		if (exceptUser)
-				this->_users.erase(const_cast<IRC_User*>(exceptUser));
-		this->send(data);
-		if (exceptUser)
-				this->_users.insert(const_cast<IRC_User*>(exceptUser));
+	if (exceptUser)
+	{
+		this->_users.erase(const_cast<IRC_User*>(exceptUser));
+	}
+	this->send(data);
+	if (exceptUser)
+	{
+		this->_users.insert(const_cast<IRC_User*>(exceptUser));
+	}
 }
 
 void IRC_Channel::send(const IRC_User& user, const std::string& data, const std::string& lastParameter)
 {
-		this->sendExcept(NULL, user, data, lastParameter);
+	this->sendExcept(NULL, user, data, lastParameter);
 }
 
 void IRC_Channel::send(const IRC_Server& server, const std::string& data, const std::string& lastParameter)
 {
-		this->sendExcept(NULL, server, data, lastParameter);
+	this->sendExcept(NULL, server, data, lastParameter);
 }
 
 void IRC_Channel::send(const std::string& data)
 {
-    for (usersConstIterator it = this->_users.begin(); it != this->_users.end(); ++it)
-    {
-        (*it)->send(data);
-    }
+	for (usersConstIterator it = this->_users.begin(); it != this->_users.end(); ++it)
+	{
+		(*it)->send(data);
+	}
 }
 
 void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter)
 {
-		if (lastParameter.empty())
-		{
-				this->sendExcept(exceptUser, ":" + user.getMask() + " " + data);
-		}
-		else
-		{
-				this->sendExcept(exceptUser, ":" + user.getMask() + " " + data + " :" + lastParameter);
-		}
+	if (lastParameter.empty())
+	{
+		this->sendExcept(exceptUser, ":" + user.getMask() + " " + data);
+	}
+	else
+	{
+		this->sendExcept(exceptUser, ":" + user.getMask() + " " + data + " :" + lastParameter);
+	}
 }
 
 void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter)

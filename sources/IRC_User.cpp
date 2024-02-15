@@ -117,8 +117,17 @@ bool IRC_User::deleteMarked() const
 void	IRC_User::send(const std::string& data)
 {
 	if (this->_deleteMarked)
+	{
 		return ;
-	this->_outputBuffer += data + "\r\n";
+	}
+	if (data.size() > IRC_LINELEN - 2)
+	{
+		this->_outputBuffer += data.substr(0, IRC_LINELEN - 2) + "\r\n";
+	}
+	else
+	{
+		this->_outputBuffer += data + "\r\n";
+	}
 	this->_pollPosition->events |= POLLOUT;
 /*
 	std::string bufferToSend = message + "\r\n";

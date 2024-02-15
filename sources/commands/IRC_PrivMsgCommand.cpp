@@ -23,7 +23,7 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 	//			¿qué diferencia hay entre el comando privmsg y notice?
 	
 	//buscar un usuario/canal
-	if (msgTarget.at(0) == '#')
+	if (msgTarget[0] == '#')
 	{
 		IRC_Channel *targetChannel = server.findChannelByName(msgTarget);
 		if (targetChannel)

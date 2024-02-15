@@ -7,11 +7,13 @@ IRC_PongCommand::IRC_PongCommand()
 	: IRC_ACommand("PONG", 1, UNREGISTERED)
 {}
 
-void IRC_PongCommand::execute(IRC_Message &message) {
+void IRC_PongCommand::execute(IRC_Message &message)
+{
 	IRC_User &user = message.getUser();
 	IRC_Server &server = message.getServer();
 	const std::string &pingText = message[0];
 
+	Console::debug << "pingText = '" << pingText << "'" << std::endl;
 	if (user.getAccess() == PENDING)
 	{
 		if (pingText == user.getPingText())
@@ -19,7 +21,7 @@ void IRC_PongCommand::execute(IRC_Message &message) {
 			user.setAccess(REGISTERED);
 			user.disablePingTimeout();
 			server.sendWelcomeMsg(user);
-    		server.sendMOTDMsg(user);
+			server.sendMOTDMsg(user);
 		}
 		else
 		{
@@ -27,5 +29,4 @@ void IRC_PongCommand::execute(IRC_Message &message) {
 		}
 	}
 	user.disablePingTimeout();
-	Console::debug << "PONG command executed" << std::endl;
 }

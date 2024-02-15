@@ -38,4 +38,6 @@
 # define IDLETOUT		9000				//general timeout tick control
 //# define PONG_STR		"Numantinos"	//Cadena de texto para pong
 
-# endif
+# define IRC_LINELEN 		512
+
+#endif
