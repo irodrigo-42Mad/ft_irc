@@ -252,8 +252,8 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 	bool plus = true;
 	int paramIndex = 1;
 	int modeCount = 0;
-	
-	for (std::string::const_iterator it = modes.begin(); it != modes.end() || modeCount < 6; ++it)
+
+	for (std::string::const_iterator it = modes.begin(); it != modes.end() && modeCount < 6; ++it)
 	{
 		// TODO: Check if is oper to modify mode
 		if (*it == '+')
@@ -300,14 +300,13 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 				++modeCount;
 				result_mode += "+l";
 				result_param.push_back(limit);
+				++paramIndex;
 			}
 			else if (!plus && this->unsetLimit())
 			{
 				++modeCount;
 				result_mode += "-l";
-				result_param.push_back(limit);
 			}
-			++paramIndex;
 		}
 		else if (*it == 'm')
 		{
