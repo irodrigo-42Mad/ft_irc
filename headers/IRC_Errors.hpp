@@ -24,10 +24,11 @@
 int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 
 // replies
-# define RPL_YOURHOST(servername, version)				"002 Your host is " + servername + ", running version " + version
-# define RPL_CREATED(date)								"003 This server was created " + date
-# define RPL_MYINFO(servername, version)				"004 " + servername + " " + version + " itkol"
 # define RPL_WELCOME(nickname, mask)            		"001 " + nickname + " :Welcome to the Internet Relay Network " + mask
+# define RPL_YOURHOST(nickname, servername, version)				"002 " + nickname + " :Your host is " + servername + ", running version " + version
+# define RPL_CREATED(nickname, date)								"003 " + nickname + " :This server was created " + date
+# define RPL_MYINFO(nickname, servername, version)				"004 " + nickname + " :" + servername + " " + version + " itkol"
+# define RPL_ISUPPORT(nickname, tokens)							"005 " + nickname + " " + tokens + " :are supported by this server"
 # define RPL_LIST(nickname, channel, mode, topic)		"322 " + nickname + " " + channel + " " + mode + " :" + topic
 # define RPL_LISTEND(nickname)							"323 " + nickname + " :End of LIST"
 # define RPL_NOTOPIC(nickname, channel)					"331 " + nickname + " " + channel + " :No topic is set"

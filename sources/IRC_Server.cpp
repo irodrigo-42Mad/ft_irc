@@ -587,14 +587,11 @@ void    IRC_Server::sendWelcomeMsg(IRC_User& user)
 {
     std::string line;
     
-    line = ":" + this->getServerName() + " " + RPL_WELCOME(user.getName(), user.getMask());
-    user.send(line);
-    line = ":" + this->getServerName() + " " + RPL_YOURHOST(this->getServerName(), _version);
-    user.send(line);
-    line = ":" + this->getServerName() + " " + RPL_CREATED(__TIME__ + " " + __DATE__);
-    user.send(line);
-    line = ":" + this->getServerName() + " " + RPL_MYINFO(this->getServerName(), _version);
-    user.send(line);  
+    user.reply(*this, RPL_WELCOME(user.getName(), user.getMask()));
+    user.reply(*this, RPL_YOURHOST(user.getName(), this->getServerName(), _version));
+    user.reply(*this, RPL_CREATED(user.getName(), __TIME__ + " " + __DATE__));
+    user.reply(*this, RPL_MYINFO(user.getName(), this->getServerName(), _version));
+    user.reply(*this, RPL_ISUPPORT(user.getName(), "LINELEN=512"));
 }
 
 IRC_Server::State 	IRC_Server::getState() const
