@@ -13,6 +13,6 @@ void IRC_QuitCommand::execute(IRC_Message& message)
 
 	if (message.size() == 0)
 		server.quitUser(user, "");
-	else if (message.size() == 0)
+	else
 		server.quitUser(user, message[0]);
 }
