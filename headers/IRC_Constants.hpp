@@ -22,12 +22,10 @@
 # define MAX_CLIENTS	10				//Max number of clients accept by server
 
 // version
-# define _version 		"1.0.0"			//first version of ft42irc server
+# define IRC_VERSION	"1.0.0"			//first version of ft42irc server
 
 // special character
 # define SPECIALCHAR 	"-_[]\\`^{|}"	//must try to control this characters in structures.
-
-# define MAXNICKLENGTH	9
 
 // const to control messages
 # define FIRST			1				//used to set first message send to client
@@ -38,6 +36,18 @@
 # define IDLETOUT		9000				//general timeout tick control
 //# define PONG_STR		"Numantinos"	//Cadena de texto para pong
 
-# define IRC_LINELEN 		512
+# define CHANLIMIT		5
+# define CHANNELLEN		15	
+# define CHANTYPES		"#"
+# define KEYLEN				15
+# define NICKLEN			9
+# define MAXTARGETS		1
+# define NAMELEN			128
+# define NETWORK			"ircserv"
+# define KICKLEN			128
+# define TOPICLEN			200
+# define USERLEN			10
+# define LINELEN			512
+# define MODES				6
 
 #endif

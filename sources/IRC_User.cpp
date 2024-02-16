@@ -120,9 +120,9 @@ void	IRC_User::send(const std::string& data)
 	{
 		return ;
 	}
-	if (data.size() > IRC_LINELEN - 2)
+	if (data.size() > LINELEN - 2)
 	{
-		this->_outputBuffer += data.substr(0, IRC_LINELEN - 2) + "\r\n";
+		this->_outputBuffer += data.substr(0, LINELEN - 2) + "\r\n";
 	}
 	else
 	{

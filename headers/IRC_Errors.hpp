@@ -24,7 +24,7 @@
 int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 
 // replies
-# define RPL_WELCOME(nickname, mask)            		"001 " + nickname + " :Welcome to the Internet Relay Network " + mask
+# define RPL_WELCOME(nickname, network, mask)            		"001 " + nickname + " :Welcome to the " + network + " IRC Network " + mask
 # define RPL_YOURHOST(nickname, servername, version)				"002 " + nickname + " :Your host is " + servername + ", running version " + version
 # define RPL_CREATED(nickname, date)								"003 " + nickname + " :This server was created " + date
 # define RPL_MYINFO(nickname, servername, version)				"004 " + nickname + " :" + servername + " " + version + " itkol"

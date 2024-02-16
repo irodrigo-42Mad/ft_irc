@@ -29,7 +29,7 @@ IRC_Server::IRC_Server() {}
 IRC_Server::IRC_Server(char *port, const std::string &password)
 	: _port(port)
 	, _password(password)
-	, _serverName("ircserv")
+	, _serverName("irc.inconight.es")
 	, _host("127.0.0.1")
 	, _MOTD("")
 	, _connectedClientsNum(0)
@@ -317,9 +317,9 @@ void IRC_Server::_processUserCommand(IRC_User* user)
     
 	while ((position = mydata.find("\r\n")) != std::string::npos)
 	{
-		if (position > IRC_LINELEN - 2)
+		if (position > LINELEN - 2)
 		{
-			command_lenght = IRC_LINELEN - 2;
+			command_lenght = LINELEN - 2;
 		}
 		else
 		{
@@ -603,13 +603,29 @@ void IRC_Server::sendMOTDMsg(IRC_User& user)  //esto hay que leerlo de línea en
 
 void    IRC_Server::sendWelcomeMsg(IRC_User& user)
 {
-    std::string line;
+    std::stringstream ss;
     
-    user.reply(*this, RPL_WELCOME(user.getName(), user.getMask()));
-    user.reply(*this, RPL_YOURHOST(user.getName(), this->getServerName(), _version));
+    user.reply(*this, RPL_WELCOME(user.getName(), NETWORK, user.getMask()));
+    user.reply(*this, RPL_YOURHOST(user.getName(), this->getServerName(), IRC_VERSION));
     user.reply(*this, RPL_CREATED(user.getName(), __TIME__ + " " + __DATE__));
-    user.reply(*this, RPL_MYINFO(user.getName(), this->getServerName(), _version));
-    user.reply(*this, RPL_ISUPPORT(user.getName(), "LINELEN=512"));
+    user.reply(*this, RPL_MYINFO(user.getName(), this->getServerName(), IRC_VERSION));
+
+		ss << "CHANLIMIT=" << CHANLIMIT << " ";
+		ss << "CHANNELLEN=" << CHANNELLEN << " ";
+		ss << "CHANTYPES=" << CHANTYPES << " ";
+		ss << "KEYLEN=" << KEYLEN << " ";
+		ss << "KICKLEN=" << KICKLEN << " ";
+		ss << "LINELEN=" << LINELEN << " ";
+		ss << "MAXTARGETS=" << MAXTARGETS << " ";
+		ss << "MODES=" << MODES << " ";
+		ss << "NAMELEN=" << NAMELEN << " ";
+		ss << "NETWORK=" << NETWORK << " ";
+		ss << "NICKLEN=" << NICKLEN << " ";
+		ss << "TOPICLEN=" << TOPICLEN << " ";
+		ss << "USERLEN=" << USERLEN << " ";
+
+
+    user.reply(*this, RPL_ISUPPORT(user.getName(), ss.str()));
 }
 
 IRC_Server::State 	IRC_Server::getState() const
