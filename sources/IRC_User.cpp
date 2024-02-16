@@ -213,9 +213,20 @@ void IRC_User::sendCommonUsersExcept(const IRC_User &exceptUser, const std::stri
 	delete commonUsers;
 }
 
-void IRC_User::send(const IRC_Server& server, const std::string& data)
+void IRC_User::send(const IRC_Server& server, const std::string& data, const std::string& lastParam)
 {
-	this->send(":" + server.getServerName() + " " + data);
+	if (lastParam.empty())
+		this->send(":" + server.getServerName() + " " + data);
+	else
+		this->send(":" + server.getServerName() + " " + data + " :" + lastParam);
+}
+
+void IRC_User::send(const IRC_User& user, const std::string& data, const std::string& lastParam)
+{
+	if (lastParam.empty())
+		this->send(":" + user.getName() + " " + data);
+	else
+		this->send(":" + user.getName() + " " + data + " :" + lastParam);
 }
 /*
 const IRC_User::channelsSetType IRC_User::getCommonUsers() const {

@@ -22,7 +22,7 @@ void IRC_NoticeCommand::execute(IRC_Message& message) {
 	{
 		IRC_Channel *targetChannel = server.findChannelByName(msgTarget);
 		if (targetChannel)
-			targetChannel->sendExcept(&user, RPL_NOTICE(user.getMask(), targetChannel->getName(), textToBeSent));
+			targetChannel->sendExcept(&user, user, "NOTICE " + targetChannel->getName(), textToBeSent);
 		else
 			user.reply(server, ERR_NOSUCHCHANNEL(user.getName(), msgTarget));
 	}
@@ -32,7 +32,7 @@ void IRC_NoticeCommand::execute(IRC_Message& message) {
 		if (targetUser)
 		{
 			// ToDo: revisar si es en todos los canales o solo en uno. Duda!!!!!!
-			targetUser->send(RPL_NOTICE(":" + user.getMask(), targetUser->getName(), textToBeSent));
+			targetUser->send(user, "NOTICE " + targetUser->getName(), textToBeSent);
 		}
 		else
 			user.reply(server, ERR_NOSUCHNICK(msgTarget));
