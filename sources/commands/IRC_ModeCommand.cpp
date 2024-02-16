@@ -45,7 +45,7 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 		user.reply(server, RPL_CHANNELMODEIS(user.getName(), targetChannel->getName(), targetChannel->getModes()));
 		user.reply(server, RPL_CREATIONTIME(user.getName(), targetChannel->getName(), creationTime));
 		//TODO: Show the list modes of that channel
-		debug << "Showing the modelist of " << targetChannel->getName() << std::endl;
+		Console::debug << "Showing the modelist of " << targetChannel->getName() << std::endl;
 	}
 	else //modifying chan modes
 	{
@@ -53,7 +53,7 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 		std::string response;
 
 		response = targetChannel->setModes(modes);
-		debug << "Processing modelist '" << response << "' of " << targetChannel << std::endl;
+		Console::debug << "Processing modelist '" << response << "' of " << targetChannel << std::endl;
 	}
 }
 
@@ -71,7 +71,7 @@ void IRC_ModeCommand::_executeUser(IRC_Message& message)
 	if (message.size() == 2) //empty modelist parameter
 	{
 		//TODO: Show the list modes of that user
-		debug << "Showing the modelist of " << targetUser->getName() << std::endl;
+		Console::debug << "Showing the modelist of " << targetUser->getName() << std::endl;
 	}
 	else
 	{
@@ -79,7 +79,7 @@ void IRC_ModeCommand::_executeUser(IRC_Message& message)
 		{
 			std::string const& modes = message[1];
 			//TODO: process modelist
-			debug << "Processing modelist '" << modes << "' of " << targetUser << std::endl;
+			Console::debug << "Processing modelist '" << modes << "' of " << targetUser << std::endl;
 		}
 		else
 		{

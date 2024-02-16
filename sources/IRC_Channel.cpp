@@ -253,24 +253,43 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 	int paramIndex = 1;
 	int modeCount = 0;
 
-	for (std::string::const_iterator it = modes.begin(); it != modes.end() && modeCount < 6; ++it)
+	if (modes[0] != '+' && modes[0] != '-')
+		result_mode += '+';
+
+	for (std::string::const_iterator it = modes.begin(); it != modes.end() && modeCount < MODES; ++it)
 	{
 		// TODO: Check if is oper to modify mode
 		if (*it == '+')
+		{
 			plus = true;
+			if (!result_mode.empty() && (*result_mode.rbegin() == '+' || *result_mode.rbegin() == '-'))
+			{
+				result_mode.erase(result_mode.size() - 1);
+				Console::debug << "eliminando minus" << std::endl;
+			}
+			result_mode += '+';
+		}
 		else if (*it == '-')
+		{
 			plus = false;
+			if (!result_mode.empty() && (*result_mode.rbegin() == '+' || *result_mode.rbegin() == '-'))
+			{
+				result_mode.erase(result_mode.size() - 1);
+				Console::debug << "eliminando plus" << std::endl;
+			}
+			result_mode += '-';
+		}
 		else if (*it == 'i')
 		{
 			if (plus && this->setInvite())
 			{
 				++modeCount;
-				result_mode += "+i";
+				result_mode += "i";
 			}
 			else if (!plus && this->unsetInvite())
 			{
 				++modeCount;
-				result_mode += "-i";
+				result_mode += "i";
 			}
 		}
 		else if (*it == 'k')
@@ -280,13 +299,13 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 			if (plus && this->setKey(key))
 			{
 				++modeCount;
-				result_mode += "+k";
+				result_mode += "k";
 				result_param.push_back(key);
 			}
 			else if (!plus && this->unsetKey(key))
 			{
 				++modeCount;
-				result_mode += "-k";
+				result_mode += "k";
 				result_param.push_back(key);
 			}
 			++paramIndex;
@@ -298,14 +317,14 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 			if (plus && this->setLimit(atoi(limit.c_str())))
 			{
 				++modeCount;
-				result_mode += "+l";
+				result_mode += "l";
 				result_param.push_back(limit);
 				++paramIndex;
 			}
 			else if (!plus && this->unsetLimit())
 			{
 				++modeCount;
-				result_mode += "-l";
+				result_mode += "l";
 			}
 		}
 		else if (*it == 'm')
@@ -313,12 +332,12 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 			if (plus && this->setModerate())
 			{
 				++modeCount;
-				result_mode += "+m";
+				result_mode += "m";
 			}
 			else if (!plus && this->unsetModerate())
 			{
 				++modeCount;
-				result_mode += "-m";
+				result_mode += "m";
 			}
 		}
 		else if (*it == 'n')
@@ -326,12 +345,12 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 			if (plus && this->setNoExternalMessages())
 			{
 				++modeCount;
-				result_mode += "+n";
+				result_mode += "n";
 			}
 			else if (!plus && this->unsetNoExternalMessages())
 			{
 				++modeCount;
-				result_mode += "-n";
+				result_mode += "n";
 			}
 		}
 		else if (*it == 'p')
@@ -339,12 +358,12 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 			if (plus && this->setPrivate())
 			{
 				++modeCount;
-				result_mode += "+p";
+				result_mode += "p";
 			}
 			else if (!plus && this->unsetPrivate())
 			{
 				++modeCount;
-				result_mode += "-p";
+				result_mode += "p";
 			}
 	  }
 		else if (*it == 's')
@@ -352,12 +371,12 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 			if (plus && this->setSecret())
 			{
 				++modeCount;
-				result_mode += "+s";
+				result_mode += "s";
 			}
 			else if (!plus && this->unsetSecret())
 			{
 				++modeCount;
-				result_mode += "-s";
+				result_mode += "s";
 			}
 		}
 		else if (*it == 't')
@@ -365,12 +384,12 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 			if (plus && this->setTopicProtection())
 			{
 				++modeCount;
-				result_mode += "+t";
+				result_mode += "t";
 			}
 			else if (!plus && this->unsetTopicProtection())
 			{
 				++modeCount;
-				result_mode += "-t";
+				result_mode += "t";
 			}
 		}
 		else if (*it == 'b')
@@ -380,13 +399,13 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 			if (plus && this->addBan(mask))
 			{
 				++modeCount;
-				result_mode += "+b";
+				result_mode += "b";
 				result_param.push_back(mask);
 			}
 			else if (!plus && this->removeBan(mask))
 			{
 				++modeCount;
-				result_mode += "-b";
+				result_mode += "b";
 				result_param.push_back(mask);
 			}
 			++paramIndex;
