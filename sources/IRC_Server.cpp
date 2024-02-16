@@ -823,6 +823,7 @@ void    IRC_Server::channelList(IRC_User& user)
 
 				oss << channel->getNumUsers();
         user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[ModeList]" + channel->getTopic()));
+        oss.str("");
         oss.clear();
     }
     user.reply(*this, RPL_LISTEND(user.getName()));
