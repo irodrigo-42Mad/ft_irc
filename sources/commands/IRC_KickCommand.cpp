@@ -28,7 +28,7 @@ void IRC_KickCommand::execute(IRC_Message& message)
 
 		if (!kickUser)
 		{
-				user.reply(server, ERR_NOSUCHNICK(kickName));
+				user.reply(server, ERR_NOSUCHNICK(user.getName(), kickName));
 				return ;
 		}
 

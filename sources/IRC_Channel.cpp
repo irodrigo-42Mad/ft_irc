@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Channel.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/22 12:36:37 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/16 21:50:15 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,7 +244,7 @@ static bool matchWildcard(const std::string& mask, const std::string& nick) {
     return maskIndex == maskLength && nickIndex == nickLength;
 }
 
-std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
+std::string IRC_Channel::setModes(IRC_User& user, IRC_Server& server, const std::vector<std::string>& modeList)
 {
 	std::string result_mode;
 	std::vector<std::string> result_param;
@@ -258,14 +258,17 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 
 	for (std::string::const_iterator it = modes.begin(); it != modes.end() && modeCount < MODES; ++it)
 	{
-		// TODO: Check if is oper to modify mode
+		if (!this->isOperator(user))
+		{
+			user.reply(server, ERR_CHANOPRIVSNEEDED(user.getName(), this->getName()));
+			break ;
+		}
 		if (*it == '+')
 		{
 			plus = true;
 			if (!result_mode.empty() && (*result_mode.rbegin() == '+' || *result_mode.rbegin() == '-'))
 			{
 				result_mode.erase(result_mode.size() - 1);
-				Console::debug << "eliminando minus" << std::endl;
 			}
 			result_mode += '+';
 		}
@@ -275,7 +278,6 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 			if (!result_mode.empty() && (*result_mode.rbegin() == '+' || *result_mode.rbegin() == '-'))
 			{
 				result_mode.erase(result_mode.size() - 1);
-				Console::debug << "eliminando plus" << std::endl;
 			}
 			result_mode += '-';
 		}
@@ -411,14 +413,59 @@ std::string IRC_Channel::setModes(const std::vector<std::string>& modeList)
 			++paramIndex;
 		}
 		else if (*it == 'o')
-			//TODO: find user
-			;
+		{
+			IRC_User* targetUser = server.findUserByName(modeList[paramIndex]);
+			
+			if (targetUser)
+			{
+				if (plus && !this->isOperator(*targetUser))
+				{
+					++modeCount;
+					result_mode += "o";
+					this->addOperator(*targetUser);
+					result_param.push_back(targetUser->getName());
+				}
+				else if (!plus && this->isOperator(*targetUser))
+				{
+					++modeCount;
+					result_mode += "o";
+					this->removeOperator(*targetUser);
+					result_param.push_back(targetUser->getName());
+				}
+			}
+			else
+			{
+				user.reply(server, ERR_NOSUCHNICK(user.getName(), modeList[paramIndex]));
+			}
+		}	
 		else if (*it == 'v')
-			//TODO: find user
-			;
+		{
+			IRC_User* targetUser = server.findUserByName(modeList[paramIndex]);
+			
+			if (targetUser)
+			{
+				if (plus && !this->isVoice(*targetUser))
+				{
+					++modeCount;
+					result_mode += "v";
+					this->addVoice(*targetUser);
+					result_param.push_back(targetUser->getName());
+				}
+				else if (!plus && this->isVoice(*targetUser))
+				{
+					++modeCount;
+					result_mode += "v";
+					this->removeVoice(*targetUser);
+					result_param.push_back(targetUser->getName());
+				}
+			}
+			else
+			{
+				user.reply(server, ERR_NOSUCHNICK(user.getName(), modeList[paramIndex]));
+			}
+		}	
 		else
-			//TODO: Mode is unknown to me!
-			;
+			user.reply(server, ERR_UNKNOWNMODE(user.getName(), *it, this->getName()));
 	}
 	
 	for (std::vector<std::string>::iterator it = result_param.begin(); it != result_param.end(); ++it)
@@ -442,9 +489,11 @@ std::string IRC_Channel::getModes() const
 	}
 	if (this->_limit)
 	{
+		std::stringstream ss;
+		
+		ss << this->_limit;
 		modes += 'l';
-		params += " ";
-		params += this->_limit;
+		params += " " + ss.str();
 	}
 	if (this->_moderate)
 		modes += 'm';

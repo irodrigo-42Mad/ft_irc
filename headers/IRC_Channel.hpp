@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Channel.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:04:15 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/16 14:20:39 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/16 21:49:44 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ struct IRC_Channel
 		bool unsetPrivate();
 
 		std::string getModes() const;
-		std::string setModes(const std::vector<std::string>& modes);
+		std::string setModes(IRC_User& user, IRC_Server& server, const std::vector<std::string>& modes);
 
   	bool empty() const;
 	

@@ -31,7 +31,7 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
 
 	if (!invitedUser)
 	{
-		user.reply(server, ERR_NOSUCHNICK(nickName));
+		user.reply(server, ERR_NOSUCHNICK(user.getName(), nickName));
 		return ;
 	}
 

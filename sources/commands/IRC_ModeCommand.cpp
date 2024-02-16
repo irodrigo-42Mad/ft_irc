@@ -32,7 +32,7 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 	IRC_Server& server = message.getServer();
 	IRC_User& user = message.getUser();
 	IRC_Channel* targetChannel = server.findChannelByName(message[0]);
-	std::string creationTime;
+	std::stringstream creationTime;
 
 	if (!targetChannel)
 	{
@@ -41,9 +41,9 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 	}
 	if (message.size() == 1) //empty modelist parameter
 	{
-		creationTime += targetChannel->getCreationTime();
+		creationTime << targetChannel->getCreationTime();
 		user.reply(server, RPL_CHANNELMODEIS(user.getName(), targetChannel->getName(), targetChannel->getModes()));
-		user.reply(server, RPL_CREATIONTIME(user.getName(), targetChannel->getName(), creationTime));
+		user.reply(server, RPL_CREATIONTIME(user.getName(), targetChannel->getName(), creationTime.str()));
 		//TODO: Show the list modes of that channel
 		Console::debug << "Showing the modelist of " << targetChannel->getName() << std::endl;
 	}
@@ -52,8 +52,10 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 	  std::vector<std::string> modes(message.getParams().begin() + 1, message.getParams().end());
 		std::string response;
 
-		response = targetChannel->setModes(modes);
-		Console::debug << "Processing modelist '" << response << "' of " << targetChannel << std::endl;
+		response = targetChannel->setModes(user, server, modes);
+		if (!response.empty())
+			targetChannel->send(user, "MODE " + targetChannel->getName() + " " + response, "");
+		//Console::debug << "Processing modelist '" << response << "' of " << targetChannel << std::endl;
 	}
 }
 
@@ -65,7 +67,7 @@ void IRC_ModeCommand::_executeUser(IRC_Message& message)
 
 	if (!targetUser)
 	{
-		user.reply(server, ERR_NOSUCHNICK(message[0]));
+		user.reply(server, ERR_NOSUCHNICK(user.getName(), message[0]));
 		return ;
 	}
 	if (message.size() == 2) //empty modelist parameter

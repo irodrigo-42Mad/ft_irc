@@ -42,6 +42,6 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 			//targetUser->send(RPL_PRIVMSG(":" + user.getMask(), targetUser->getName(), textToBeSent));
 		}
 		else
-			user.reply(server, ERR_NOSUCHNICK(msgTarget));
+			user.reply(server, ERR_NOSUCHNICK(user.getName(), msgTarget));
 	}
 }

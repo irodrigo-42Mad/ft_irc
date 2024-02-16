@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Errors.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 11:38:07 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/26 12:17:10 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/16 21:10:35 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define RPL_YOUAREOPER(nickname)						"381 " + nickname + " :You are now an IRC operator"
 
 // error replies
-# define ERR_NOSUCHNICK(nickname)                		"401 " + nickname + " :No such nick/channel"
+# define ERR_NOSUCHNICK(nickname, user)          		"401 " + nickname + " :" + user + " No such nick/channel"
 # define ERR_NOSUCHSERVER(nickname, server)				"402 " + nickname + " " + server + " :No such server"
 # define ERR_NOSUCHCHANNEL(nickname, channel)			"403 " + nickname + " " + channel + " :No such channel"
 # define ERR_CANNOTSENDTOCHAN(nickname, channel)		"404 " + nickname + " " + channel + " :Cannot send to channel"
@@ -61,8 +61,9 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_NOTREGISTERED(nickname, command)			"451 " + nickname + " " + command + " :You have not registered"
 # define ERR_NEEDMOREPARAMS(nickname, command)			"461 " + nickname + " " + command + " :Not enough parameters"
 # define ERR_ALREADYREGISTRED(nickname)			        "462 " + nickname + " :Unauthorized command (already registered)"	//ToDo: repasar esto
-# define ERR_PASSWDMISMATCH(nickname)							"464 " + nickname + " :Password incorrect"
+# define ERR_PASSWDMISMATCH(nickname)					"464 " + nickname + " :Password incorrect"
 # define ERR_CHANNELISFULL(nickname, channel)           "471 " + nickname + " " + channel + " :Cannot join channel (+l)"	//ToDo: ídem que el siguiente
+# define ERR_UNKNOWNMODE(nickname, mode, channel)       "472 " + nickname + " " + mode + " :is unknown mode char to me for " + channel
 # define ERR_INVITEONLYCHAN(nickname, channel)			"473 " + nickname + " " + channel + " :Cannot join channel (+i)"	//ToDo: repasar esto porque creo que tiene modos
 # define ERR_BANNEDFROMCHAN(nickname, channel)   		"474 " + nickname + " " + channel + " :Cannot join channel (+b)"	//ToDo: ídem
 # define ERR_BADCHANNELKEY(nickname, channel)           "475 " + nickname + " " + channel + " :Cannot join channel (+k)"	//ToDo: ídem
@@ -70,7 +71,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_NOPRIVILEGES(nickname)						"481 " + nickname + " :Permission Denied- You're not an IRC operator"
 # define ERR_CHANOPRIVSNEEDED(nickname, channel)		"482 " + nickname + " " + channel + " :You're not channel operator"
 # define ERR_NOOPERHOST(nickname)						"491 " + nickname + " :No O-lines for your host"
-# define ERR_USERSDONTMATH(nickname)				"502 " + nickname + " :Cannot change mode for other users"
+# define ERR_USERSDONTMATH(nickname)				    "502 " + nickname + " :Cannot change mode for other users"
 # define ERR_PONG(mask, message)						"ERROR: Closing link: (" + mask + ") " + message // unregistered [Registration timeout] o bien registered [Ping timeout: 120 seconds]
 // other
 # define RPL_PRIVMSG(mask, name, message)				mask + " PRIVMSG " + name + " :" + message

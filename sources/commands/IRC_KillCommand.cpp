@@ -12,7 +12,7 @@ void IRC_KillCommand::execute(IRC_Message& message) {
 
 	if (!targetUser)
 	{
-		user.send(ERR_NOSUCHNICK(targetUser->getName()));
+		user.reply(server, ERR_NOSUCHNICK(user.getName(), targetUser->getName()));
 		return ;
 	}
 
