@@ -917,7 +917,7 @@ IRC_Response IRC_Server::kickUserFromChannel(IRC_User& user, IRC_Channel& channe
 
     if (channel.empty())
     {
-            this->deleteChannel(channel);
+        this->deleteChannel(channel);
     }
     return (SUCCESS);
 }

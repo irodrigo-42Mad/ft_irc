@@ -30,9 +30,9 @@ void IRC_NamesCommand::execute(IRC_Message& message) {
 	if (!message.empty())
 		channelName = message[0];
 	else
-		channelName	= "";
+		channelName	= "*";
 
-	if (!channelName.empty())
+	if (!message.empty())
 	{
 		IRC_Channel *channel = message.getServer().findChannelByName(channelName);
 		if (channel)
@@ -51,11 +51,11 @@ void IRC_NamesCommand::execute(IRC_Message& message) {
 			// user.reply(&user, RPL_NAMREPLY(message.getUser().getName(), channel->getName(), names));
 		// }
 	}
-	else
+	/*else
 	{
 		for (IRC_Server::channelsNameConstIterator it = server.getChannels().begin(); it != server.getChannels().end(); ++it)
-    	{
-        	IRC_Channel *channel = (*it).second;
+    {
+     	IRC_Channel *channel = (*it).second;
 			
 			nicknamesList(user, channel);
 			// std::string names;  // User names of channel
@@ -70,7 +70,7 @@ void IRC_NamesCommand::execute(IRC_Message& message) {
 			// }
 			// user.reply(&user, RPL_NAMREPLY(message.getUser().getName(), channel->getName(), names));
 		}
-	}
-	user.reply(user, RPL_ENDOFNAMES(user.getName(), channelName));
+	}*/
+	user.reply(server, RPL_ENDOFNAMES(user.getName(), channelName));
 	//user.reply(&user, RPL_ENDOFNAMES(message.getUser().getName(), channelName));	//ToDo: ojo a cuando channelName es nulo => sin parámetros
 }
