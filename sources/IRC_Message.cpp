@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Message.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2023/12/19 14:42:55 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/16 14:14:13 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,14 +60,19 @@ void IRC_Message::_processCommand(std::string buffer)
         position = buffer.find(" ");
         if (position == std::string::npos)
             return ;  //error de comando
-        buffer.erase(0, (position + 1));
+        position = buffer.find_first_not_of(' ', position);
+        buffer.erase(0, position);
     }
     // take command
+    
+    if ((position = buffer.find_first_not_of(' ', 0)) > 0)
+        buffer.erase(0, position);
     position = buffer.find(" ");
     if (position != std::string::npos)
     {
         this->_cmd = buffer.substr(0, position);
-        buffer.erase(0, (position + 1));
+        position = buffer.find_first_not_of(' ', position);
+        buffer.erase(0, position);
         // get params
         std::stringstream line(buffer);
         std::string myparam;
@@ -81,7 +86,9 @@ void IRC_Message::_processCommand(std::string buffer)
                 break ;
             }
             this->_params.push_back(myparam);
-            buffer.erase(0, (buffer.find(" ") + 1));
+            position = buffer.find(" ");
+            position = buffer.find_first_not_of(' ', position);
+            buffer.erase(0, position);
         }
         //std::cout << "num params: " << this->_params.size() << std::endl;
     }

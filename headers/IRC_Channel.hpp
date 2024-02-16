@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:04:15 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/22 12:36:36 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/16 14:20:39 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ struct IRC_User;
 
 struct IRC_Channel
 {
-	typedef std::set<IRC_User*>				usersType;
+	typedef std::set<IRC_User*>			usersType;
 	typedef usersType::iterator			usersIterator;
 	typedef usersType::const_iterator	usersConstIterator;
 
@@ -32,30 +32,30 @@ struct IRC_Channel
   	const std::string&	getTopic() const;
   	const IRC_User&		getCreator() const;
   	const usersType&	getUsers() const;
-  	int getNumUsers() const;
+  	int 				getNumUsers() const;
 	
-  	void setTopic(const std::string& newTopic);
+  	void 				setTopic(const std::string& newTopic);
 	
-  	bool addUser(IRC_User& user);
-  	bool hasUser(IRC_User& user);
-  	void removeUser(IRC_User& user);
+  	bool 				addUser(IRC_User& user);
+  	bool 				hasUser(IRC_User& user);
+  	void 				removeUser(IRC_User& user);
 
-  	bool empty() const;
+  	bool 				empty() const;
 	
-  	void sendExcept(const IRC_User* exceptUser, const std::string& data);
-  	void send(const std::string&);
-  	void send(const IRC_User& user, const std::string& data, const std::string& lastParameter = "");
-  	void send(const IRC_Server& server, const std::string& data, const std::string& lastParameter = "");
-  	void sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter = "");
-  	void sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter = "");
+  	void 				sendExcept(const IRC_User* exceptUser, const std::string& data);
+  	void 				send(const std::string&);
+  	void 				send(const IRC_User& user, const std::string& data, const std::string& lastParameter = "");
+  	void 				send(const IRC_Server& server, const std::string& data, const std::string& lastParameter = "");
+  	void 				sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter = "");
+  	void 				sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter = "");
 
 private:
 	std::string			_channelName;
-	IRC_User&				_creator;
+	IRC_User&			_creator;
 	std::string			_topic;
 	std::string			_key;
-	int							_limit;
-	usersType				_users;
+	int					_limit;
+	usersType			_users;
 };
 
 #endif
