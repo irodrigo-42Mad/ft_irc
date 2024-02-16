@@ -44,10 +44,14 @@ struct IRC_Channel
 	
   	void 				sendExcept(const IRC_User* exceptUser, const std::string& data);
   	void 				send(const std::string&);
-  	void 				send(const IRC_User& user, const std::string& data, const std::string& lastParameter = "");
-  	void 				send(const IRC_Server& server, const std::string& data, const std::string& lastParameter = "");
-  	void 				sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter = "");
-  	void 				sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter = "");
+  	void 				send(const IRC_User& user, const std::string& data);
+  	void 				send(const IRC_Server& server, const std::string& data);
+  	void 				sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data);
+  	void 				sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data);
+  	void 				send(const IRC_User& user, const std::string& data, const std::string& lastParameter);
+  	void 				send(const IRC_Server& server, const std::string& data, const std::string& lastParameter);
+  	void 				sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter);
+  	void 				sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter);
 
 private:
 	std::string			_channelName;

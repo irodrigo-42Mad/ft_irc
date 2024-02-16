@@ -77,8 +77,10 @@ struct IRC_User
 	void setIdleTime(time_t value);
 
 	void send(const std::string& data);
-	void send(const IRC_Server& server, const std::string& data, const std::string& lastParam = "");
-	void send(const IRC_User& user, const std::string& data, const std::string& lastParam = "");
+	void send(const IRC_Server& server, const std::string& data);
+	void send(const IRC_User& user, const std::string& data);
+	void send(const IRC_Server& server, const std::string& data, const std::string& lastParam);
+	void send(const IRC_User& user, const std::string& data, const std::string& lastParam);
 	void sendCommonUsers(const std::string& data);
 	void sendCommonUsersExcept(const IRC_User& exceptUser, const std::string& data);
 	void reply(const IRC_User& user, const std::string& data);

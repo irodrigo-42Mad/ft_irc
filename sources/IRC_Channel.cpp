@@ -108,28 +108,24 @@ void IRC_Channel::send(const std::string& data)
 	}
 }
 
+void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data)
+{
+	this->sendExcept(exceptUser, ":" + user.getMask() + " " + data);
+}
+
 void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter)
 {
-	if (lastParameter.empty())
-	{
-		this->sendExcept(exceptUser, ":" + user.getMask() + " " + data);
-	}
-	else
-	{
-		this->sendExcept(exceptUser, ":" + user.getMask() + " " + data + " :" + lastParameter);
-	}
+	this->sendExcept(exceptUser, ":" + user.getMask() + " " + data + " :" + lastParameter);
+}
+
+void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data)
+{
+	this->sendExcept(exceptUser, ":" + server.getServerName() + " " + data);
 }
 
 void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter)
 {
-	if (lastParameter.empty())
-	{
-		this->sendExcept(exceptUser, ":" + server.getServerName() + " " + data);
-	}
-	else
-	{
-		this->sendExcept(exceptUser, ":" + server.getServerName() + " " + data + " :" + lastParameter);
-	}
+	this->sendExcept(exceptUser, ":" + server.getServerName() + " " + data + " :" + lastParameter);
 }
 
 //FIX: La entidad mínima con la que deberíais trabajar es "IRC_User" ya que ella contiene el fd de cada usuarios.

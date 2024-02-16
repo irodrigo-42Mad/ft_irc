@@ -36,6 +36,9 @@
 # define IDLETOUT		9000				//general timeout tick control
 //# define PONG_STR		"Numantinos"	//Cadena de texto para pong
 
+# define OPERUSER			"test"
+# define OPERPASS			"1234"
+
 # define CHANLIMIT		5
 # define CHANNELLEN		15	
 # define CHANTYPES		"#"
