@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/17 13:07:03 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/17 18:37:10 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,7 @@ struct IRC_Server : public Console::Console::IDisplayManager
 		// Invited user management
 		bool    				findInvitedUserToAChannel(const std::string& nickname, const std::string& channelName);
 		void					insertInvitedUser(std::string& nickname, IRC_Channel& channel);
+		void					deleteInvitedUser(const std::string& nickname, const std::string& channelName);
 		
 	private:
 		int						_serverFd;

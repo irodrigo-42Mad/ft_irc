@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Channel.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/16 21:50:15 by pcosta-j         ###   ########.fr       */
+/*   Updated: 2024/02/17 17:37:31 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,7 @@ bool    IRC_Channel::addUser(IRC_User& userToAdd)
 }
 
 void    IRC_Channel::removeUser(IRC_User& userToDelete)
-{
-    // Eliminar un usuario del canal
+{	
     this->_users.erase(&userToDelete);
 
   	/** problema, si no queda nadie más en el canal, necesítaríamos avisar al servidor

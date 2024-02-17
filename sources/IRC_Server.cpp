@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/17 13:51:07 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/17 19:18:58 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,7 +239,7 @@ void    IRC_Server::start()
 void IRC_Server::_handleDeletionAndDisconnect(IRC_User* user)
 {
 	if (user->_deleteMarked && user->_inputBuffer.empty())
-	{
+	{	
 		this->_deleteUser(user);
 	}
 }
@@ -357,6 +357,20 @@ bool    IRC_Server::findInvitedUserToAChannel(const std::string& nickname, const
 			return (true);
 	}
 	return (false);
+}
+
+void	IRC_Server::deleteInvitedUser(const std::string& nickname, const std::string& channelName)
+{
+
+	
+	for (IRC_Server::invitedChannelsNameIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
+	{
+		if (toUpperNickname((*it).first) == toUpperNickname(nickname) && (*it).second->getName() == channelName)
+		{	
+			this->_invitedByName.erase(it);
+			break ;
+		}
+	}
 }
 
 IRC_User* IRC_Server::findUserByFd(int fd)
@@ -484,7 +498,15 @@ void IRC_Server::_deleteUser(IRC_User* user)
 	this->_usersByFd.erase(user->getFd());
 	if (user->getName() != "*")
 	{
+		// // erase all invitations asociated to an user nickname
+		// for (IRC_Server::invitedChannelsNameConstIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
+		// {
+		// 	//Console::log << "Invited user: " << (*it).first << " invited to " << (*it).second->getName() << std::endl;
+		// 	if ((*it).first == user->getName())
+		// 		this->_invitedByName.erase(it);
+		// }
 		this->_usersByName.erase(toUpperNickname(user->getName()));
+		
 	}
 	Console::debug << "User " << user->getMask() << " destroyed (" << user->getFd() << ")" << std::endl;
 	::close(user->getFd());
@@ -503,11 +525,17 @@ IRC_Channel* IRC_Server::createChannel(const std::string& name, IRC_User& user)
 
 void IRC_Server::deleteChannel(IRC_Channel& channel)
 {
+	// for (IRC_Server::invitedChannelsNameConstIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
+	// {
+	// 	//Console::log << "Invited user: " << (*it).first << ", " << (*it).second->getName() << std::endl;
+	// 	if ((*it).second->getName() == channel.getName())
+	// 		this->_invitedByName.erase(it);
+	// }
+	
 	this->_channelsByName.erase(channel.getName());	
 	Console::log << "Channel " << channel.getName() << " deleted" << std::endl;
 	delete &channel;
 }
-
 
 bool IRC_Server::setPendingUser(IRC_User& user)
 {
@@ -702,6 +730,7 @@ void IRC_Server::removeUserFromChannels(IRC_User& user)
 
 	for (channelsIterator it = channels.begin(); it != channels.end(); ++it)
 	{
+		// borrar las invitaciones del usuario
 		removeUserFromChannel(user, **it);
 	}
 }
@@ -722,11 +751,14 @@ IRC_Response IRC_Server::joinUser(IRC_User& user, IRC_Channel& channel, const st
 		if (!channel.isSameKey(key))
 			return (CHANNEL_KEY_MISMATCH);
 	}
+	
 	response = this->addUserToChannel(user, channel);
 	if (response == SUCCESS)
 	{
 		channel.send(user, "JOIN " + channel.getName());
+		deleteInvitedUser(user.getName(), channel.getName());	
 	}
+
 	return (response);
 }
 
@@ -944,8 +976,9 @@ void IRC_Server::_setSignals()
 }
 
 void	IRC_Server::insertInvitedUser(std::string& nickname, IRC_Channel& channel)
-{
-    this->_invitedByName.insert(std::make_pair(nickname, &channel));
+{	
+	this->_invitedByName.insert(std::make_pair(nickname, &channel));
+	Console::log << "he llenado con " << nickname << std::endl;
 }
 
 const IRC_Server::channelsNameType &IRC_Server::getChannels() const
