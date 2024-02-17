@@ -1,6 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   IRC_User.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/17 16:15:01 by irodrigo          #+#    #+#             */
+/*   Updated: 2024/02/17 16:29:51 by irodrigo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "IRC_User.hpp"
 #include "IRC_Channel.hpp"
 #include "IRC_Server.hpp"
+#include "IRC_Utils.hpp"
 #include "console.hpp"
 
 #include <iostream>
@@ -165,7 +178,11 @@ void	IRC_User::reply(const IRC_User& user, const std::string& data)
 
 void	IRC_User::reply(const IRC_Server& server, const std::string& data)
 {
-	this->send(":" + server.getServerName() + " " + data);
+	std::string preparedMsg = ":" + server.getServerName() + " " + data;
+	
+	this->sendLimitedMessage(preparedMsg);
+	
+	//this->send(":" + server.getServerName() + " " + data);
 }
 
 IRC_User::usersType* IRC_User::getCommonUsers()
@@ -359,4 +376,47 @@ const std::string&	IRC_User::getPass() const
 void	IRC_User::setPass(const std::string& pass)
 {
 	this->_pass = pass;
+}
+
+void    IRC_User::sendLimitedMessage(const std::string& data)
+{
+	std::string message;
+	std::size_t dataLength = data.size();
+    //size_t i = 1;
+
+    if (dataLength <= MSGLENGTH)
+	{
+        // La cadena es corta, imprímela completa
+        this->send(data);
+        //std::cout << data << std::endl;
+    }
+	else
+	{
+		std::size_t secondColonIndex = secondColonPosition(data);
+        //std::cout << "secondColonIndex: " << secondColonIndex << std::endl;
+        std::string header = data.substr(0, secondColonIndex + 1);
+        size_t		headerLength = header.size();
+        //std::cout << "headerLength: " << headerLength << std::endl;
+
+        // Imprime bloques de 510 caracteres sin cortar palabras con la cabecera
+        std::size_t initIndex = header.size();
+        while (initIndex < dataLength)
+		{
+            message = "";
+			std::size_t endIndex = std::min(initIndex + MSGLENGTH - headerLength, dataLength);
+            // Retrocede hasta encontrar un espacio si estamos en medio de una palabra
+            while (endIndex < dataLength && endIndex > initIndex && data[endIndex] != ' ') {
+                --endIndex;
+            }
+
+            std::size_t blockLength = endIndex - initIndex;
+            message = header + data.substr(initIndex, blockLength);
+			//std::cout << "Mensaje " << i << ": &" << message << "&, longitud = " << message.size() << std::endl;
+            this->send(message);
+
+            // Avanza al siguiente bloque
+            initIndex = endIndex + 1;
+            //i++;
+        }
+    }
 }

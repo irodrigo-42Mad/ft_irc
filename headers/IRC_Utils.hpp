@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:49:23 by icastell          #+#    #+#             */
-/*   Updated: 2024/01/10 11:06:22 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/17 16:07:37 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ bool		checkChannelName(std::string const &name);
 void		deleteUnwantedChars(std::string &name);
 bool		checkHostName(std::string &name);
 bool		checkNickname(const std::string &name);
+size_t		secondColonPosition(const std::string& data);
 
 
 // string functions

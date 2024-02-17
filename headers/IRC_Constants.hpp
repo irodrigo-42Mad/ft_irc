@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:22:13 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/09 13:43:41 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/17 16:10:43 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,7 @@
 # define USERLEN			10
 # define LINELEN			512
 # define MODES				6
+
+# define MSGLENGTH		510			//number of chars that are going to sent in one message
 
 #endif

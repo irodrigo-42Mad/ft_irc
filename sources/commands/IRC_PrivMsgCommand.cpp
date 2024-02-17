@@ -42,7 +42,7 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 	{
 		IRC_User *targetUser = server.findUserByName(msgTarget);
 
-		if (targetUser)
+		if (!targetUser)
 		{
 			user.reply(server, ERR_NOSUCHNICK(user.getName(), msgTarget));
 			return ;

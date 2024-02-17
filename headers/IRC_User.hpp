@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/17 12:23:44 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/17 16:09:16 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,8 @@ struct IRC_User
 	void sendCommonUsersExceptMe(const IRC_User& user, const std::string& data);
 	void sendCommonUsersExceptMe(const IRC_User& user, const std::string& data, const std::string& lastParam);
 	//void reply(const IRC_User& user, const std::string& data);
-	void reply(const IRC_Server& server, const std::string& data);
+	void 	reply(const IRC_Server& server, const std::string& data);
+	void	sendLimitedMessage(const std::string& data);
 
 	void resetIdle(void);
 	void disablePingTimeout(void);
