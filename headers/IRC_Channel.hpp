@@ -37,13 +37,14 @@ struct IRC_Channel
 
   	const std::string&	getName() const;
   	const std::string&	getTopic() const;
-//  	const IRC_User&		getCreator() const;
+	const std::string& 	getTopicUser() const;
+	time_t			getTopicTime() const;
   	const usersType&	getUsers() const;
   	int 				getNumUsers() const;
 	
-		time_t getCreationTime() const;
+	time_t getCreationTime() const;
 
-  	void setTopic(const std::string& newTopic);
+  	void setTopic(const IRC_User& user, const std::string& newTopic);
 	
   	bool addUser(IRC_User& user);
   	bool hasUser(const IRC_User& user);
@@ -67,48 +68,49 @@ struct IRC_Channel
   	bool isSameKey(const std::string& value);
 
   	bool setNoExternalMessages();
-		bool hasNoExternalMessages();
+	bool hasNoExternalMessages();
   	bool unsetNoExternalMessages();
 
-		bool addBan(const std::string& mask);
-		bool isBanned(const IRC_User& user);
-		bool removeBan(const std::string& mask);
+	bool addBan(const std::string& mask);
+	bool isBanned(const IRC_User& user);
+	bool removeBan(const std::string& mask);
 
-		bool setTopicProtection();
-		bool hasTopicProtection();
-		bool unsetTopicProtection();
+	bool setTopicProtection();
+	bool hasTopicProtection();
+	bool unsetTopicProtection();
 
-		bool setLimit(int value);
-		bool hasLimit();
-		bool unsetLimit();
+	bool setLimit(size_t value);
+	bool hasLimit();
+	bool unsetLimit();
+	bool isFull();
 
-		bool setModerate();
-		bool hasModerate();
-		bool unsetModerate();
+	bool setModerate();
+	bool hasModerate();
+	bool unsetModerate();
 
-		bool setSecret();
-		bool hasSecret();
-		bool unsetSecret();
+	bool setSecret();
+	bool hasSecret();
+	bool unsetSecret();
 
-		bool setPrivate();
-		bool hasPrivate();
-		bool unsetPrivate();
+	bool setPrivate();
+	bool hasPrivate();
+	bool unsetPrivate();
 
-		std::string getModes() const;
-		std::string setModes(IRC_User& user, IRC_Server& server, const std::vector<std::string>& modes);
+	std::string getModes() const;
+	std::string setModes(IRC_User& user, IRC_Server& server, const std::vector<std::string>& modes);
 
   	bool empty() const;
 	
-  	void 				sendExcept(const IRC_User* exceptUser, const std::string& data);
-  	void 				send(const std::string&);
-  	void 				send(const IRC_User& user, const std::string& data);
-  	void 				send(const IRC_Server& server, const std::string& data);
-  	void 				sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data);
-  	void 				sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data);
-  	void 				send(const IRC_User& user, const std::string& data, const std::string& lastParameter);
-  	void 				send(const IRC_Server& server, const std::string& data, const std::string& lastParameter);
-  	void 				sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter);
-  	void 				sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter);
+  	void sendExcept(const IRC_User* exceptUser, const std::string& data);
+  	void send(const std::string&);
+  	void send(const IRC_User& user, const std::string& data);
+  	void send(const IRC_Server& server, const std::string& data);
+  	void sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data);
+  	void sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data);
+  	void send(const IRC_User& user, const std::string& data, const std::string& lastParameter);
+  	void send(const IRC_Server& server, const std::string& data, const std::string& lastParameter);
+  	void sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter);
+  	void sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter);
 
 private:
 	usersType				_users;
@@ -119,8 +121,10 @@ private:
 	time_t					_creationTime;
 	std::string			_channelName;
 	std::string			_topic;
+	std::string			_topicUser;
+	time_t 				_topicTime;
 	std::string			_key;
-	int							_limit;
+	size_t						_limit;
 	bool						_private;
 	bool						_secret;
 	bool						_moderate;

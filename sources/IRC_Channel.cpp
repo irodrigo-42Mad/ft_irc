@@ -89,6 +89,14 @@ const IRC_User& IRC_Channel::getCreator() const
 }
 */
 
+
+/*
+*  Para cuando veais esta función. De lo que se trata es de no tener que generar
+*  un listado de usuarios verificando uno a uno si ese usuario es el que queremos omitir
+*  porque tendríamos que iterar todos los elementos así que se me ocurrió eliminar
+*  el usuario que quiero omitir, proceder al envio masivo de la informacion y volver
+*  a incluir al usuario para que todo quede tal como estaba.
+*/
 void IRC_Channel::sendExcept(const IRC_User* exceptUser, const std::string &data)
 {
 	if (exceptUser)
@@ -102,14 +110,30 @@ void IRC_Channel::sendExcept(const IRC_User* exceptUser, const std::string &data
 	}
 }
 
+void IRC_Channel::send(const IRC_User& user, const std::string& data)
+{
+	this->sendExcept(NULL, user, data);
+}
+
+void IRC_Channel::send(const IRC_Server& server, const std::string& data)
+{
+	this->sendExcept(NULL, server, data);
+}
+
 void IRC_Channel::send(const IRC_User& user, const std::string& data, const std::string& lastParameter)
 {
-	this->sendExcept(NULL, user, data, lastParameter);
+	if (lastParameter.empty())
+		this->sendExcept(NULL, user, data);
+	else
+		this->sendExcept(NULL, user, data, lastParameter);
 }
 
 void IRC_Channel::send(const IRC_Server& server, const std::string& data, const std::string& lastParameter)
 {
-	this->sendExcept(NULL, server, data, lastParameter);
+	if (lastParameter.empty())
+		this->sendExcept(NULL, server, data);
+	else
+		this->sendExcept(NULL, server, data, lastParameter);
 }
 
 void IRC_Channel::send(const std::string& data)
@@ -160,12 +184,22 @@ void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_Server& serve
 
 time_t	IRC_Channel::getCreationTime() const
 {
-		return (this->_creationTime);
+	return (this->_creationTime);
 }
 
 const std::string& IRC_Channel::getTopic() const
 {
-    return (this->_topic);
+	return (this->_topic);
+}
+
+const std::string& IRC_Channel::getTopicUser() const
+{
+	return (this->_topicUser);
+}
+
+time_t IRC_Channel::getTopicTime() const
+{
+	return (this->_topicTime);
 }
 
 //FIX: Si queréis evitar tener que pasar por referencia la instancia IRC_Server
@@ -199,9 +233,11 @@ int IRC_Channel::getNumUsers() const
     return (this->_users.size());
 }
 
-void IRC_Channel::setTopic(const std::string& topic)
+void IRC_Channel::setTopic(const IRC_User& user, const std::string& topic)
 {
-    this->_topic = topic;
+	this->_topic = topic;
+	this->_topicUser = user.getName();
+	this->_topicTime = time(NULL);
 }
 
 /*const IRC_Channel::_usersInChannelType* IRC_Channel::getUsers() const
@@ -367,7 +403,7 @@ std::string IRC_Channel::setModes(IRC_User& user, IRC_Server& server, const std:
 				++modeCount;
 				result_mode += "p";
 			}
-	  }
+		}
 		else if (*it == 's')
 		{
 			if (plus && this->setSecret())
@@ -437,6 +473,7 @@ std::string IRC_Channel::setModes(IRC_User& user, IRC_Server& server, const std:
 			{
 				user.reply(server, ERR_NOSUCHNICK(user.getName(), modeList[paramIndex]));
 			}
+			++paramIndex;
 		}	
 		else if (*it == 'v')
 		{
@@ -463,6 +500,7 @@ std::string IRC_Channel::setModes(IRC_User& user, IRC_Server& server, const std:
 			{
 				user.reply(server, ERR_NOSUCHNICK(user.getName(), modeList[paramIndex]));
 			}
+			++paramIndex;
 		}	
 		else
 			user.reply(server, ERR_UNKNOWNMODE(user.getName(), *it, this->getName()));
@@ -472,7 +510,11 @@ std::string IRC_Channel::setModes(IRC_User& user, IRC_Server& server, const std:
 	{
 		result_mode += " " + *it;
 	}
-	return (result_mode);
+
+	if (result_mode.size() > 1)
+		return (result_mode);
+	else
+		return ("");
 }
 
 std::string IRC_Channel::getModes() const
@@ -612,7 +654,7 @@ bool IRC_Channel::unsetKey(const std::string& value)
 
 bool IRC_Channel::isSameKey(const std::string& value)
 {
-	return (this->_key == value);
+	return (this->_key.empty() || this->_key == value);
 }
 
 bool IRC_Channel::setPrivate()
@@ -640,7 +682,7 @@ bool IRC_Channel::unsetPrivate()
 	return (false);
 }
 
-bool IRC_Channel::setLimit(int value)
+bool IRC_Channel::setLimit(size_t value)
 {
 	if (this->_limit != value)
 	{
@@ -663,6 +705,11 @@ bool IRC_Channel::unsetLimit()
 		return (true);
 	}
 	return (false);
+}
+
+bool IRC_Channel::isFull()
+{
+	return (this->_limit && this->_users.size() >= this->_limit);
 }
 
 bool IRC_Channel::setNoExternalMessages()

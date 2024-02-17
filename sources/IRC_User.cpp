@@ -154,10 +154,14 @@ void	IRC_User::send(const std::string& data)
 */
 }
 
+
+/*
+//FIX: Los usuarios pueden enviar reply??? o solo los servidores?
 void	IRC_User::reply(const IRC_User& user, const std::string& data)
 {
 	this->send(":" + user.getMask() + " " + data);
 }
+*/
 
 void	IRC_User::reply(const IRC_Server& server, const std::string& data)
 {
@@ -196,19 +200,30 @@ void IRC_User::sendCommonUsers(const std::string& data)
 
 	for (usersIterator it = commonUsers->begin(); it != commonUsers->end(); ++it)
 	{
-			(*it)->send(data);
+		(*it)->send(data);
 	}
 
 	delete commonUsers;
 }
 
-void IRC_User::sendCommonUsersExcept(const IRC_User &exceptUser, const std::string& data)
+void IRC_User::sendCommonUsersExceptMe(const IRC_User& user, const std::string& data)
 {
-	usersType* commonUsers = this->getCommonUsersExcept(exceptUser);
+	usersType* commonUsers = this->getCommonUsersExcept(*this);
 
 	for (usersIterator it = commonUsers->begin(); it != commonUsers->end(); ++it)
 	{
-			(*it)->send(data);
+		(*it)->send(user, data);
+	}
+	delete commonUsers;
+}
+
+void IRC_User::sendCommonUsersExceptMe(const IRC_User& user, const std::string& data, const std::string& lastParam)
+{
+	usersType* commonUsers = this->getCommonUsersExcept(*this);
+
+	for (usersIterator it = commonUsers->begin(); it != commonUsers->end(); ++it)
+	{
+		(*it)->send(user, data, lastParam);
 	}
 	delete commonUsers;
 }
@@ -220,7 +235,10 @@ void IRC_User::send(const IRC_Server& server, const std::string& data)
 
 void IRC_User::send(const IRC_Server& server, const std::string& data, const std::string& lastParam)
 {
-	this->send(":" + server.getServerName() + " " + data + " :" + lastParam);
+	if (lastParam.empty())
+		this->send(":" + server.getServerName() + " " + data);
+	else
+		this->send(":" + server.getServerName() + " " + data + " :" + lastParam);
 }
 
 void IRC_User::send(const IRC_User& user, const std::string& data)
@@ -230,7 +248,10 @@ void IRC_User::send(const IRC_User& user, const std::string& data)
 
 void IRC_User::send(const IRC_User& user, const std::string& data, const std::string& lastParam)
 {
-	this->send(":" + user.getMask() + " " + data + " :" + lastParam);
+	if (lastParam.empty())
+		this->send(":" + user.getMask() + " " + data);
+	else
+		this->send(":" + user.getMask() + " " + data + " :" + lastParam);
 }
 /*
 const IRC_User::channelsSetType IRC_User::getCommonUsers() const {

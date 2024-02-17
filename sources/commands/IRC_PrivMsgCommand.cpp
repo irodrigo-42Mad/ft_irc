@@ -15,7 +15,7 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 
 	if (message[1].empty())
 	{
-		user.reply(user, ERR_NOTEXTTOSEND(user.getName()));
+		user.reply(server, ERR_NOTEXTTOSEND(user.getName()));
 		return ;
 	}
 	
@@ -26,22 +26,32 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 	if (msgTarget[0] == '#')
 	{
 		IRC_Channel *targetChannel = server.findChannelByName(msgTarget);
-		if (targetChannel)
-			targetChannel->sendExcept(&user, user, "PRIVMSG " + targetChannel->getName(), textToBeSent);
-			//targetChannel->sendExcept(&user, RPL_PRIVMSG(user.getMask(), targetChannel->getName(), textToBeSent));
-		else
+
+		if (!targetChannel)
+		{
 			user.reply(server, ERR_NOSUCHCHANNEL(user.getName(), msgTarget));
+			return ;
+		}	
+		if (!targetChannel->isOperator(user) && 
+				(targetChannel->isBanned(user) || targetChannel->hasModerate())
+		   )
+		{
+			user.reply(server, ERR_CANNOTSENDTOCHAN(user.getName(), targetChannel->getName()));
+			return ;
+		}
+		targetChannel->sendExcept(&user, user, "PRIVMSG " + targetChannel->getName(), textToBeSent);
+		
 	}
 	else
 	{
 		IRC_User *targetUser = server.findUserByName(msgTarget);
+
 		if (targetUser)
 		{
-			// ToDo: revisar si es en todos los canales o solo en uno. Duda!!!!!!
-			targetUser->send(user, "PRIVMSG " + targetUser->getName(), textToBeSent);
-			//targetUser->send(RPL_PRIVMSG(":" + user.getMask(), targetUser->getName(), textToBeSent));
-		}
-		else
 			user.reply(server, ERR_NOSUCHNICK(user.getName(), msgTarget));
+			return ;
+		}
+		// ToDo: revisar si es en todos los canales o solo en uno. Duda!!!!!!
+		targetUser->send(user, "PRIVMSG " + targetUser->getName(), textToBeSent);
 	}
 }

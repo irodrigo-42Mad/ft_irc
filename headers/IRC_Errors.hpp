@@ -35,6 +35,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define RPL_CREATIONTIME(nickname, channel, creation_time)	"329 " + nickname + " " + channel + " :" + creation_time
 # define RPL_NOTOPIC(nickname, channel)					"331 " + nickname + " " + channel + " :No topic is set"
 # define RPL_TOPIC(nickname, channel, topic)			"332 " + nickname + " " + channel + " :" + topic
+# define RPL_TOPICWHOTIME(nickname, channel, user, time) 		"333 " + nickname + " " + channel + " " + user + " :" + time
 # define RPL_INVITING(nickname, channel)				"341 " + nickname + " " + channel + " : Invited"	//ToDo: el mensaje de confirmación me lo he inventado. No sé si lleva. Probarlo.
 # define RPL_NAMREPLY(nickname, channel, names)			"353 " + nickname + " = " + channel + " :" + names
 # define RPL_ENDOFNAMES(nickname, channel)				"366 " + nickname + " " + channel + " :End of NAMES list"
@@ -44,7 +45,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define RPL_YOUAREOPER(nickname)						"381 " + nickname + " :You are now an IRC operator"
 
 // error replies
-# define ERR_NOSUCHNICK(nickname, user)          		"401 " + nickname + " :" + user + " No such nick/channel"
+# define ERR_NOSUCHNICK(nickname, user)          		"401 " + nickname + " " + user + " :No such nick/channel"
 # define ERR_NOSUCHSERVER(nickname, server)				"402 " + nickname + " " + server + " :No such server"
 # define ERR_NOSUCHCHANNEL(nickname, channel)			"403 " + nickname + " " + channel + " :No such channel"
 # define ERR_CANNOTSENDTOCHAN(nickname, channel)		"404 " + nickname + " " + channel + " :Cannot send to channel"

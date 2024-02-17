@@ -544,13 +544,22 @@ bool IRC_Server::setPendingUser(IRC_User& user)
 
 bool IRC_Server::quitUser(IRC_User& user, const std::string& text)
 {
-    std::string reply = user.getMask() + " QUIT :" + text;
+	std::string message;
+
+	if (text.empty())
+	{
+		message = "Client exited";
+	}
+	else
+	{
+		message = "Quit: " + text;
+	}	
     
-		user.sendCommonUsersExcept(user, user.getMask() + " QUIT :" + text);
-    this->removeUserFromChannels(user);
-    user.send("ERROR : Closing link: (" + text + ")");
-    user.markForDelete();
-    return true;
+	user.sendCommonUsersExceptMe(user, "QUIT", message);
+	this->removeUserFromChannels(user);
+	user.send("ERROR : Closing link: (" + user.getIdent() + "@" + user.getHost() + ") [" + message + "]");
+	user.markForDelete();
+	return true;
 }
 
 bool IRC_Server::killUser(const IRC_User& user, IRC_User& targetUser, const std::string& text)
@@ -664,63 +673,108 @@ IRC_Response IRC_Server::changeNameUser(IRC_User& user, const std::string& nickn
 IRC_Response IRC_Server::addUserToChannel(IRC_User& user, IRC_Channel& channel)
 {
 		if (user.isInChannel(channel))
-				return (ALREADY_IN_CHANNEL);
+			return (ALREADY_IN_CHANNEL);
 		user.addChannel(channel);
 		channel.addUser(user);
 		return (SUCCESS);
 }
 
-IRC_Response IRC_Server::removeUserFromChannel(IRC_User& user, IRC_Channel& channel, const std::string& msg)
+IRC_Response IRC_Server::removeUserFromChannel(IRC_User& user, IRC_Channel& channel)
 {
-		if (!user.isInChannel(channel))
-		{
-				return (NOT_IN_CHANNEL);
-		}
+	if (!user.isInChannel(channel))
+	{
+		return (NOT_IN_CHANNEL);
+	}
 
-		channel.send(user, "PART " + channel.getName(), msg);
-		user.removeChannel(channel);
-		channel.removeUser(user);
+	user.removeChannel(channel);
+	channel.removeUser(user);
 
-		if (channel.empty())
-		{
-				this->deleteChannel(channel);
-		}
-		return (SUCCESS);
+	if (channel.empty())
+	{
+		this->deleteChannel(channel);
+	}
+	return (SUCCESS);
 }
 
 void IRC_Server::removeUserFromChannels(IRC_User& user)
 {
-		const channelsType& channels = user.getChannels();
+	const channelsType& channels = user.getChannels();
 
-		for (channelsIterator it = channels.begin(); it != channels.end(); ++it)
-		{
-				removeUserFromChannel(user, **it);
-		}
+	for (channelsIterator it = channels.begin(); it != channels.end(); ++it)
+	{
+		removeUserFromChannel(user, **it);
+	}
+}
+
+IRC_Response IRC_Server::joinUser(IRC_User& user, IRC_Channel& channel, const std::string& key)
+{
+	IRC_Response response;
+
+	//TODO: Aquí es donde hay que comprobar si ha sido invitado
+	//      y, en caso afirmativo, saltar hasta addUserToChannel.
+	if (channel.isBanned(user))
+		return (USER_BANNED);
+	if (channel.isFull())
+		return (CHANNEL_IS_FULL);
+	if (!channel.isSameKey(key))
+		return (CHANNEL_KEY_MISMATCH);
+	response = this->addUserToChannel(user, channel);
+	if (response == SUCCESS)
+	{
+		channel.send(user, "JOIN " + channel.getName());
+	}
+	return (response);
+}
+
+IRC_Response IRC_Server::partUser(IRC_User& user, IRC_Channel& channel, const std::string& msg)
+{
+	IRC_Response response;
+
+	response = this->removeUserFromChannel(user, channel);
+	if (response == SUCCESS)
+	{
+		channel.send(user, "PART " + channel.getName(), msg);
+		user.send(user, "PART " + channel.getName(), msg);
+	}
+	return (response);
+}
+
+IRC_Response IRC_Server::kickUser(IRC_User& user, IRC_Channel& channel, const std::string& message)
+{
+	IRC_Response response;
+
+	response = this->removeUserFromChannel(user, channel);
+	if (response == SUCCESS)
+	{
+		channel.send(user, "KICK " + channel.getName(), message);
+		user.send(user, "KICK " + channel.getName(), message);
+	}	
+    	return (response);
 }
 
 void IRC_Server::_fillCommands()
 {
-    this->_addCommand(new IRC_DieCommand);
-    this->_addCommand(new IRC_InviteCommand);
-    this->_addCommand(new IRC_JoinCommand);
-    this->_addCommand(new IRC_KickCommand);
-    this->_addCommand(new IRC_KillCommand);
-    this->_addCommand(new IRC_ListCommand);
-    this->_addCommand(new IRC_ModeCommand);
-    this->_addCommand(new IRC_MOTDCommand);
-    this->_addCommand(new IRC_NamesCommand);
-		this->_addCommand(new IRC_NickCommand);
-    this->_addCommand(new IRC_NoticeCommand);
-    this->_addCommand(new IRC_OperCommand);
-    this->_addCommand(new IRC_PartCommand);
-    this->_addCommand(new IRC_PassCommand);
-    this->_addCommand(new IRC_PingCommand);
-    this->_addCommand(new IRC_PongCommand);
-    this->_addCommand(new IRC_PrivMsgCommand);
-    this->_addCommand(new IRC_QuitCommand);
-    this->_addCommand(new IRC_TopicCommand);
-    this->_addCommand(new IRC_UserCommand);
-    this->_addCommand(new IRC_WelcomeCommand);
+	this->_addCommand(new IRC_DieCommand);
+	this->_addCommand(new IRC_InviteCommand);
+	this->_addCommand(new IRC_JoinCommand);
+	this->_addCommand(new IRC_KickCommand);
+	this->_addCommand(new IRC_KillCommand);
+	this->_addCommand(new IRC_ListCommand);
+	this->_addCommand(new IRC_ModeCommand);
+	this->_addCommand(new IRC_MOTDCommand);
+	this->_addCommand(new IRC_NamesCommand);
+	this->_addCommand(new IRC_NickCommand);
+	this->_addCommand(new IRC_NoticeCommand);
+	this->_addCommand(new IRC_OperCommand);
+	this->_addCommand(new IRC_PartCommand);
+	this->_addCommand(new IRC_PassCommand);
+	this->_addCommand(new IRC_PingCommand);
+	this->_addCommand(new IRC_PongCommand);
+	this->_addCommand(new IRC_PrivMsgCommand);
+	this->_addCommand(new IRC_QuitCommand);
+	this->_addCommand(new IRC_TopicCommand);
+	this->_addCommand(new IRC_UserCommand);
+	this->_addCommand(new IRC_WelcomeCommand);
 }
 
 void IRC_Server::_addCommand(IRC_ACommand* command)
@@ -815,33 +869,32 @@ bool	IRC_Server::_checkClientTime(IRC_User *user)
 
 void    IRC_Server::channelList(IRC_User& user)
 {
-		std::ostringstream oss;
-    std::string line;
+	std::ostringstream oss;
+	std::string line;
     
-    for (channelsNameConstIterator it = this->_channelsByName.begin(); it != this->_channelsByName.end(); ++it)
-    {
-        IRC_Channel *channel = (*it).second;
+	for (channelsNameConstIterator it = this->_channelsByName.begin(); it != this->_channelsByName.end(); ++it)
+	{
+		IRC_Channel *channel = (*it).second;
 
-				oss << channel->getNumUsers();
-        user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[ModeList]" + channel->getTopic()));
-        oss.str("");
-        oss.clear();
-    }
-    user.reply(*this, RPL_LISTEND(user.getName()));
+		oss << channel->getNumUsers();
+		user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[" + channel->getModes() + "] " + channel->getTopic()));
+		oss.str("");
+		oss.clear();
+	}
+	user.reply(*this, RPL_LISTEND(user.getName()));
 }
 
 void    IRC_Server::channelListByName(IRC_User& user, std::string name)
 {
-		std::ostringstream oss;
-    std::string line;
-    IRC_Channel *channel = this->findChannelByName(name);
+	std::ostringstream oss;
+	std::string line;
+	IRC_Channel *channel = this->findChannelByName(name);
     
-    if (channel)
-    {
-				oss << channel->getNumUsers();
-        user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[ModeList]" + channel->getTopic()));
-        oss.clear();
-    }
+	if (channel)
+	{
+		oss << channel->getNumUsers();
+        	user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[" + channel->getModes() + "] " + channel->getTopic()));
+	}
 }
 
 bool   IRC_Server::changeChannelTopic(IRC_User& user, IRC_Channel& channel, const std::string &topic)
@@ -850,7 +903,7 @@ bool   IRC_Server::changeChannelTopic(IRC_User& user, IRC_Channel& channel, cons
     {
      //   channel->setUserTopic(user->getName());
      //   channel->setTimestampTopic(time(NULL));
-        channel.setTopic(topic);
+        channel.setTopic(user, topic);
         //informar
         //(todos -> :mask TOPIC canal :value)
         channel.send(":" + user.getMask() + " TOPIC " + channel.getName() + " :" + topic);
@@ -898,28 +951,6 @@ void	IRC_Server::insertInvitedUser(std::string& nickname, IRC_Channel& channel)
 const IRC_Server::channelsNameType &IRC_Server::getChannels() const
 {
     return (this->_channelsByName);
-}
-
-IRC_Response IRC_Server::kickUserFromChannel(IRC_User& user, IRC_Channel& channel, const std::string& msg)
-{
-    if (!user.isInChannel(channel))
-    {
-        return (NOT_IN_CHANNEL);
-    }
-
-    if (msg.empty())
-        channel.send(user, "KICK " + channel.getName(), "");
-    else
-        channel.send(user, "KICK " + channel.getName(), msg);
-    
-    user.removeChannel(channel);
-    channel.removeUser(user);
-
-    if (channel.empty())
-    {
-        this->deleteChannel(channel);
-    }
-    return (SUCCESS);
 }
 
 void IRC_Server::ping(IRC_User *sender, std::string const &message)

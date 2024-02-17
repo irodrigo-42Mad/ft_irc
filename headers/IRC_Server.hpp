@@ -145,8 +145,10 @@ struct IRC_Server : public Console::Console::IDisplayManager
 		bool killUser(const IRC_User& User, IRC_User& targetUser, const std::string& message);
 		IRC_Response changeNameUser(IRC_User& user, const std::string& name);
 		IRC_Response addUserToChannel(IRC_User& user, IRC_Channel& channel);
-		IRC_Response removeUserFromChannel(IRC_User& user, IRC_Channel& channel, const std::string& msg = "");
-		IRC_Response kickUserFromChannel(IRC_User& user, IRC_Channel& channel, const std::string& msg= "");
+		IRC_Response removeUserFromChannel(IRC_User& user, IRC_Channel& channel);
+		IRC_Response kickUser(IRC_User& user, IRC_Channel& channel, const std::string& message);
+		IRC_Response joinUser(IRC_User& user, IRC_Channel& channel, const std::string& key);
+		IRC_Response partUser(IRC_User& user, IRC_Channel& channel, const std::string& message);
 		void removeUserFromChannels(IRC_User& user);
 		void shutdown(const std::string& msg);
 		//invited user management

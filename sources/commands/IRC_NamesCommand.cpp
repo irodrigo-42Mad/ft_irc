@@ -2,7 +2,7 @@
 # include "IRC_Channel.hpp"
 # include "IRC_Server.hpp"
 
-static void	nicknamesList(IRC_User& user, IRC_Channel *channel)
+static void	nicknamesList(IRC_User& user, IRC_Server& server, IRC_Channel *channel)
 {
 	std::string names;
 
@@ -14,7 +14,7 @@ static void	nicknamesList(IRC_User& user, IRC_Channel *channel)
 			names += "+";
 		names += (*it)->getName() + " ";
 	}
-	user.reply(user, RPL_NAMREPLY(user.getName(), channel->getName(), names));
+	user.reply(server, RPL_NAMREPLY(user.getName(), channel->getName(), names));
 }
 
 IRC_NamesCommand::IRC_NamesCommand()
@@ -36,7 +36,7 @@ void IRC_NamesCommand::execute(IRC_Message& message) {
 	{
 		IRC_Channel *channel = message.getServer().findChannelByName(channelName);
 		if (channel)
-			nicknamesList(user, channel);
+			nicknamesList(user, server, channel);
 		// {
 			// std::string names;  // User names of channel
 // 

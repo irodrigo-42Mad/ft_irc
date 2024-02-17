@@ -44,8 +44,6 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 		creationTime << targetChannel->getCreationTime();
 		user.reply(server, RPL_CHANNELMODEIS(user.getName(), targetChannel->getName(), targetChannel->getModes()));
 		user.reply(server, RPL_CREATIONTIME(user.getName(), targetChannel->getName(), creationTime.str()));
-		//TODO: Show the list modes of that channel
-		Console::debug << "Showing the modelist of " << targetChannel->getName() << std::endl;
 	}
 	else //modifying chan modes
 	{
@@ -54,8 +52,7 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 
 		response = targetChannel->setModes(user, server, modes);
 		if (!response.empty())
-			targetChannel->send(user, "MODE " + targetChannel->getName() + " " + response, "");
-		//Console::debug << "Processing modelist '" << response << "' of " << targetChannel << std::endl;
+			targetChannel->send(user, "MODE " + targetChannel->getName() + " " + response);
 	}
 }
 

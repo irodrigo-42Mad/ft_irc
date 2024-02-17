@@ -7,30 +7,29 @@ IRC_PartCommand::IRC_PartCommand()
 
 void IRC_PartCommand::execute(IRC_Message& message)
 {
-		const std::string& channelName = message[0];
+	const std::string& channelName = message[0];
 
-		IRC_Server& server = message.getServer();
-		IRC_User& user = message.getUser();
-		IRC_Channel* channel = server.findChannelByName(channelName);
-		IRC_Response response;
-		std::string msg;
+	IRC_Server& server = message.getServer();
+	IRC_User& user = message.getUser();
+	IRC_Channel* channel = server.findChannelByName(channelName);
+	IRC_Response response;
+	std::string msg;
 
-		if (message.size() > 1)
-		{
-			msg = message[1];
-		}
+	if (message.size() > 1)
+	{
+		msg = message[1];
+	}
 
-		if (!channel)
-		{
-				user.send(ERR_NOSUCHCHANNEL(user.getName(), channelName));
-				return ;
-		}
+	if (!channel)
+	{
+		user.send(ERR_NOSUCHCHANNEL(user.getName(), channelName));
+		return ;
+	}
 
-		response = server.removeUserFromChannel(user, *channel, msg);
+	response = server.partUser(user, *channel, msg);
 
-		if (response == NOT_IN_CHANNEL)
-		{
-				user.send(ERR_NOTONCHANNEL(user.getName(), channelName));
-				return ;
-		}
+	if (response == NOT_IN_CHANNEL)
+	{
+		user.send(ERR_NOTONCHANNEL(user.getName(), channelName));
+	}
 }
