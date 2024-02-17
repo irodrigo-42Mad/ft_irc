@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/17 20:45:48 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/17 21:27:56 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -751,7 +751,8 @@ IRC_Response IRC_Server::joinUser(IRC_User& user, IRC_Channel& channel, const st
 		if (!channel.isSameKey(key))
 			return (CHANNEL_KEY_MISMATCH);
 	}
-	
+
+	// modo i n t (invitacion para mañana) pendientes
 	response = this->addUserToChannel(user, channel);
 	if (response == SUCCESS)
 	{

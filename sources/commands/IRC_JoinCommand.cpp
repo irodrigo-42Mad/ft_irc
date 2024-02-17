@@ -31,12 +31,6 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 	else
 		response = server.joinUser(user, *channel, "");
 
-	IRC_ACommand* command = server.findCommandByName("TOPIC");
-	
-	command->execute(message);
-	command = server.findCommandByName("NAMES");
-	command->execute(message);
-
 	
 	// ToDo: En pruebas
 	if (response == CHANNEL_KEY_MISMATCH)
@@ -45,4 +39,13 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 		user.reply(server, ERR_CHANNELISFULL(user.getName(), channelName));
 	else if (response == INVITE_ONLY)
 		user.reply(server, ERR_INVITEONLYCHAN(user.getName(), channelName));
+	else if (response == SUCCESS)
+	{
+		IRC_ACommand* command = server.findCommandByName("TOPIC");
+	
+		command->execute(message);
+		command = server.findCommandByName("NAMES");
+		command->execute(message);
+	}
+
 }
