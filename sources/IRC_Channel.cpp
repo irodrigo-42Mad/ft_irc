@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/17 17:37:31 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/17 20:44:04 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -516,7 +516,7 @@ std::string IRC_Channel::setModes(IRC_User& user, IRC_Server& server, const std:
 		return ("");
 }
 
-std::string IRC_Channel::getModes() const
+std::string IRC_Channel::getModes(bool list) const
 {
 	std::string modes;
 	std::string params;
@@ -526,7 +526,10 @@ std::string IRC_Channel::getModes() const
 	if (!this->_key.empty())
 	{
 		modes += 'k';
-		params += " " + this->_key;
+		if (!list)
+			params += " " + this->_key;
+		else
+			params += " <key>";
 	}
 	if (this->_limit)
 	{

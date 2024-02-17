@@ -42,7 +42,7 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 	if (message.size() == 1) //empty modelist parameter
 	{
 		creationTime << targetChannel->getCreationTime();
-		user.reply(server, RPL_CHANNELMODEIS(user.getName(), targetChannel->getName(), targetChannel->getModes()));
+		user.reply(server, RPL_CHANNELMODEIS(user.getName(), targetChannel->getName(), targetChannel->getModes(!user.isInChannel(*targetChannel))));
 		user.reply(server, RPL_CREATIONTIME(user.getName(), targetChannel->getName(), creationTime.str()));
 	}
 	else //modifying chan modes

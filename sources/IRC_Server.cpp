@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/17 19:18:58 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/17 20:45:48 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -913,7 +913,7 @@ void    IRC_Server::channelList(IRC_User& user)
 		IRC_Channel *channel = (*it).second;
 
 		oss << channel->getNumUsers();
-		user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[" + channel->getModes() + "] " + channel->getTopic()));
+		user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[" + channel->getModes(!user.isInChannel(*channel)) + "] " + channel->getTopic()));
 		oss.str("");
 		oss.clear();
 	}
@@ -929,7 +929,7 @@ void    IRC_Server::channelListByName(IRC_User& user, std::string name)
 	if (channel)
 	{
 		oss << channel->getNumUsers();
-        	user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[" + channel->getModes() + "] " + channel->getTopic()));
+        user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[" + channel->getModes(!user.isInChannel(*channel)) + "] " + channel->getTopic()));
 	}
 }
 

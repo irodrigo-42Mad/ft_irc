@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:04:15 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/17 15:47:36 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/17 20:14:07 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ struct IRC_Channel
 	bool 				hasPrivate();
 	bool 				unsetPrivate();
 
-	std::string			getModes() const;
+	std::string			getModes(bool list) const;
 	std::string			setModes(IRC_User& user, IRC_Server& server, const std::vector<std::string>& modes);
 
   	bool 				empty() const;
