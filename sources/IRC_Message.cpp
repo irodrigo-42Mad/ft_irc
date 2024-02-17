@@ -79,7 +79,7 @@ void IRC_Message::_processCommand(std::string buffer)
         while (line >> myparam && this->_params.size() < 15)
         {
             position = myparam.find(":");
-            if (position != std::string::npos)
+            if (position == 0) //std::string::npos)
             {
                 buffer.erase(0, 1);
                 this->_params.push_back(buffer.erase(buffer.length(), 2));
