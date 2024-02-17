@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/26 12:39:36 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/17 13:51:07 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -710,14 +710,18 @@ IRC_Response IRC_Server::joinUser(IRC_User& user, IRC_Channel& channel, const st
 {
 	IRC_Response response;
 
-	//TODO: Aquí es donde hay que comprobar si ha sido invitado
+	// ToDo: En pruebas  toavien en pruebas.
+	// TODO: Aquí es donde hay que comprobar si ha sido invitado
 	//      y, en caso afirmativo, saltar hasta addUserToChannel.
-	if (channel.isBanned(user))
-		return (USER_BANNED);
-	if (channel.isFull())
-		return (CHANNEL_IS_FULL);
-	if (!channel.isSameKey(key))
-		return (CHANNEL_KEY_MISMATCH);
+	if (!this->findInvitedUserToAChannel(user.getName(), channel.getName()))
+	{
+		if (channel.isBanned(user))
+			return (USER_BANNED);
+		if (channel.isFull())
+			return (CHANNEL_IS_FULL);
+		if (!channel.isSameKey(key))
+			return (CHANNEL_KEY_MISMATCH);
+	}
 	response = this->addUserToChannel(user, channel);
 	if (response == SUCCESS)
 	{
@@ -942,10 +946,6 @@ void IRC_Server::_setSignals()
 void	IRC_Server::insertInvitedUser(std::string& nickname, IRC_Channel& channel)
 {
     this->_invitedByName.insert(std::make_pair(nickname, &channel));
-    for (IRC_Server::invitedChannelsNameConstIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
-    {
-        std::cout << "pareja: " << it->first << ", " << it->second->getName() << std::endl;
-    } 
 }
 
 const IRC_Server::channelsNameType &IRC_Server::getChannels() const
@@ -962,13 +962,6 @@ void IRC_Server::pong(IRC_User *sender, std::string const &message)
 {
     sender->reply(*this, "PONG " + this->getServerName() + " :" + message);
 }
-
-/*
-std::string	IRC_Server::getTimeStamp()
-{
-    return (tmToString(this->_myTimeStamp));
-}
-*/
 
 // void                IRC_Server::sendMSG(std::string message, int type)
 // {

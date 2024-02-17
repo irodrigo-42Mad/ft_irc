@@ -7,3 +7,5 @@ ircserv
 irc
 .DS_Store
 .cache
+pendientes/._*
+pendientes/Names*.rtf

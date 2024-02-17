@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/01/25 14:03:34 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/17 12:23:44 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ struct IRC_User
 	int	getAccess() const;
 	struct pollfd*		getPollPosition();
 	const std::string&	getName() const;
-	const std::string		getMask() const;
+	const std::string	getMask() const;
 	const std::string&  getHost() const;
 	//const std::string	getUsers() const;  // habrá que crearlas
 	const std::string&	getIdent() const;

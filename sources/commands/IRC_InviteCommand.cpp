@@ -16,10 +16,10 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
 	std::string reason = "No reason specified!";
 	
 	if (!channel)
-  {
+  	{
 		user.reply(server, ERR_NOSUCHCHANNEL(nickName, message[1]));
-    return ;
-  }
+    	return ;
+  	}
 
 	if (!channel->isOperator(user)) //toUpperNickname(user.getName()) != toUpperNickname(channel->getCreator().getName()))
 	{
@@ -40,56 +40,9 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
         user.reply(server, ERR_USERONCHANNEL(nickName, channel->getName()));
         return ;
     }
-	std::cout << "hola" << std::endl;
-	// meter al invitedUser al multimap siempre que no esté y comunicar que ha sido invitdo
-	std::cout << server.findInvitedUserToAChannel(nickName, channel->getName()) << std::endl;
-	if (!server.findInvitedUserToAChannel(nickName, channel->getName())){
-		std::cout << "hasta aquí" << std::endl;
-		server.insertInvitedUser(nickName, *channel);}
+
+	if (!server.findInvitedUserToAChannel(nickName, channel->getName()))
+		server.insertInvitedUser(nickName, *channel);
 
 	invitedUser->reply(server, RPL_INVITING(nickName, channel->getName()));
-	
-	//channel->addUser(user);	//hacer un nuevo mapa (multimap) para almacenar los usuarios invitados.
-	// invitación de un único uso
-	// si se sale de IRC te tienen que volver a invitar
 }
-
-// syntax: Invite <client> <channel>
-
-// void    Invite::execute(Client* client, std::vector<std::string> args)
-// {
-// 
-    // if (args.size() >= 3 && (args[2][0] != ':' || args[2].size() > 1))
-    // {
-        // reason = "";
-// 
-        // std::vector<std::string>::iterator it = args.begin();
-        // std::vector<std::string>::iterator end = args.end();
-// 
-        // while (it != end)
-        // {
-            // reason.append(*it + " ");
-            // it++;
-        // }
-    // }
-	    // Channel *channel = _srv->get_channel(name);
-		// Client* clientinvited = _srv->get_client(target);
-// 
-    // if (!clientinvited)
-    // {
-        // client->reply(ERR_NOSUCHNICK(client->get_nickname(), target));
-        // return;
-    // }
-	// if (channel->is_ban_client(clientinvited))
-	// {
-		// client->reply(ERR_BANEDFROMCHAN(channel->get_name(), target));
-// 
-		// return ;
-	// }
-	// if (channel->is_invited(clientinvited))
-	// {
-		// client->reply(ERR_ALREADYINVITED(client->get_nickname(), target, name));
-		// return ;
-	// }
-    // channel->invite(client, clientinvited);
-// }

@@ -19,10 +19,7 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 		return ;
 	}
 	
-	// ToDo:	¿los dos usuarios deben estar en el mismo canal para enviarse mensajes?
-	//			¿qué diferencia hay entre el comando privmsg y notice?
-	
-	//buscar un usuario/canal
+	// Code for finding channel or user instances 
 	if (msgTarget[0] == '#')
 	{
 		IRC_Channel *targetChannel = server.findChannelByName(msgTarget);
@@ -33,14 +30,13 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 			return ;
 		}	
 		if (!targetChannel->isOperator(user) && 
-				(targetChannel->isBanned(user) || targetChannel->hasModerate())
-		   )
+				(targetChannel->isBanned(user) || targetChannel->hasModerate()) &&
+				targetChannel->hasNoExternalMessages())
 		{
 			user.reply(server, ERR_CANNOTSENDTOCHAN(user.getName(), targetChannel->getName()));
 			return ;
 		}
 		targetChannel->sendExcept(&user, user, "PRIVMSG " + targetChannel->getName(), textToBeSent);
-		
 	}
 	else
 	{
@@ -51,7 +47,6 @@ void IRC_PrivMsgCommand::execute(IRC_Message& message) {
 			user.reply(server, ERR_NOSUCHNICK(user.getName(), msgTarget));
 			return ;
 		}
-		// ToDo: revisar si es en todos los canales o solo en uno. Duda!!!!!!
 		targetUser->send(user, "PRIVMSG " + targetUser->getName(), textToBeSent);
 	}
 }

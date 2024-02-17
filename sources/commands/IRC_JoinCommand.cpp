@@ -30,11 +30,19 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 		response = server.joinUser(user, *channel, message[1]);
 	else
 		response = server.joinUser(user, *channel, "");
+
+	IRC_ACommand* command = server.findCommandByName("TOPIC");
 	
+	command->execute(message);
+	command = server.findCommandByName("NAMES");
+	command->execute(message);
+
+	
+	// ToDo: En pruebas
 	if (response == CHANNEL_KEY_MISMATCH)
-		; //TODO: mandar el numeric correspondiente
+		user.reply(server, ERR_BADCHANNELKEY(user.getName()	, channelName));
 	else if (response == CHANNEL_IS_FULL)
-		; //TODO: mandar el numeric correspondiente	
+		user.reply(server, ERR_CHANNELISFULL(user.getName(), channelName));
 	else if (response == INVITE_ONLY)
-		; //TODO: mandar el numeric correspondiente
+		user.reply(server, ERR_INVITEONLYCHAN(user.getName(), channelName));
 }

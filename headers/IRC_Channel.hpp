@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Channel.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
+/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:04:15 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/16 21:49:44 by pcosta-j         ###   ########.fr       */
+/*   Updated: 2024/02/17 12:24:43 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ struct IRC_Channel
   	const std::string&	getName() const;
   	const std::string&	getTopic() const;
 	const std::string& 	getTopicUser() const;
-	time_t			getTopicTime() const;
+	time_t				getTopicTime() const;
   	const usersType&	getUsers() const;
   	int 				getNumUsers() const;
 	
