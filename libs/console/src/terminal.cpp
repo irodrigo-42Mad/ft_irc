@@ -5,6 +5,7 @@
 #include <signal.h>
 #include <sstream>
 #include <sys/ioctl.h>
+#include <limits>
 
 Terminal terminal;
 
@@ -92,8 +93,6 @@ void Terminal::setCursorBottom()
 	position.col = 0;
 	position.row = this->_limits.row;
 
-	//std::cout << "this = " << this << " ";
-	//std::cout << "position.row = " << position.row << " : position.col = " << position.col << std::endl;
 	this->setCursorPosition(position);
 }
 
@@ -101,11 +100,11 @@ Position Terminal::getCursorPosition() const
 {
 	Position pos;
 	char response[32];
+	char dummy;
 
 	std::cout << "\033[6n";
 	std::cin.readsome(response, sizeof(response));
 	std::stringstream ss(response);
-	char dummy;
 
 	ss >> dummy >> pos.row >> dummy >> pos.col;
 	return (pos);
@@ -123,7 +122,7 @@ void Terminal::_updateLimits()
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 	terminal._limits.col = size.ws_col;
 	terminal._limits.row = size.ws_row;
-	terminal._updatePosition();
+//	terminal._updatePosition();
 }
 
 void Terminal::_sigwinchHandler(int /*signal*/)

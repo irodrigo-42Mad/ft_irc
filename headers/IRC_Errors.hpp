@@ -48,7 +48,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_NOSUCHNICK(nickname, user)          					"401 " + nickname + " " + user + " :No such nick/channel"
 # define ERR_NOSUCHSERVER(nickname, server)							"402 " + nickname + " " + server + " :No such server"
 # define ERR_NOSUCHCHANNEL(nickname, channel)						"403 " + nickname + " " + channel + " :No such channel"
-# define ERR_CANNOTSENDTOCHAN(nickname, channel)					"404 " + nickname + " " + channel + " :Cannot send to channel"
+# define ERR_CANNOTSENDTOCHAN(nickname, channel, mode)		"404 " + nickname + " " + channel + " :Cannot send to channel (" + mode + ")"
 # define ERR_TOOMANYCHANNELS(nickname, channel)						"405 " + nickname + " " + channel + " :You have joined too many channels"
 # define ERR_NORECIPIENT(nickname, command)							"411 " + nickname + " :No recipient given (" + command + ")"
 # define ERR_NOTEXTTOSEND(nickname)									"412 " + nickname + " :No text to send"

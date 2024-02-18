@@ -6,7 +6,6 @@
 
 CustomBuffer::CustomBuffer()
 {
-	printf("CustomBuffer constructor\n");
 	char* buffer = new char[100];
 	setp(buffer, buffer + 100);
 }

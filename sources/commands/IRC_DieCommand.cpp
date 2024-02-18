@@ -7,7 +7,11 @@ IRC_DieCommand::IRC_DieCommand()
 
 void IRC_DieCommand::execute(IRC_Message& message) {
 	IRC_Server& server = message.getServer();
-	//IRC_User& user = message.getUser();
-	
-	server.shutdown("DIE");
+	IRC_User& user = message.getUser();
+	std::string msg;
+
+	if (message.size() == 1)
+		msg = message[0];
+
+	server.shutdown("Server shutdown by " + user.getName() + ": (" + msg + ")");
 }

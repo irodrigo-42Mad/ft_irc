@@ -14,5 +14,5 @@ void IRC_QuitCommand::execute(IRC_Message& message)
 	if (message.size() == 0)
 		server.quitUser(user, "");
 	else
-		server.quitUser(user, message[0]);
+		server.quitUser(user, "Quit: " + message[0]);
 }

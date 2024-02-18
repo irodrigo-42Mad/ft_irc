@@ -1,13 +1,9 @@
 #include "commands/IRC_ModeCommand.hpp"
 #include "IRC_Server.hpp"
 #include "IRC_Errors.hpp"
+#include "tools.hpp"
 
 #include <string>
-
-static bool isChannel(const std::string& target)
-{
-	return (target[0] == '#');
-}
 
 IRC_ModeCommand::IRC_ModeCommand()
 	: IRC_ACommand("MODE", 1, REGISTERED)
@@ -42,7 +38,7 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 	if (message.size() == 1) //empty modelist parameter
 	{
 		creationTime << targetChannel->getCreationTime();
-		user.reply(server, RPL_CHANNELMODEIS(user.getName(), targetChannel->getName(), targetChannel->getModes(!user.isInChannel(*targetChannel))));
+		user.reply(server, RPL_CHANNELMODEIS(user.getName(), targetChannel->getName(), targetChannel->getModes(user)));
 		user.reply(server, RPL_CREATIONTIME(user.getName(), targetChannel->getName(), creationTime.str()));
 	}
 	else //modifying chan modes

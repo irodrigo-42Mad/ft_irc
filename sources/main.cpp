@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/IRC_Server.hpp"
+#include "IRC_Server.hpp"
+#include "IRC_Exception.hpp"
 
 int	main(int argc, char *argv[])
 {
@@ -22,13 +23,16 @@ int	main(int argc, char *argv[])
 		return (ft_err_msg("invalid port", ERR_COMPLETELY_SCREWED, 3));
 	if (!checkPasswordNotEmpty(argv[2]))
 		return (ft_err_msg("password is empty!", ERR_COMPLETELY_SCREWED, 3));
-	
-	IRC_Server irc(argv[1], argv[2]);   // crearemos el servidor
-	IRC_Server::State srvState = IRC_Server::ALIVE;
 
-	irc.start();    		 	// lanzaremos el bucle del pool
-	srvState = irc.getState();  // comprobamos que no está caido en cada ejecución
+	try {
+		IRC_Server irc(argv[1], argv[2]);   // crearemos el servidor
 
-	std::cout << "Status: " << srvState << std::endl;
-	return(0);
+		irc.start();    		 	// lanzaremos el bucle del pool
+	}
+	catch (const IRC_Exception& ie)
+	{
+		std::cerr << "IRC_Exception: " << ie.what() << std::endl;
+		return (1);
+	}
+	return (0);
 }

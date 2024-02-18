@@ -71,7 +71,7 @@ void    IRC_Channel::removeUser(IRC_User& userToDelete)
     */
 }
 
-bool IRC_Channel::hasUser(const IRC_User& user)
+bool IRC_Channel::hasUser(const IRC_User& user) const
 {
 	return (this->_users.find(const_cast<IRC_User*>(&user)) != this->_users.end());
 }
@@ -516,7 +516,7 @@ std::string IRC_Channel::setModes(IRC_User& user, IRC_Server& server, const std:
 		return ("");
 }
 
-std::string IRC_Channel::getModes(bool list) const
+std::string IRC_Channel::getModes(const IRC_User& user) const
 {
 	std::string modes;
 	std::string params;
@@ -526,7 +526,7 @@ std::string IRC_Channel::getModes(bool list) const
 	if (!this->_key.empty())
 	{
 		modes += 'k';
-		if (!list)
+		if (this->hasUser(user))
 			params += " " + this->_key;
 		else
 			params += " <key>";
@@ -559,7 +559,7 @@ bool IRC_Channel::addBan(const std::string& value)
 	return (this->_bans.insert(value).second);
 }
 
-bool IRC_Channel::isBanned(const IRC_User& user)
+bool IRC_Channel::isBanned(const IRC_User& user) const
 {
 	for (bansConstIterator it = this->_bans.begin(); it != this->_bans.end(); ++it)
 	{
@@ -579,7 +579,7 @@ bool IRC_Channel::addOperator(IRC_User& user)
 	return (this->_operUsers.insert(&user).second);
 }
 
-bool IRC_Channel::isOperator(const IRC_User& user)
+bool IRC_Channel::isOperator(const IRC_User& user) const
 {
 	return (this->_operUsers.find(const_cast<IRC_User*>(&user)) != this->_operUsers.end());
 }
@@ -594,7 +594,7 @@ bool IRC_Channel::addVoice(IRC_User& user)
 	return (this->_voiceUsers.insert(&user).second);
 }
 
-bool IRC_Channel::isVoice(const IRC_User& user)
+bool IRC_Channel::isVoice(const IRC_User& user) const
 {
 	return (this->_voiceUsers.find(const_cast<IRC_User*>(&user)) != this->_voiceUsers.end());
 }
@@ -614,7 +614,7 @@ bool IRC_Channel::setInvite()
 	return (false);
 }
 
-bool IRC_Channel::hasInvite()
+bool IRC_Channel::hasInvite() const
 {
 	return (this->_invite);
 }
@@ -639,7 +639,7 @@ bool IRC_Channel::setKey(const std::string& value)
 	return (false);
 }
 
-bool IRC_Channel::hasKey()
+bool IRC_Channel::hasKey() const
 {
 	return (!this->_key.empty());
 }
@@ -654,7 +654,7 @@ bool IRC_Channel::unsetKey(const std::string& value)
 	return (false);
 }
 
-bool IRC_Channel::isSameKey(const std::string& value)
+bool IRC_Channel::isSameKey(const std::string& value) const
 {
 	return (this->_key.empty() || this->_key == value);
 }
@@ -669,7 +669,7 @@ bool IRC_Channel::setPrivate()
 	return (false);
 }
 
-bool IRC_Channel::hasPrivate()
+bool IRC_Channel::hasPrivate() const
 {
 	return (this->_private);
 }
@@ -694,7 +694,7 @@ bool IRC_Channel::setLimit(size_t value)
 	return (false);
 }
 
-bool IRC_Channel::hasLimit()
+bool IRC_Channel::hasLimit() const
 {
 	return (this->_limit > 0);
 }
@@ -709,7 +709,7 @@ bool IRC_Channel::unsetLimit()
 	return (false);
 }
 
-bool IRC_Channel::isFull()
+bool IRC_Channel::isFull() const
 {
 	return (this->_limit && this->_users.size() >= this->_limit);
 }
@@ -724,7 +724,7 @@ bool IRC_Channel::setNoExternalMessages()
 	return (false);
 }
 
-bool IRC_Channel::hasNoExternalMessages()
+bool IRC_Channel::hasNoExternalMessages() const
 {
 	return (this->_noExternalMessages);
 }
@@ -749,7 +749,7 @@ bool IRC_Channel::setTopicProtection()
 	return (false);
 }
 
-bool IRC_Channel::hasTopicProtection()
+bool IRC_Channel::hasTopicProtection() const
 {
 	return (this->_topicProtection);
 }
@@ -775,7 +775,7 @@ bool IRC_Channel::setModerate()
 	return (false);
 }
 
-bool IRC_Channel::hasModerate()
+bool IRC_Channel::hasModerate() const
 {
 	return (this->_moderate);
 }
@@ -800,7 +800,7 @@ bool IRC_Channel::setSecret()
 	return (false);
 }
 
-bool IRC_Channel::hasSecret()
+bool IRC_Channel::hasSecret() const
 {
 	return (this->_secret);
 }

@@ -16,5 +16,5 @@ void IRC_KillCommand::execute(IRC_Message& message) {
 		return ;
 	}
 
-	server.killUser(user, *targetUser, message[1]);
+	server.killUser(user, *targetUser, "Killed by " + user.getName() + ": (" + message[1] + ")");
 }

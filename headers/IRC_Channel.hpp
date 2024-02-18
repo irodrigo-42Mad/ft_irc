@@ -47,70 +47,70 @@ struct IRC_Channel
   	void				setTopic(const IRC_User& user, const std::string& newTopic);
 	
   	bool				addUser(IRC_User& user);
-  	bool				hasUser(const IRC_User& user);
+  	bool				hasUser(const IRC_User& user) const;
   	void				removeUser(IRC_User& user);
 
   	bool	 			addOperator(IRC_User& user);
-  	bool 				isOperator(const IRC_User& user);
+  	bool 				isOperator(const IRC_User& user) const;
   	bool 				removeOperator(IRC_User& user);
 
   	bool 				addVoice(IRC_User& user);
-  	bool 				isVoice(const IRC_User& user);
+  	bool 				isVoice(const IRC_User& user) const;
   	bool 				removeVoice(IRC_User& user);
 
   	bool 				setInvite();
-  	bool 				hasInvite();
+  	bool 				hasInvite() const;
   	bool 				unsetInvite();
 
   	bool	 			setKey(const std::string& value);
-  	bool 				hasKey();
+  	bool 				hasKey() const;
   	bool 				unsetKey(const std::string& value);
-  	bool 				isSameKey(const std::string& value);
+  	bool 				isSameKey(const std::string& value) const;
 
   	bool	 			setNoExternalMessages();
-	bool 				hasNoExternalMessages();
+	bool 				hasNoExternalMessages() const;
   	bool 				unsetNoExternalMessages();
 
 	bool	 			addBan(const std::string& mask);
-	bool 				isBanned(const IRC_User& user);
+	bool 				isBanned(const IRC_User& user) const;
 	bool 				removeBan(const std::string& mask);
 
 	bool	 			setTopicProtection();
-	bool 				hasTopicProtection();
+	bool 				hasTopicProtection() const;
 	bool 				unsetTopicProtection();
 
 	bool	 			setLimit(size_t value);
-	bool 				hasLimit();
+	bool 				hasLimit() const;
 	bool 				unsetLimit();
-	bool 				isFull();
+	bool 				isFull() const;
 
 	bool	 			setModerate();
-	bool 				hasModerate();
+	bool 				hasModerate() const;
 	bool 				unsetModerate();
 
 	bool	 			setSecret();
-	bool 				hasSecret();
+	bool 				hasSecret() const;
 	bool 				unsetSecret();
 
 	bool	 			setPrivate();
-	bool 				hasPrivate();
+	bool 				hasPrivate() const;
 	bool 				unsetPrivate();
 
-	std::string			getModes(bool list) const;
+	std::string			getModes(const IRC_User& user) const;
 	std::string			setModes(IRC_User& user, IRC_Server& server, const std::vector<std::string>& modes);
 
-  	bool 				empty() const;
-	
-  	void 				sendExcept(const IRC_User* exceptUser, const std::string& data);
-  	void 				send(const std::string&);
-  	void 				send(const IRC_User& user, const std::string& data);
-  	void 				send(const IRC_Server& server, const std::string& data);
-  	void 				sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data);
-  	void 				sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data);
-  	void 				send(const IRC_User& user, const std::string& data, const std::string& lastParameter);
-  	void 				send(const IRC_Server& server, const std::string& data, const std::string& lastParameter);
-  	void	 			sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter);
-  	void 				sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter);
+	bool 				empty() const;
+
+	void 				sendExcept(const IRC_User* exceptUser, const std::string& data);
+	void 				send(const std::string&);
+	void 				send(const IRC_User& user, const std::string& data);
+	void 				send(const IRC_Server& server, const std::string& data);
+	void 				sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data);
+	void 				sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data);
+	void 				send(const IRC_User& user, const std::string& data, const std::string& lastParameter);
+	void 				send(const IRC_Server& server, const std::string& data, const std::string& lastParameter);
+	void				sendExcept(const IRC_User* exceptUser, const IRC_User& user, const std::string& data, const std::string& lastParameter);
+	void 				sendExcept(const IRC_User* exceptUser, const IRC_Server& server, const std::string& data, const std::string& lastParameter);
 
 private:
 	usersType			_users;

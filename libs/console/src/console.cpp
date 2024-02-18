@@ -53,10 +53,10 @@ void Console::displayBottom()
 	std::stringstream ss;
 
 	Console::_displayManager->displayBottom(ss, terminal.getColumns());
-	terminal.setCursorBottom();
+	//terminal.setCursorBottom();
 	terminal.clearCurrentRow();
 	std::cout << ss.str().substr(0, terminal.getColumns()) << '\r';
-	terminal.restoreCursorPosition();
+	//terminal.restoreCursorPosition();
 	std::cout << std::flush;
 }
 

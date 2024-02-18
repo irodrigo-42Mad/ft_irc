@@ -1,6 +1,7 @@
 #include "commands/IRC_JoinCommand.hpp"
 #include "IRC_Channel.hpp"
 #include "IRC_Server.hpp"
+#include "tools.hpp"
 
 IRC_JoinCommand::IRC_JoinCommand()
 	: IRC_ACommand("JOIN", 1, REGISTERED)
@@ -14,10 +15,11 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 	IRC_User& user = message.getUser();
 	IRC_Response response;
 	const std::string chanTypes(CHANTYPES);
+	std::string password;
 
-	if (chanTypes.find(channelName[0]) == std::string::npos)
+	if (!isChannel(channelName))
 	{
-		user.reply(server, ERR_BADCHANMASK(user.getName(), channelName));		
+		user.reply(server, ERR_BADCHANMASK(user.getName(), channelName));	
 		return ;
 	}
 
@@ -27,11 +29,9 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 	}
 
 	if (message.size() > 1)
-		response = server.joinUser(user, *channel, message[1]);
-	else
-		response = server.joinUser(user, *channel, "");
+		password = message[1];
+	response = server.joinUser(user, *channel, password);
 
-	
 	// ToDo: En pruebas
 	if (response == CHANNEL_KEY_MISMATCH)
 		user.reply(server, ERR_BADCHANNELKEY(user.getName()	, channelName));
@@ -39,13 +39,14 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 		user.reply(server, ERR_CHANNELISFULL(user.getName(), channelName));
 	else if (response == INVITE_ONLY)
 		user.reply(server, ERR_INVITEONLYCHAN(user.getName(), channelName));
+	else if (response == USER_BANNED)
+		user.reply(server, ERR_BANNEDFROMCHAN(user.getName(), channelName));
 	else if (response == SUCCESS)
 	{
-		IRC_ACommand* command = server.findCommandByName("TOPIC");
-	
-		command->execute(message);
-		command = server.findCommandByName("NAMES");
-		command->execute(message);
+		if (IRC_ACommand* command = server.findCommandByName("NAMES"))
+			command->execute(message);
+		//command = server.findCommandByName("TOPIC");
+		//command->execute(message);
 	}
 
 }

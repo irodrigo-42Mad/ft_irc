@@ -16,6 +16,7 @@
 #include "IRC_Message.hpp"
 #include "IRC_Utils.hpp"
 #include "IRC_Response.hpp"
+#include "IRC_Exception.hpp"
 #include "terminal.hpp"
 
 #include <signal.h>
@@ -41,25 +42,15 @@ IRC_Server::IRC_Server(char *port, const std::string &password)
 
 	if (!_createServerSocket())
 	{
-		Console::error << "no es posible inicializar el socket" << std::endl;
-		return ;
-    	}
+		throw IRC_Exception("Unable initialize socket");
+  }
 	if (!listen(10))
 	{
-		Console::error << "No se puede abrir el puerto" << std::endl;
-		return ;
+		throw IRC_Exception("Unable initialize port");
 	}
 
 	this->fillMOTDMsg("./images/ascii-art5.txt");
 	this->_fillCommands();
-   
-   	/*
-    std::time_t now = std::time(NULL);
-    std::tm     *localTime = std::localtime(&now);
-
-    std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec //solo de momento
-              << std::endl;
-		*/
 	this->_createPoll();
 }
 
@@ -181,11 +172,11 @@ void    IRC_Server::start()
 
         	int poll_count = poll(this->_pfds, this->_connectedClientsNum, 200);
 
-        	if (poll_count < 0 && !this->_forceDie)
+        	if (poll_count < 0 && IRC_Server::_forceDie)
         	{
-			continue ;
+						this->_die = true;
+						continue ;
 			//Console::error << "Server::start fatal server error" << std::endl;
-			//this->_die = true;
         	}
 
         	// Run through the existing connections looking for data to read
@@ -260,42 +251,35 @@ void IRC_Server::_sendToUser(IRC_User *user)
 	if (bytesSent == bytesToSend)
 		user->_pollPosition->events &= ~POLLOUT;
 	if (bytesSent == -1)
+		Console::debug << "Error writing to client (TODO, handle it!)" << std::endl;
 		//ERROR socket desconectado, hay que gestionarlo
-		;
 	buffer.erase(0, bytesSent);
 }
 
 void IRC_Server::_readFromUser(IRC_User* user)
 {
 	char buffer[SOCKET_BUFFER + 1];
-    
+	int nbytes;
+
 	if (user->deleteMarked())
-				return ;
-    //std::cout << senderUser->getName() << std::endl;
-    //if (!senderUser)
-	//  	throw std::runtime_error("User not exists");
-
-	int nbytes = recv(user->getPollPosition()->fd, buffer, SOCKET_BUFFER, 0);
-
+		return ;
+	nbytes = recv(user->getPollPosition()->fd, buffer, SOCKET_BUFFER, 0);
 	if (nbytes <= 0)        // Got error or connection closed by client
-    	{
-        	if (nbytes == 0)    // Connection closed
-            		Console::debug << "pollserver: Socket " << user->getFd() << " hung up" << std::endl;
-        	else
-        	{
+	{
+		if (nbytes == 0)    // Connection closed
+			Console::debug << "pollserver: Socket " << user->getFd() << " hung up" << std::endl;
+		else
+		{
 			Console::error << "Can not receive client data" << std::endl;
 			this->_die = true;
 			return ;
-        	}
-        	this->_deleteUser(user);
-    	}
-    	else                    // We got some good data from a client
-    	{
+		}
+		this->_deleteUser(user);
+	}
+	else // We got some good data from a client
+	{
 		buffer[nbytes] = '\0';
 		user->addReceiveData(buffer);
-		//TODO: Deberíamos verificar que buffer tiene un \r\n en lugar de verificar
-		//todo lo que ha recibido hasta ese momento el cliente. Eso ya se verificó
-		//en operaciones anteriores.
 		this->_processUserCommand(user);
 	}
 }
@@ -306,15 +290,15 @@ void IRC_Server::_processUserCommand(IRC_User* user)
 	size_t command_lenght;
 	std::string& mydata = user->_inputBuffer;
 	//std::cout << user->getBuffer();
-    
+
 	// para que pruebes todo el contenido, cambia mydata, por el comando que quieres probar, yo, esta tarde
 	// te entregaré un parser básico que deberia ejecutar ya todo
 	// descomenta estas primera linea para pruebas y pon tu comando entre "" (te incluyo un ejemplo)
 	// deberia de parsearse del todo.
-    
+
 	//   IRC_Message procesed = IRC_Message(user, this, "NICK hola");
 	//   this->_runCommand(procesed);
-    
+
 	while ((position = mydata.find("\r\n")) != std::string::npos)
 	{
 		if (position > LINELEN - 2)
@@ -325,17 +309,12 @@ void IRC_Server::_processUserCommand(IRC_User* user)
 		{
 			command_lenght = position;
 		}
-		
-		Console::debug << "cmd = " << command_lenght << ": " << mydata.substr(0, command_lenght) << std::endl;	
-        	IRC_Message procesed = IRC_Message(user, this, mydata.substr(0, command_lenght));
+	
+		IRC_Message procesed = IRC_Message(user, this, mydata.substr(0, command_lenght));
 
-        	this->_runCommand(procesed);
+		this->_runCommand(procesed);
 		mydata.erase(0, position + 2);
-    	}
-    	/*
-    	else
-        	std::cout << "incomplete command" << std::endl;
-    	*/
+  }
 }
 
 IRC_User* IRC_Server::findUserByName(const std::string& name)
@@ -349,7 +328,7 @@ IRC_User* IRC_Server::findUserByName(const std::string& name)
 	return (it->second);
 }
 
-bool    IRC_Server::findInvitedUserToAChannel(const std::string& nickname, const std::string& channelName)
+bool	IRC_Server::findInvitedUserToAChannel(const std::string& nickname, const std::string& channelName)
 {
 	for (IRC_Server::invitedChannelsNameConstIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
 	{
@@ -361,8 +340,6 @@ bool    IRC_Server::findInvitedUserToAChannel(const std::string& nickname, const
 
 void	IRC_Server::deleteInvitedUser(const std::string& nickname, const std::string& channelName)
 {
-
-	
 	for (IRC_Server::invitedChannelsNameIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
 	{
 		if (toUpperNickname((*it).first) == toUpperNickname(nickname) && (*it).second->getName() == channelName)
@@ -454,11 +431,11 @@ void IRC_Server::send(const IRC_User& user, const std::string& data)
 	this->send(":" + user.getMask() + " " + data);
 }
 
-void IRC_Server::shutdown(const std::string& msg)
+void IRC_Server::shutdown(const std::string& message)
 {
 	for (usersFdIterator it = this->_usersByFd.begin(); it != this->_usersByFd.end(); ++it)
 	{
-		this->quitUser(*it->second, msg);
+		this->quitUser(*it->second, message);
 		//this->send("ERROR :Closing Link: " + it->second->getName() + "@" + it->second->getHost() + " (" + msg + ")");
 	}
 	this->_die = true;
@@ -531,7 +508,7 @@ void IRC_Server::deleteChannel(IRC_Channel& channel)
 	// 	if ((*it).second->getName() == channel.getName())
 	// 		this->_invitedByName.erase(it);
 	// }
-	
+
 	this->_channelsByName.erase(channel.getName());	
 	Console::log << "Channel " << channel.getName() << " deleted" << std::endl;
 	delete &channel;
@@ -540,20 +517,9 @@ void IRC_Server::deleteChannel(IRC_Channel& channel)
 bool IRC_Server::setPendingUser(IRC_User& user)
 {
 	std::string random = generateRandomText();
-	//std::cout << random << std::endl;
 
 	if (user.getName() != "*" && !user.getIdent().empty() && user.getAccess() == UNREGISTERED)
 	{
-		// creemos que tenemos que hacer esto aqui
-		// this->_checkClientTime(&user);
-        
-        
-		// ToDo: lanzar un ping, ya veremos como y contar tiempo
-		// if ping correcto y pong a tiempo setAccess = 1
-		// llamar a un pong
-
-
-		//TODO: check password?  and.... return function can be boolean?
 		if (this->_password != user.getPass())
 		{
 			user.reply(*this, ERR_PASSWDMISMATCH(user.getName()));
@@ -561,8 +527,8 @@ bool IRC_Server::setPendingUser(IRC_User& user)
 			return false;
 		}
 		user.setAccess(PENDING);
-	        user._pingText = random;
-	        this->ping(&user, random);
+		user._pingText = random;
+		this->ping(&user, random);
 		Console::log << "User " << user.getMask() << " pending" << std::endl;
 		Console::debug << "PING >> " << random << std::endl;
 		return true;
@@ -572,16 +538,10 @@ bool IRC_Server::setPendingUser(IRC_User& user)
 
 bool IRC_Server::quitUser(IRC_User& user, const std::string& text)
 {
-	std::string message;
+	std::string message = text;
 
-	if (text.empty())
-	{
+	if (message.empty())
 		message = "Client exited";
-	}
-	else
-	{
-		message = "Quit: " + text;
-	}	
     
 	user.sendCommonUsersExceptMe(user, "QUIT", message);
 	this->removeUserFromChannels(user);
@@ -642,11 +602,6 @@ void    IRC_Server::sendWelcomeMsg(IRC_User& user)
 {
     std::stringstream ss;
     
-    user.reply(*this, RPL_WELCOME(user.getName(), NETWORK, user.getMask()));
-    user.reply(*this, RPL_YOURHOST(user.getName(), this->getServerName(), IRC_VERSION));
-    user.reply(*this, RPL_CREATED(user.getName(), __TIME__ + " " + __DATE__));
-    user.reply(*this, RPL_MYINFO(user.getName(), this->getServerName(), IRC_VERSION));
-
 		ss << "CHANLIMIT=" << CHANLIMIT << " ";
 		ss << "CHANNELLEN=" << CHANNELLEN << " ";
 		ss << "CHANTYPES=" << CHANTYPES << " ";
@@ -661,7 +616,10 @@ void    IRC_Server::sendWelcomeMsg(IRC_User& user)
 		ss << "TOPICLEN=" << TOPICLEN << " ";
 		ss << "USERLEN=" << USERLEN << " ";
 
-
+    user.reply(*this, RPL_WELCOME(user.getName(), NETWORK, user.getMask()));
+    user.reply(*this, RPL_YOURHOST(user.getName(), this->getServerName(), IRC_VERSION));
+    user.reply(*this, RPL_CREATED(user.getName(), __TIME__ + " " + __DATE__));
+    user.reply(*this, RPL_MYINFO(user.getName(), this->getServerName(), IRC_VERSION));
     user.reply(*this, RPL_ISUPPORT(user.getName(), ss.str()));
 }
 
@@ -914,7 +872,7 @@ void    IRC_Server::channelList(IRC_User& user)
 		IRC_Channel *channel = (*it).second;
 
 		oss << channel->getNumUsers();
-		user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[" + channel->getModes(!user.isInChannel(*channel)) + "] " + channel->getTopic()));
+		user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[" + channel->getModes(user) + "] " + channel->getTopic()));
 		oss.str("");
 		oss.clear();
 	}
@@ -930,7 +888,7 @@ void    IRC_Server::channelListByName(IRC_User& user, std::string name)
 	if (channel)
 	{
 		oss << channel->getNumUsers();
-        user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[" + channel->getModes(!user.isInChannel(*channel)) + "] " + channel->getTopic()));
+        user.reply(*this, RPL_LIST(user.getName(), channel->getName(), oss.str(), "[" + channel->getModes(user) + "] " + channel->getTopic()));
 	}
 }
 
