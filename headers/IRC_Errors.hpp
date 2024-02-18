@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 11:38:07 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/17 17:08:24 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/18 20:23:32 by rnavarre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_CHANOPRIVSNEEDED(nickname, channel)					"482 " + nickname + " " + channel + " :You're not channel operator"
 # define ERR_NOOPERHOST(nickname)									"491 " + nickname + " :No O-lines for your host"
 # define ERR_USERSDONTMATH(nickname)				    			"502 " + nickname + " :Cannot change mode for other users"
+# define ERR_INVALIDMODEPARAM(nickname, target, mode)				"696 " + nickname + " " + target + " " + mode + " :You must specify a parameter for the mode."
 # define ERR_PONG(mask, message)									"ERROR: Closing link: (" + mask + ") " + message // unregistered [Registration timeout] o bien registered [Ping timeout: 120 seconds]
 
 #endif

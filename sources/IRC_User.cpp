@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 16:15:01 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/18 14:55:41 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/18 20:34:28 by rnavarre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include "IRC_Channel.hpp"
 #include "IRC_Server.hpp"
 #include "IRC_Utils.hpp"
-#include "console.hpp"
 
 #include <iostream>
 
@@ -35,7 +34,6 @@ IRC_User::IRC_User(struct pollfd* pollPosition)
 	, _loginTime(time(NULL))
 	, _deleteMarked(false)
 {
-	Console::debug << "User &" << this->_ident << "(" << this->_pollPosition->fd << ")" << " & created desde el constructor con un parámetro" << std::endl;
 }
 
 IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const std::string& ident, const std::string& realname)
@@ -49,7 +47,6 @@ IRC_User::IRC_User(struct pollfd* pollPosition, const std::string& name, const s
 	, _loginTime(time(NULL))
 	, _deleteMarked(false)
 {
-	Console::debug << "User &" << this->_ident << "& created desde el constructor con 4 parámetros" << std::endl;
 }
 
 IRC_User::~IRC_User()

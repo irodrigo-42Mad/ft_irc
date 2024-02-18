@@ -58,17 +58,6 @@ SOURCES		:= $(addprefix $(SRCPATH), $(SRCFILES))
 # DEPENDENCIES
 DEPENDENCIES = -MMD
 
-
-# LIBCONSOLE
-
-LIBPATH = ./libs
-LIBS += -L $(LIBCONSOLEPATH) -l $(LIBCONSOLENAME)
-INCLUDES += -I $(LIBCONSOLEPATH)/inc
-
-LIBCONSOLEPATH = $(LIBPATH)/$(LIBCONSOLENAME)
-LIBCONSOLENAME = console
-LIBCONSOLE = $(LIBCONSOLEPATH)/lib$(LIBCONSOLENAME).a
-
 # COMPILER AND FLAGS#
 CXX = clang++
 VERSION = --std=c++98 -pedantic
@@ -104,7 +93,7 @@ RM = rm -rf
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LIBCONSOLE)
+$(NAME): $(OBJS)
 	@echo "$(BLUE)==========CREATING $(NAME)==========$(RESET)"
 	@$(CXX) $(OBJS) $(LDFLAGS) -o $(NAME)
 	@echo "$(WHITE)Done $(RESET)"
@@ -115,9 +104,6 @@ $(NAME): $(OBJS) $(LIBCONSOLE)
 
 info:
 	$(info $(OBJS))
-
-$(LIBCONSOLE):
-	make -C $(LIBCONSOLEPATH)
 
 test:		all
 	./$(NAME) 6667 "1234"

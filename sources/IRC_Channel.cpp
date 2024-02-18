@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/17 20:44:04 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/18 20:34:34 by rnavarre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,12 @@ IRC_Channel::IRC_Channel(std::string const &name, IRC_User& creator)
     //this->_key = ""; // Puedes establecer una clave si es necesario.
     this->addUser(creator);			// Agrega el creador como miembro del canal
     this->addOperator(creator); // y le otorga @
-		Console::debug << "IRC_Channel constructor" << std::endl;
 
     // También puedes configurar otros modos de canal, como invitaciones, si es necesario.
 }
 
 IRC_Channel::~IRC_Channel() // destructor de canal, veremos a ver que debemos hacer aqui.
 {
-		Console::debug << "IRC_Channel destructor" << std::endl;
 }
 
 bool    IRC_Channel::addUser(IRC_User& userToAdd)
@@ -285,7 +283,7 @@ std::string IRC_Channel::setModes(IRC_User& user, IRC_Server& server, const std:
 	std::vector<std::string> result_param;
 	const std::string& modes = modeList[0];
 	bool plus = true;
-	int paramIndex = 1;
+	size_t paramIndex = 1;
 	int modeCount = 0;
 
 	if (modes[0] != '+' && modes[0] != '-')
@@ -331,37 +329,47 @@ std::string IRC_Channel::setModes(IRC_User& user, IRC_Server& server, const std:
 		}
 		else if (*it == 'k')
 		{
-			const std::string& key = modeList[paramIndex];
+			if (paramIndex == modeList.size())
+				user.reply(server, ERR_INVALIDMODEPARAM(user.getName(), this->getName(), "k"));
+			else
+			{
+				const std::string& key = modeList[paramIndex];
 
-			if (plus && this->setKey(key))
-			{
-				++modeCount;
-				result_mode += "k";
-				result_param.push_back(key);
+				if (plus && this->setKey(key))
+				{
+					++modeCount;
+					result_mode += "k";
+					result_param.push_back(key);
+				}
+				else if (!plus && this->unsetKey(key))
+				{
+					++modeCount;
+					result_mode += "k";
+					result_param.push_back(key);
+				}
+				++paramIndex;
 			}
-			else if (!plus && this->unsetKey(key))
-			{
-				++modeCount;
-				result_mode += "k";
-				result_param.push_back(key);
-			}
-			++paramIndex;
 		}
 		else if (*it == 'l')
 		{
-			const std::string& limit = modeList[paramIndex];
+			if (paramIndex == modeList.size())
+				user.reply(server, ERR_INVALIDMODEPARAM(user.getName(), this->getName(), "l"));
+			else
+			{
+				const std::string& limit = modeList[paramIndex];
 
-			if (plus && this->setLimit(atoi(limit.c_str())))
-			{
-				++modeCount;
-				result_mode += "l";
-				result_param.push_back(limit);
-				++paramIndex;
-			}
-			else if (!plus && this->unsetLimit())
-			{
-				++modeCount;
-				result_mode += "l";
+				if (plus && this->setLimit(atoi(limit.c_str())))
+				{
+					++modeCount;
+					result_mode += "l";
+					result_param.push_back(limit);
+					++paramIndex;
+				}
+				else if (!plus && this->unsetLimit())
+				{
+					++modeCount;
+					result_mode += "l";
+				}
 			}
 		}
 		else if (*it == 'm')
@@ -431,75 +439,90 @@ std::string IRC_Channel::setModes(IRC_User& user, IRC_Server& server, const std:
 		}
 		else if (*it == 'b')
 		{
-			const std::string& mask = modeList[paramIndex]; 
+			if (paramIndex == modeList.size())
+				user.reply(server, ERR_INVALIDMODEPARAM(user.getName(), this->getName(), "b"));
+			else
+			{
+				const std::string& mask = modeList[paramIndex]; 
 
-			if (plus && this->addBan(mask))
-			{
-				++modeCount;
-				result_mode += "b";
-				result_param.push_back(mask);
+				if (plus && this->addBan(mask))
+				{
+					++modeCount;
+					result_mode += "b";
+					result_param.push_back(mask);
+				}
+				else if (!plus && this->removeBan(mask))
+				{
+					++modeCount;
+					result_mode += "b";
+					result_param.push_back(mask);
+				}
+				++paramIndex;
 			}
-			else if (!plus && this->removeBan(mask))
-			{
-				++modeCount;
-				result_mode += "b";
-				result_param.push_back(mask);
-			}
-			++paramIndex;
 		}
 		else if (*it == 'o')
 		{
-			IRC_User* targetUser = server.findUserByName(modeList[paramIndex]);
-			
-			if (targetUser)
-			{
-				if (plus && !this->isOperator(*targetUser))
-				{
-					++modeCount;
-					result_mode += "o";
-					this->addOperator(*targetUser);
-					result_param.push_back(targetUser->getName());
-				}
-				else if (!plus && this->isOperator(*targetUser))
-				{
-					++modeCount;
-					result_mode += "o";
-					this->removeOperator(*targetUser);
-					result_param.push_back(targetUser->getName());
-				}
-			}
+			if (paramIndex == modeList.size())
+				user.reply(server, ERR_INVALIDMODEPARAM(user.getName(), this->getName(), "o"));
 			else
 			{
-				user.reply(server, ERR_NOSUCHNICK(user.getName(), modeList[paramIndex]));
+				IRC_User* targetUser = server.findUserByName(modeList[paramIndex]);
+			
+				if (targetUser)
+				{
+					if (plus && !this->isOperator(*targetUser))
+					{
+						++modeCount;
+						result_mode += "o";
+						this->addOperator(*targetUser);
+						result_param.push_back(targetUser->getName());
+					}
+					else if (!plus && this->isOperator(*targetUser))
+					{
+						++modeCount;
+						result_mode += "o";
+						this->removeOperator(*targetUser);
+						result_param.push_back(targetUser->getName());
+					}
+				}
+				else
+				{
+					user.reply(server, ERR_NOSUCHNICK(user.getName(), modeList[paramIndex]));
+				}
+				++paramIndex;
 			}
-			++paramIndex;
 		}	
 		else if (*it == 'v')
 		{
-			IRC_User* targetUser = server.findUserByName(modeList[paramIndex]);
-			
-			if (targetUser)
-			{
-				if (plus && !this->isVoice(*targetUser))
-				{
-					++modeCount;
-					result_mode += "v";
-					this->addVoice(*targetUser);
-					result_param.push_back(targetUser->getName());
-				}
-				else if (!plus && this->isVoice(*targetUser))
-				{
-					++modeCount;
-					result_mode += "v";
-					this->removeVoice(*targetUser);
-					result_param.push_back(targetUser->getName());
-				}
-			}
+			if (paramIndex == modeList.size())
+				user.reply(server, ERR_INVALIDMODEPARAM(user.getName(), this->getName(), "v"));
 			else
 			{
-				user.reply(server, ERR_NOSUCHNICK(user.getName(), modeList[paramIndex]));
+				IRC_User* targetUser = server.findUserByName(modeList[paramIndex]);
+			
+				if (targetUser)
+				{
+					if (plus && !this->isVoice(*targetUser))
+					{
+						++modeCount;
+						result_mode += "v";
+						this->addVoice(*targetUser);
+						result_param.push_back(targetUser->getName());
+					}
+					else if (!plus && this->isVoice(*targetUser))
+					{
+						++modeCount;
+						result_mode += "v";
+						this->removeVoice(*targetUser);
+						result_param.push_back(targetUser->getName());
+					}
+				}
+				else
+				{
+					user.reply(server, ERR_NOSUCHNICK(user.getName(), modeList[paramIndex]));
+				}
+				++paramIndex;
 			}
-			++paramIndex;
 		}	
 		else
 			user.reply(server, ERR_UNKNOWNMODE(user.getName(), *it, this->getName()));

@@ -1,5 +1,4 @@
 #include "commands/IRC_KickCommand.hpp"
-#include "console.hpp"
 #include "IRC_Server.hpp"
 
 IRC_KickCommand::IRC_KickCommand()

@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/18 14:38:06 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/18 20:34:00 by rnavarre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,13 @@
 # include "IRC_Channel.hpp"
 # include "IRC_Response.hpp"
 # include "commands.hpp"
-# include "console.hpp"
 
 # include <map>
 # include <ctime>
 
 struct IRC_Message;
 
-struct IRC_Server : public Console::Console::IDisplayManager
+struct IRC_Server
 {
 		typedef std::map<std::string, IRC_User*>			usersNameType;				//map<nick, user*>
 		typedef usersNameType::iterator						usersNameIterator;

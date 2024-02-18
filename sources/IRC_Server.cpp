@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/18 18:49:13 by rnavarre         ###   ########.fr       */
+/*   Updated: 2024/02/18 20:38:23 by rnavarre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,27 +17,11 @@
 #include "IRC_Utils.hpp"
 #include "IRC_Response.hpp"
 #include "IRC_Exception.hpp"
-#include "terminal.hpp"
 
 #include <fcntl.h>
 #include <signal.h>
 #include <exception>
 #include <sstream>
-
- void IRC_Server::_printfds(pollfd* fds, size_t size)
-{
-	for (size_t i = 0; i < size; ++i)
-		std::cout << i << ": " << fds[i].fd << std::endl;
-	std::cout << "-----\n";
-
-	int i = 1;
-	for (IRC_Server::usersFdIterator it = this->_usersByFd.begin(); it != this->_usersByFd.end(); ++it, ++i)
-	{
-		std::cout << i << " -> " << it->second->getPollPosition()->fd << std::endl;
-	}
-	std::cout << "--------------\n";
-}
-
 
 bool IRC_Server::_forceDie = false;
 
@@ -52,15 +36,13 @@ IRC_Server::IRC_Server(char *port, const std::string &password)
 	, _connectedClientsNum(0)
 	, _die(false)
 {
-	Console::Console::setLogLevel(Console::LOGLEVEL_DEBUG);
-	Console::Console::setDisplayManager(this);
 	this->_setSignals();
 
 	if (!_createServerSocket())
 	{
 		throw IRC_Exception("Unable initialize socket");
   }
-	if (!listen(10))
+	if (!listen(BACKLOG))
 	{
 		throw IRC_Exception("Unable initialize port");
 	}
@@ -147,7 +129,6 @@ bool IRC_Server::_createServerSocket()
 bool IRC_Server::listen(int backlog)
 {
     // If we got here, it means we didn't get bound
-	Console::debug << "listener: " << this->_serverFd << std::endl;
 	if (::listen(this->_serverFd, backlog) == -1)
 		return (false);
 	return (true);
@@ -190,13 +171,9 @@ void    IRC_Server::start()
 
 	this->_startTime = std::time(NULL);
 
-	terminal.disableEcho();
-	terminal.hideCursor();
-
-	Console::log << "Server started (" << this->_host << ":" << this->_port << ")" << std::endl;
+	std::cout << "[LOG] Server started (" << this->_host << ":" << this->_port << ")" << std::endl;
 
 	// Main loop
-	//Console::Console::displayBottom();
 	while (!this->_die || !this->_usersByFd.empty())
 	{
 		int poll_count = poll(this->_pfds, this->_connectedClientsNum, 200);
@@ -236,6 +213,9 @@ void    IRC_Server::start()
 			if (this->_pfds[i].revents & POLLOUT)
 			{
 				this->_sendToUser(user);
+			}
+			if (this->_pfds[i].revents & (POLLOUT | POLLHUP))
+			{
 				this->_handleDeletionAndDisconnect(user);
 			}
 			if (IRC_Server::_forceDie)
@@ -244,11 +224,7 @@ void    IRC_Server::start()
 				this->shutdown("Server stopped");
 			}        
 		}						// END looping through file descriptors
-		//Console::Console::displayBottom();
 	}							// END for(;;)--and you thought it would never end!
-	terminal.clearCurrentRow();
-	terminal.showCursor();
-	terminal.enableEcho();
 }
 
 void IRC_Server::_handleDeletionAndDisconnect(IRC_User* user)
@@ -274,8 +250,8 @@ void IRC_Server::_sendToUser(IRC_User *user)
 
 	if (bytesSent == bytesToSend && buffer.size() <= SOCKET_BUFFER)
 		user->_pollPosition->events &= ~POLLOUT;
-	if (bytesSent == -1)
-		Console::debug << "Error writing to client (TODO, handle it!)" << std::endl;
+//	if (bytesSent == -1)
+//		Console::debug << "Error writing to client (TODO, handle it!)" << std::endl;
 		//ERROR socket desconectado, hay que gestionarlo
 	buffer.erase(0, bytesSent);
 }
@@ -370,7 +346,6 @@ bool	IRC_Server::findInvitedUserToAChannel(IRC_User& user, const std::string& ch
 void	IRC_Server::insertInvitedUser(IRC_User& user, IRC_Channel& channel)
 {	
 	this->_invitedByName.insert(std::make_pair(&user, &channel));
-	Console::log << "he llenado con " << user.getName() << std::endl;
 }
 
 void	IRC_Server::deleteInvitedUser(IRC_User& user, const std::string& channelName)
@@ -508,16 +483,10 @@ IRC_User* IRC_Server::_createUser(int fd, struct sockaddr_storage* addrStorage)
 	if (!pollPosition)
 		return (NULL);
 	IRC_User* user = new IRC_User(pollPosition);
-	this->_printfds(this->_pfds, this->_connectedClientsNum);
 
 	inet_ntop(addrStorage->ss_family, getInAddr((struct sockaddr *)addrStorage), remoteIP, INET_ADDRSTRLEN);
 	user->setHost(remoteIP);
 	this->_usersByFd[fd] = user;
-
-	Console::debug << "New connection accepted (" << fd << ")" << std::endl;
-	
-//		co << "paco paco" << "porras porras" << 44 << std::endl;
-		//Console::dd << "New connection accepted. FD: " << fd;
 	return (user);
 }
 
@@ -539,11 +508,9 @@ void IRC_Server::_deleteUser(IRC_User* user)
 		}
 		this->_usersByName.erase(toUpperNickname(user->getName()));
 	}
-	Console::debug << "User " << user->getMask() << " destroyed (" << user->getFd() << ")" << std::endl;
 	::close(user->getFd());
 	
 	this->_delFromPfds(user->getPollPosition());
-	this->_printfds(this->_pfds, this->_connectedClientsNum);
 	delete user;
 }
 
@@ -552,7 +519,7 @@ IRC_Channel* IRC_Server::createChannel(const std::string& name, IRC_User& user)
 	IRC_Channel* channel = new IRC_Channel(name, user);
 
 	this->_channelsByName[name] = channel;
-	Console::log << "User " << user.getMask() << " created the channel " << name << std::endl;
+	std::cout << "[LOG] User " << user.getMask() << " created the channel " << name << std::endl;
 	return channel;
 }
 
@@ -569,7 +536,7 @@ void IRC_Server::deleteChannel(IRC_Channel& channel)
 			++it;
 	}
 	this->_channelsByName.erase(channel.getName());	
-	Console::log << "Channel " << channel.getName() << " deleted" << std::endl;
+	std::cout << "[LOG] Channel " << channel.getName() << " deleted" << std::endl;
 	delete &channel;
 }
 
@@ -588,8 +555,7 @@ bool IRC_Server::setPendingUser(IRC_User& user)
 		user.setAccess(PENDING);
 		user._pingText = random;
 		this->ping(&user, random);
-		Console::log << "User " << user.getMask() << " pending" << std::endl;
-		Console::debug << "PING >> " << random << std::endl;
+		std::cout << "[LOG] User " << user.getMask() << " pending" << std::endl;
 		return true;
 	}
 	return false;
@@ -709,7 +675,7 @@ IRC_Response	IRC_Server::changeNameUser(IRC_User& user, const std::string& nickn
 	if (user._name != "*")
 	{
 		user.sendCommonUsers(":" + user.getMask() + " NICK " + nickname);
-		Console::log << "User " << user._name << " change nick to " << nickname << std::endl;			
+		std::cout << "[LOG] User " << user._name << " change nick to " << nickname << std::endl;			
 	}
 	user.setName(nickname);
 	return (SUCCESS);
@@ -979,24 +945,6 @@ bool	IRC_Server::changeChannelTopic(IRC_User& user, IRC_Channel& channel, const 
         return (true);
     }
     return (false);
-}
-
-void	IRC_Server::displayBottom(std::stringstream& ss, int /*width*/)
-{
-		struct tm	*timeinfo;
-		time_t		timestamp = std::difftime(std::time(NULL), this->_startTime);
-		char buffer[9];
-
-		timeinfo = gmtime(&timestamp);
-		strftime(buffer, sizeof(buffer), "%H:%M:%S", timeinfo);
-
-		ss << "[ Unregistered users: " << this->_usersByFd.size() - this->_usersByName.size() << " ]  "; 
-		ss << "[ Registered users: " << this->_usersByName.size() << " ]  ";
-		ss << "[ Opers: " << this->_opers.size() << " ]  ";
-		ss << "[ Open channels: " << this->_channelsByName.size() << " ]  ";
-		ss << "[ Invites: " << this->_invitedByName.size() << " ]  ";
-		ss << "[ Load commands: " << this->_commandsByName.size() << " ]  ";
-		ss << "[ Uptime: " << buffer << " ]";
 }
 
 void IRC_Server::_sigintHandler(int)

@@ -17,10 +17,6 @@ void IRC_ModeCommand::execute(IRC_Message& message)
 	{
 		this->_executeChannel(message);
 	}
-	else
-	{
-		this->_executeUser(message);
-	}
 }
 
 void IRC_ModeCommand::_executeChannel(IRC_Message& message)
@@ -49,36 +45,5 @@ void IRC_ModeCommand::_executeChannel(IRC_Message& message)
 		response = targetChannel->setModes(user, server, modes);
 		if (!response.empty())
 			targetChannel->send(user, "MODE " + targetChannel->getName() + " " + response);
-	}
-}
-
-void IRC_ModeCommand::_executeUser(IRC_Message& message)
-{
-	IRC_Server& server = message.getServer();
-	IRC_User& user = message.getUser();
-	IRC_User* targetUser = server.findUserByName(message[0]);
-
-	if (!targetUser)
-	{
-		user.reply(server, ERR_NOSUCHNICK(user.getName(), message[0]));
-		return ;
-	}
-	if (message.size() == 2) //empty modelist parameter
-	{
-		//TODO: Show the list modes of that user
-		Console::debug << "Showing the modelist of " << targetUser->getName() << std::endl;
-	}
-	else
-	{
-		if (targetUser == &user) //try to change modelist for own user
-		{
-			std::string const& modes = message[1];
-			//TODO: process modelist
-			Console::debug << "Processing modelist '" << modes << "' of " << targetUser << std::endl;
-		}
-		else
-		{
-			user.reply(server, ERR_USERSDONTMATH(targetUser->getName()));
-		}
 	}
 }
