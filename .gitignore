@@ -10,3 +10,5 @@ irc
 .cache
 pendientes/._*
 pendientes/Names*.rtf
+compile_commands.json
+libs/console/compile_commands.json

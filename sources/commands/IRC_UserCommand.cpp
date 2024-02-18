@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   IRC_UserCommand.cpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/18 19:18:33 by pcosta-j          #+#    #+#             */
+/*   Updated: 2024/02/18 19:18:47 by pcosta-j         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "commands/IRC_UserCommand.hpp"
 #include "IRC_Server.hpp"
 #include "IRC_User.hpp"
@@ -22,7 +34,7 @@ void IRC_UserCommand::execute(IRC_Message& message)
     user.setIdent(message[0]);
     user.setRealName(message[3]);
     server.setPendingUser(user);
- 		/*
+ 	/*
     std::cout << "nick usuario = " << user.getName() << std::endl;
     std::cout << "| ident usuario = " << user.getIdent();
     std::cout << "| fd usuario = " << user.getFd();

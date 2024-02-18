@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   IRC_ListCommand.cpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/18 19:12:04 by pcosta-j          #+#    #+#             */
+/*   Updated: 2024/02/18 19:12:05 by pcosta-j         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "commands/IRC_ListCommand.hpp"
 #include "IRC_Server.hpp"
 #include "IRC_Errors.hpp"
@@ -9,9 +21,6 @@ IRC_ListCommand::IRC_ListCommand()
 void IRC_ListCommand::execute(IRC_Message& message) {
 	IRC_Server& server = message.getServer();
 	IRC_User& user = message.getUser();
-
-	// obtiene el listado de canales de un servidor de IRC
-	// ToDo: comprobar los parámetros porque es diferente la salida
 
 	if (message.empty())
 		server.channelList(user);

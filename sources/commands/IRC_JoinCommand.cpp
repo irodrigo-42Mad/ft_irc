@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   IRC_JoinCommand.cpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/18 19:11:18 by pcosta-j          #+#    #+#             */
+/*   Updated: 2024/02/18 19:11:20 by pcosta-j         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "commands/IRC_JoinCommand.hpp"
 #include "IRC_Channel.hpp"
 #include "IRC_Server.hpp"
@@ -32,7 +44,6 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 		password = message[1];
 	response = server.joinUser(user, *channel, password);
 
-	// ToDo: En pruebas
 	if (response == CHANNEL_KEY_MISMATCH)
 		user.reply(server, ERR_BADCHANNELKEY(user.getName()	, channelName));
 	else if (response == CHANNEL_IS_FULL)

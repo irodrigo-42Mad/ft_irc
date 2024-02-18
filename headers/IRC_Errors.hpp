@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Errors.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 11:38:07 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/18 20:23:32 by rnavarre         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:12:33 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define RPL_NOTOPIC(nickname, channel)								"331 " + nickname + " " + channel + " :No topic is set"
 # define RPL_TOPIC(nickname, channel, topic)						"332 " + nickname + " " + channel + " :" + topic
 # define RPL_TOPICWHOTIME(nickname, channel, user, time) 			"333 " + nickname + " " + channel + " " + user + " :" + time
-# define RPL_INVITING(nickname, channel)							"341 " + nickname + " " + channel + " : Invited"	//ToDo: el mensaje de confirmación me lo he inventado. No sé si lleva. Probarlo.
+# define RPL_INVITING(nickname, channel)							"341 " + nickname + " " + channel + " : Invited"
 # define RPL_NAMREPLY(nickname, channel, names)						"353 " + nickname + " = " + channel + " :" + names
 # define RPL_ENDOFNAMES(nickname, channel)							"366 " + nickname + " " + channel + " :End of NAMES list"
 # define RPL_MOTD(nickmame, text)									"372 " + nickmame + " :" + text
@@ -48,7 +48,7 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_NOSUCHNICK(nickname, user)          					"401 " + nickname + " " + user + " :No such nick/channel"
 # define ERR_NOSUCHSERVER(nickname, server)							"402 " + nickname + " " + server + " :No such server"
 # define ERR_NOSUCHCHANNEL(nickname, channel)						"403 " + nickname + " " + channel + " :No such channel"
-# define ERR_CANNOTSENDTOCHAN(nickname, channel, mode)		"404 " + nickname + " " + channel + " :Cannot send to channel (" + mode + ")"
+# define ERR_CANNOTSENDTOCHAN(nickname, channel, mode)		        "404 " + nickname + " " + channel + " :Cannot send to channel (" + mode + ")"
 # define ERR_TOOMANYCHANNELS(nickname, channel)						"405 " + nickname + " " + channel + " :You have joined too many channels"
 # define ERR_NORECIPIENT(nickname, command)							"411 " + nickname + " :No recipient given (" + command + ")"
 # define ERR_NOTEXTTOSEND(nickname)									"412 " + nickname + " :No text to send"
@@ -61,19 +61,19 @@ int	ft_err_msg(std::string const &msg, int err_lvl, int err_n);
 # define ERR_USERONCHANNEL(nickname, channel)						"443 " + nickname + channel + " :is already on channel"
 # define ERR_NOTREGISTERED(nickname, command)						"451 " + nickname + " " + command + " :You have not registered"
 # define ERR_NEEDMOREPARAMS(nickname, command)						"461 " + nickname + " " + command + " :Not enough parameters"
-# define ERR_ALREADYREGISTRED(nickname)			        			"462 " + nickname + " :Unauthorized command (already registered)"	//ToDo: repasar esto
+# define ERR_ALREADYREGISTRED(nickname)			        			"462 " + nickname + " :Unauthorized command (already registered)"
 # define ERR_PASSWDMISMATCH(nickname)								"464 " + nickname + " :Password incorrect"
 # define ERR_CHANNELISFULL(nickname, channel)           			"471 " + nickname + " " + channel + " :Cannot join channel (+l)"
 # define ERR_UNKNOWNMODE(nickname, mode, channel)       			"472 " + nickname + " " + mode + " :is unknown mode char to me for " + channel
 # define ERR_INVITEONLYCHAN(nickname, channel)						"473 " + nickname + " " + channel + " :Cannot join channel (+i)"
-# define ERR_BANNEDFROMCHAN(nickname, channel)   					"474 " + nickname + " " + channel + " :Cannot join channel (+b)"	//ToDo: ídem
+# define ERR_BANNEDFROMCHAN(nickname, channel)   					"474 " + nickname + " " + channel + " :Cannot join channel (+b)"
 # define ERR_BADCHANNELKEY(nickname, channel)           			"475 " + nickname + " " + channel + " :Cannot join channel (+k)"
-# define ERR_BADCHANMASK(nickname, channel)							"476 " + nickname + " " + channel + " :Bad Channel Mask"			//ToDo: repasar
+# define ERR_BADCHANMASK(nickname, channel)							"476 " + nickname + " " + channel + " :Bad Channel Mask"
 # define ERR_NOPRIVILEGES(nickname)									"481 " + nickname + " :Permission Denied- You're not an IRC operator"
 # define ERR_CHANOPRIVSNEEDED(nickname, channel)					"482 " + nickname + " " + channel + " :You're not channel operator"
 # define ERR_NOOPERHOST(nickname)									"491 " + nickname + " :No O-lines for your host"
 # define ERR_USERSDONTMATH(nickname)				    			"502 " + nickname + " :Cannot change mode for other users"
 # define ERR_INVALIDMODEPARAM(nickname, target, mode)				"696 " + nickname + " " + target + " " + mode + " :You must specify a parameter for the mode."
-# define ERR_PONG(mask, message)									"ERROR: Closing link: (" + mask + ") " + message // unregistered [Registration timeout] o bien registered [Ping timeout: 120 seconds]
+# define ERR_PONG(mask, message)									"ERROR: Closing link: (" + mask + ") " + message 
 
 #endif
