@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/18 20:38:23 by rnavarre         ###   ########.fr       */
+/*   Updated: 2024/02/18 20:57:48 by rnavarre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -699,6 +699,8 @@ IRC_Response	IRC_Server::removeUserFromChannel(IRC_User& user, IRC_Channel& chan
 
 	user.removeChannel(channel);
 	channel.removeUser(user);
+	channel.removeOperator(user);
+	channel.removeVoice(user);
 
 	if (channel.empty())
 	{
@@ -734,7 +736,7 @@ IRC_Response	IRC_Server::joinUser(IRC_User& user, IRC_Channel& channel, const st
 	// ToDo: En pruebas  toavien en pruebas.
 	// TODO: Aquí es donde hay que comprobar si ha sido invitado
 	//      y, en caso afirmativo, saltar hasta addUserToChannel.
-	if (!this->findInvitedUserToAChannel(user, channel.getName()))
+	if (!this->findInvitedUserToAChannel(user, channel.getName()) && user.getAccess() != OPERATOR)
 	{
 		if (channel.isBanned(user))
 			return (USER_BANNED);

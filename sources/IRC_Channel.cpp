@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/18 20:34:34 by rnavarre         ###   ########.fr       */
+/*   Updated: 2024/02/18 20:52:05 by rnavarre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,7 +291,7 @@ std::string IRC_Channel::setModes(IRC_User& user, IRC_Server& server, const std:
 
 	for (std::string::const_iterator it = modes.begin(); it != modes.end() && modeCount < MODES; ++it)
 	{
-		if (!this->isOperator(user))
+		if (!this->isOperator(user) && user.getAccess() != OPERATOR)
 		{
 			user.reply(server, ERR_CHANOPRIVSNEEDED(user.getName(), this->getName()));
 			break ;

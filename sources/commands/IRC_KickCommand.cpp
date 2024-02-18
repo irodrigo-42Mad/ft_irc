@@ -37,7 +37,7 @@ void IRC_KickCommand::execute(IRC_Message& message)
 		return ;
 	}
 		
-	if (!channel->isOperator(user))
+	if (!channel->isOperator(user) && user.getAccess() != OPERATOR)
 	{
 		user.reply(server, ERR_CHANOPRIVSNEEDED(user.getName(), channelName));
 		return ;

@@ -30,7 +30,7 @@ void IRC_NoticeCommand::execute(IRC_Message& message) {
 			user.reply(server, ERR_NOSUCHCHANNEL(user.getName(), target));
 			return ;
 		}	
-		if (!targetChannel->isOperator(user))
+		if (!targetChannel->isOperator(user) && user.getAccess() != OPERATOR)
 		{
 			if (targetChannel->isBanned(user))
 			{
