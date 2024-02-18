@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/18 14:54:49 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/18 17:21:27 by rnavarre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -490,8 +490,11 @@ void IRC_Server::_delFromPfds(struct pollfd* pollPosition)
 	struct pollfd* last = this->_pfds + this->_connectedClientsNum - 1;
 	IRC_User* lastUser = this->findUserByFd(last->fd);
 
-	*pollPosition = *last;
-	lastUser->setPollPosition(pollPosition);
+	if (lastUser)
+	{
+		*pollPosition = *last;
+		lastUser->setPollPosition(pollPosition);
+	}
 	--this->_connectedClientsNum;
 }
 
