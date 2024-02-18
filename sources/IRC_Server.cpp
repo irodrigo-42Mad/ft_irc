@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/18 17:21:27 by rnavarre         ###   ########.fr       */
+/*   Updated: 2024/02/18 18:49:13 by rnavarre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "IRC_Exception.hpp"
 #include "terminal.hpp"
 
+#include <fcntl.h>
 #include <signal.h>
 #include <exception>
 #include <sstream>
@@ -217,25 +218,21 @@ void    IRC_Server::start()
 				{
 					addrlen = sizeof(remoteaddr);
 					newFd = accept(this->_serverFd, (struct sockaddr *)&remoteaddr, &addrlen);
+					//fcntl(newFd, F_SETFL, O_NONBLOCK);
 					if (newFd == -1)
 						ft_err_msg("can not allocate socket client information", ERR_STILL_SAVED, 2);
-					//perror("accept");
 					else
 					{   
 						this->_createUser(newFd, &remoteaddr);
-						//addToPfds(&this->_clients, newFd, &this->_connectedClientsNum, &fdMaxSize);
-						//sendMOTDMsg(newFd); //¿qué hacemos si no se manda?
 					}
 				}
-				else                        // If not the listener, we're just a regular client
+				else  // If not the listener, we're just a regular client
 				{
 					this->_readFromUser(user);
 				}   // END handle data from client
 			}       // END got ready-to-read from poll()
-			if (user && this->_checkClientTime(user))
-			{
-				//std::cout << "me encuentro viendo el tiempo" << std::endl;
-			}        
+			if (user)
+				this->_checkClientTime(user);
 			if (this->_pfds[i].revents & POLLOUT)
 			{
 				this->_sendToUser(user);
@@ -275,7 +272,7 @@ void IRC_Server::_sendToUser(IRC_User *user)
 
 	bytesSent = ::send(user->getPollPosition()->fd, buffer.c_str(), bytesToSend, 0);
 
-	if (bytesSent == bytesToSend)
+	if (bytesSent == bytesToSend && buffer.size() <= SOCKET_BUFFER)
 		user->_pollPosition->events &= ~POLLOUT;
 	if (bytesSent == -1)
 		Console::debug << "Error writing to client (TODO, handle it!)" << std::endl;
@@ -293,6 +290,7 @@ void IRC_Server::_readFromUser(IRC_User* user)
 	nbytes = recv(user->getPollPosition()->fd, buffer, SOCKET_BUFFER, 0);
 	if (nbytes <= 0)        // Got error or connection closed by client
 	{
+		/*
 		if (nbytes == 0)    // Connection closed
 			Console::debug << "pollserver: Socket " << user->getFd() << " hung up" << std::endl;
 		else
@@ -300,8 +298,12 @@ void IRC_Server::_readFromUser(IRC_User* user)
 			Console::error << "Can not receive client data" << std::endl;
 			this->_die = true;
 			return ;
-		}
-		this->_deleteUser(user);
+		}*/
+		this->quitUser(*user, "");
+//		user->markForDelete();
+//		std::cout << "input buffer " << user->_inputBuffer.empty() << std::endl;
+//		user->_inputBuffer.clear();
+//		user->_pollPosition->events |= POLLOUT;	
 	}
 	else // We got some good data from a client
 	{
@@ -790,12 +792,15 @@ IRC_Response	IRC_Server::joinUser(IRC_User& user, IRC_Channel& channel, const st
 IRC_Response	IRC_Server::partUser(IRC_User& user, IRC_Channel& channel, const std::string& msg)
 {
 	IRC_Response response;
+	bool isLast = channel.getNumUsers() == 1;
+	std::string channelName = channel.getName();
 
 	response = this->removeUserFromChannel(user, channel);
 	if (response == SUCCESS)
 	{
-		channel.send(user, "PART " + channel.getName(), msg);
-		user.send(user, "PART " + channel.getName(), msg);
+		if (!isLast)
+			channel.send(user, "PART " + channelName, msg);
+		user.send(user, "PART " + channelName, msg);
 	}
 	return (response);
 }
@@ -803,12 +808,15 @@ IRC_Response	IRC_Server::partUser(IRC_User& user, IRC_Channel& channel, const st
 IRC_Response	IRC_Server::kickUser(IRC_User& user, IRC_Channel& channel, const std::string& message)
 {
 	IRC_Response response;
+	bool isLast = channel.getNumUsers() == 1;
+	std::string channelName = channel.getName();
 
 	response = this->removeUserFromChannel(user, channel);
 	if (response == SUCCESS)
 	{
-		channel.send(user, "KICK " + channel.getName(), message);
-		user.send(user, "KICK " + channel.getName(), message);
+		if (!isLast)
+			channel.send(user, "KICK " + channelName, message);
+		user.send(user, "KICK " + channelName, message);
 	}	
     return (response);
 }

@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:22:13 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/17 16:10:43 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/18 18:21:38 by rnavarre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # define SERV_PORT 		"4242"			//Port we are listening on
 # define BUF_SIZE 		100				//Socket receive buffer size
 # define BACKLOG 		5				//Number of incoming connections that can be queued for acceptance  ¡¡OJO CON ESTO!!!
-# define MAX_CLIENTS	10				//Max number of clients accept by server
+# define MAX_CLIENTS	100				//Max number of clients accept by server
 
 // version
 # define IRC_VERSION	"1.0.0"			//first version of ft42irc server
@@ -31,9 +31,9 @@
 # define FIRST			1				//used to set first message send to client
 # define NORMALMSG		0				//normal messages to clients
 
-# define PINGTOUT		9000				//timeout over ping events
-# define REGTOUT		9000				//max timeout for register one user
-# define IDLETOUT		9000				//general timeout tick control
+# define PINGTOUT		30				//timeout over ping events
+# define REGTOUT		15				//max timeout for register one user
+# define IDLETOUT		60				//general timeout tick control
 //# define PONG_STR		"Numantinos"	//Cadena de texto para pong
 
 # define OPERUSER			"test"
