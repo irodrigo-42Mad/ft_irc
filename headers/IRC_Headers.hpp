@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Headers.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 11:47:03 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/12/04 16:54:20 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/18 19:09:12 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
 #ifndef IRC_HEADERS_HPP
 #define IRC_HEADERS_HPP
 
@@ -39,13 +38,7 @@
 
 // private functions, structures and constants by function
 # include "IRC_Colors.hpp"
-// # include "IRC_Messages.hpp"
 # include "IRC_Errors.hpp"
-// # include "IRC_Constants.hpp"
-// # include "IRC_Structs.hpp"
 # include "IRC_Utils.hpp"
-// # include "IRC_Users.hpp"
-// # include "IRC_Channel.hpp"
-//# include "IRC_Server.hpp"
 
 #endif

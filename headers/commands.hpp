@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   commands.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/18 19:05:57 by pcosta-j          #+#    #+#             */
+/*   Updated: 2024/02/18 19:05:59 by pcosta-j         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 # include "commands/IRC_DieCommand.hpp"
 # include "commands/IRC_InviteCommand.hpp"
 # include "commands/IRC_JoinCommand.hpp"

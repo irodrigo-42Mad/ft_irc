@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   IRC_TopicCommand.cpp                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/18 19:17:47 by pcosta-j          #+#    #+#             */
+/*   Updated: 2024/02/18 19:18:24 by pcosta-j         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "commands/IRC_TopicCommand.hpp"
 #include "IRC_Server.hpp"
 #include "IRC_Errors.hpp"
@@ -47,6 +59,4 @@ void IRC_TopicCommand::execute(IRC_Message& message)
 	const std::string& newTopic = message[1];
 	
 	server.changeChannelTopic(user, *channel, newTopic);
-	//advertir a todos los del canal incluido a mi.
-	//message.reply(RPL_TOPIC(user.getName(), channel->getName(), channel->getTopic()));
 }

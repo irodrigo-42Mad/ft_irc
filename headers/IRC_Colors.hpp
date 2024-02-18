@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Colors.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 11:46:46 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/09/27 13:07:09 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/18 19:06:56 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
 #ifndef COLORS_HPP
 #define COLORS_HPP
 

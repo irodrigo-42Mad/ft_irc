@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   IRC_NamesCommand.cpp                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/18 19:13:15 by pcosta-j          #+#    #+#             */
+/*   Updated: 2024/02/18 19:14:18 by pcosta-j         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 # include "commands/IRC_NamesCommand.hpp"
 # include "IRC_Channel.hpp"
 # include "IRC_Server.hpp"
@@ -8,7 +20,7 @@ static void	nicknamesList(IRC_User& user, IRC_Server& server, IRC_Channel *chann
 
 	for (IRC_Channel::usersConstIterator it = channel->getUsers().begin(); it != (channel->getUsers()).end(); ++it)
   {
-		if (channel->isOperator(**it)) //channel->getCreator().getName() == (*it)->getName())
+		if (channel->isOperator(**it))
 			names += "@";
 		if (channel->isVoice(**it))
 			names += "+";
@@ -25,7 +37,7 @@ void IRC_NamesCommand::execute(IRC_Message& message) {
 	
 	IRC_Server& server = message.getServer();
 	IRC_User& user = message.getUser();
-	std::string channelName;	//ToDo: ojo porque puede venir sin parámetros.
+	std::string channelName;
 
 	if (!message.empty())
 		channelName = message[0];
@@ -37,40 +49,6 @@ void IRC_NamesCommand::execute(IRC_Message& message) {
 		IRC_Channel *channel = message.getServer().findChannelByName(channelName);
 		if (channel)
 			nicknamesList(user, server, channel);
-		// {
-			// std::string names;  // User names of channel
-// 
-			// for (IRC_Channel::usersSetConstIterator it = (channel->getUsers())->begin(); it != (channel->getUsers())->end(); ++it)
-    		// {
-				// if (channel->getCreator()->getName() == (*it)->getName())
-					// names += "@" + (*it)->getName();
-				// else
-					// names += (*it)->getName();
-				// names += " ";
-			// }
-			// user.reply(&user, RPL_NAMREPLY(message.getUser().getName(), channel->getName(), names));
-		// }
 	}
-	/*else
-	{
-		for (IRC_Server::channelsNameConstIterator it = server.getChannels().begin(); it != server.getChannels().end(); ++it)
-    {
-     	IRC_Channel *channel = (*it).second;
-			
-			nicknamesList(user, channel);
-			// std::string names;  // User names of channel
-// 
-			// for (IRC_Channel::usersSetConstIterator it = (channel->getUsers())->begin(); it != (channel->getUsers())->end(); ++it)
-    		// {
-				// if (channel->getCreator()->getName() == (*it)->getName())
-					// names += "@" + (*it)->getName();
-				// else
-					// names += (*it)->getName();
-				// names += " ";
-			// }
-			// user.reply(&user, RPL_NAMREPLY(message.getUser().getName(), channel->getName(), names));
-		}
-	}*/
 	user.reply(server, RPL_ENDOFNAMES(user.getName(), channelName));
-	//user.reply(&user, RPL_ENDOFNAMES(message.getUser().getName(), channelName));	//ToDo: ojo a cuando channelName es nulo => sin parámetros
 }

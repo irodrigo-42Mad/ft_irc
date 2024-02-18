@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   IRC_InviteCommand.cpp                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/18 19:10:46 by pcosta-j          #+#    #+#             */
+/*   Updated: 2024/02/18 19:10:48 by pcosta-j         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 # include "commands/IRC_InviteCommand.hpp"
 # include "IRC_Server.hpp"
 # include "IRC_User.hpp"
@@ -21,7 +33,7 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
     	return ;
   	}
 
-	if (!channel->isOperator(user)) //toUpperNickname(user.getName()) != toUpperNickname(channel->getCreator().getName()))
+	if (!channel->isOperator(user))
 	{
 		user.reply(server, ERR_CHANOPRIVSNEEDED(nickName, channel->getName()));
 		return ;

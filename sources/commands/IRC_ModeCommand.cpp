@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   IRC_ModeCommand.cpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/18 19:12:45 by pcosta-j          #+#    #+#             */
+/*   Updated: 2024/02/18 19:12:46 by pcosta-j         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "commands/IRC_ModeCommand.hpp"
 #include "IRC_Server.hpp"
 #include "IRC_Errors.hpp"
@@ -65,7 +77,6 @@ void IRC_ModeCommand::_executeUser(IRC_Message& message)
 	}
 	if (message.size() == 2) //empty modelist parameter
 	{
-		//TODO: Show the list modes of that user
 		Console::debug << "Showing the modelist of " << targetUser->getName() << std::endl;
 	}
 	else
@@ -73,7 +84,6 @@ void IRC_ModeCommand::_executeUser(IRC_Message& message)
 		if (targetUser == &user) //try to change modelist for own user
 		{
 			std::string const& modes = message[1];
-			//TODO: process modelist
 			Console::debug << "Processing modelist '" << modes << "' of " << targetUser << std::endl;
 		}
 		else

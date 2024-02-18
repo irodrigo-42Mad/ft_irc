@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   IRC_NickCommand.cpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/18 19:14:26 by pcosta-j          #+#    #+#             */
+/*   Updated: 2024/02/18 19:15:20 by pcosta-j         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "commands/IRC_NickCommand.hpp"
 #include "IRC_Server.hpp"
 #include "IRC_Utils.hpp"
@@ -26,7 +38,5 @@ void IRC_NickCommand::execute(IRC_Message& message)
 	else if (user.getAccess() == UNREGISTERED)
   	{
 		server.setPendingUser(user);
-		//	server.sendWelcomeMsg(user);
-      	//	server.sendMOTDMsg(user);
 	}
 }
