@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 10:59:21 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/17 21:27:56 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/18 12:23:22 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ IRC_Server::~IRC_Server()
     /* recorrer la lista de FDS y ver el nivel de registro, si es no registrado eliminamos de FD
     solamente, sino, habrá que eliminarlo de todas las posiciones en las que está registrado.
     */
+
+   //limpiar todos los contenedores
 	this->_clearCommands();
 }
 
@@ -328,21 +330,27 @@ IRC_User* IRC_Server::findUserByName(const std::string& name)
 	return (it->second);
 }
 
-bool	IRC_Server::findInvitedUserToAChannel(const std::string& nickname, const std::string& channelName)
+bool	IRC_Server::findInvitedUserToAChannel(IRC_User& user, const std::string& channelName)
 {
 	for (IRC_Server::invitedChannelsNameConstIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
 	{
-		if (toUpperNickname((*it).first) == toUpperNickname(nickname) && (*it).second->getName() == channelName)
+		if ((*it).first == &user && (*it).second->getName() == channelName)
 			return (true);
 	}
 	return (false);
 }
 
-void	IRC_Server::deleteInvitedUser(const std::string& nickname, const std::string& channelName)
+void	IRC_Server::insertInvitedUser(IRC_User& user, IRC_Channel& channel)
+{	
+	this->_invitedByName.insert(std::make_pair(&user, &channel));
+	Console::log << "he llenado con " << user.getName() << std::endl;
+}
+
+void	IRC_Server::deleteInvitedUser(IRC_User& user, const std::string& channelName)
 {
 	for (IRC_Server::invitedChannelsNameIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
 	{
-		if (toUpperNickname((*it).first) == toUpperNickname(nickname) && (*it).second->getName() == channelName)
+		if ((*it).first == &user && (*it).second->getName() == channelName)
 		{	
 			this->_invitedByName.erase(it);
 			break ;
@@ -502,13 +510,6 @@ IRC_Channel* IRC_Server::createChannel(const std::string& name, IRC_User& user)
 
 void IRC_Server::deleteChannel(IRC_Channel& channel)
 {
-	// for (IRC_Server::invitedChannelsNameConstIterator it = this->_invitedByName.begin(); it != this->_invitedByName.end(); ++it)
-	// {
-	// 	//Console::log << "Invited user: " << (*it).first << ", " << (*it).second->getName() << std::endl;
-	// 	if ((*it).second->getName() == channel.getName())
-	// 		this->_invitedByName.erase(it);
-	// }
-
 	this->_channelsByName.erase(channel.getName());	
 	Console::log << "Channel " << channel.getName() << " deleted" << std::endl;
 	delete &channel;
@@ -700,7 +701,7 @@ IRC_Response IRC_Server::joinUser(IRC_User& user, IRC_Channel& channel, const st
 	// ToDo: En pruebas  toavien en pruebas.
 	// TODO: Aquí es donde hay que comprobar si ha sido invitado
 	//      y, en caso afirmativo, saltar hasta addUserToChannel.
-	if (!this->findInvitedUserToAChannel(user.getName(), channel.getName()))
+	if (!this->findInvitedUserToAChannel(user, channel.getName()))
 	{
 		if (channel.isBanned(user))
 			return (USER_BANNED);
@@ -708,16 +709,16 @@ IRC_Response IRC_Server::joinUser(IRC_User& user, IRC_Channel& channel, const st
 			return (CHANNEL_IS_FULL);
 		if (!channel.isSameKey(key))
 			return (CHANNEL_KEY_MISMATCH);
+		if (channel.hasInvite())
+			return (INVITE_ONLY);
 	}
-
-	// modo i n t (invitacion para mañana) pendientes
+	// modo i (invitacion para mañana) pendientes
 	response = this->addUserToChannel(user, channel);
 	if (response == SUCCESS)
 	{
 		channel.send(user, "JOIN " + channel.getName());
-		deleteInvitedUser(user.getName(), channel.getName());	
+		deleteInvitedUser(user, channel.getName());	
 	}
-
 	return (response);
 }
 
@@ -932,12 +933,6 @@ void IRC_Server::_sigintHandler(int)
 void IRC_Server::_setSignals()
 {
 		signal(SIGINT, IRC_Server::_sigintHandler);
-}
-
-void	IRC_Server::insertInvitedUser(std::string& nickname, IRC_Channel& channel)
-{	
-	this->_invitedByName.insert(std::make_pair(nickname, &channel));
-	Console::log << "he llenado con " << nickname << std::endl;
 }
 
 const IRC_Server::channelsNameType &IRC_Server::getChannels() const

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_Server.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/17 20:19:03 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/18 11:44:47 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,19 +31,19 @@ struct IRC_Message;
 
 struct IRC_Server : public Console::Console::IDisplayManager
 {
-		typedef std::map<std::string, IRC_User*>			usersNameType;			//map<nick, user*>
+		typedef std::map<std::string, IRC_User*>			usersNameType;				//map<nick, user*>
 		typedef usersNameType::iterator						usersNameIterator;
 		typedef usersNameType::const_iterator				usersNameConstIterator;
 
-		typedef std::map<int, IRC_User*>					usersFdType;			//map<fd, user*>
+		typedef std::map<int, IRC_User*>					usersFdType;				//map<fd, user*>
 		typedef usersFdType::iterator						usersFdIterator;
 		typedef usersFdType::const_iterator					usersFdConstIterator;
 
-		typedef std::map<std::string, IRC_Channel*>			channelsNameType;		//map<channelName, channel*>
+		typedef std::map<std::string, IRC_Channel*>			channelsNameType;			//map<channelName, channel*>
 		typedef channelsNameType::iterator					channelsNameIterator;
 		typedef channelsNameType::const_iterator			channelsNameConstIterator;
 
-		typedef std::multimap<std::string, IRC_Channel*>	invitedChannelsNameType;		//multimap<nickname, channel*>
+		typedef std::multimap<IRC_User*, IRC_Channel*>		invitedChannelsNameType;	//multimap<user*, channel*>
 		typedef invitedChannelsNameType::iterator			invitedChannelsNameIterator;
 		typedef invitedChannelsNameType::const_iterator		invitedChannelsNameConstIterator;
 
@@ -134,9 +134,9 @@ struct IRC_Server : public Console::Console::IDisplayManager
 		void 					pong(IRC_User *sender, std::string const &message);
 		
 		// Invited user management
-		bool    				findInvitedUserToAChannel(const std::string& nickname, const std::string& channelName);
-		void					insertInvitedUser(std::string& nickname, IRC_Channel& channel);
-		void					deleteInvitedUser(const std::string& nickname, const std::string& channelName);
+		bool    				findInvitedUserToAChannel(IRC_User& user, const std::string& channelName);
+		void					insertInvitedUser(IRC_User& user, IRC_Channel& channel);
+		void					deleteInvitedUser(IRC_User& user, const std::string& channelName);
 		
 	private:
 		int						_serverFd;
@@ -168,7 +168,6 @@ struct IRC_Server : public Console::Console::IDisplayManager
 
 		bool					_createServerSocket();
 		void					_fillCommands(void);
-		void 					_clearCommands();
 		void					_addCommand(IRC_ACommand* command);
 		void					_runCommand(IRC_Message& message);
 		void					_readFromUser(IRC_User* user);
@@ -184,6 +183,13 @@ struct IRC_Server : public Console::Console::IDisplayManager
 
 		void 					_setSignals();
 		static void 			_sigintHandler(int);
+		
+		void					_clearUsersByName();
+		void					_clearUsersByFd();
+		void					_clearOpers();
+		void					_clearChannels();
+		void 					_clearCommands();
+		void					_clearInvited();			
 };
 
 #endif

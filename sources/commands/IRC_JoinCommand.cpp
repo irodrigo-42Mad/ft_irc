@@ -48,5 +48,4 @@ void IRC_JoinCommand::execute(IRC_Message& message){
 		//command = server.findCommandByName("TOPIC");
 		//command->execute(message);
 	}
-
 }

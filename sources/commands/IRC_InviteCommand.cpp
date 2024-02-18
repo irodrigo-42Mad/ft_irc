@@ -41,8 +41,8 @@ void IRC_InviteCommand::execute(IRC_Message& message) {
         return ;
     }
 
-	if (!server.findInvitedUserToAChannel(nickName, channel->getName()))
-		server.insertInvitedUser(nickName, *channel);
+	if (!server.findInvitedUserToAChannel(*invitedUser, channel->getName()))
+		server.insertInvitedUser(*invitedUser, *channel);
 
 	invitedUser->reply(server, RPL_INVITING(nickName, channel->getName()));
 }
