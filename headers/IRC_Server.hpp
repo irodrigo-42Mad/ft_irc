@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/18 11:44:47 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/18 14:38:06 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,6 +165,7 @@ struct IRC_Server : public Console::Console::IDisplayManager
 		struct pollfd*			_addToPfds(int newfd);
 		void					_delFromPfds(struct pollfd* pollPosition);
 		struct pollfd			_getPollfd();
+		void 					_printfds(pollfd* fds, size_t size);
 
 		bool					_createServerSocket();
 		void					_fillCommands(void);
@@ -184,12 +185,9 @@ struct IRC_Server : public Console::Console::IDisplayManager
 		void 					_setSignals();
 		static void 			_sigintHandler(int);
 		
-		void					_clearUsersByName();
-		void					_clearUsersByFd();
-		void					_clearOpers();
+		void					_clearUsers();
 		void					_clearChannels();
-		void 					_clearCommands();
-		void					_clearInvited();			
+		void 					_clearCommands();			
 };
 
 #endif

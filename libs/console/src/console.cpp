@@ -31,6 +31,7 @@ Console& Console::operator<<(Manipulator manip)
 {
 	if (manip == static_cast<Manipulator>(std::endl))
 	{
+		terminal.clearCurrentRow();
 		this->_resetColor();
 		this->_colorSet = false;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_User.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/17 16:09:16 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/18 14:50:23 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ struct IRC_User
 	int getFd() const;
 	int	getAccess() const;
 	struct pollfd*		getPollPosition();
+	void 				setPollPosition(struct pollfd* value);
 	const std::string&	getName() const;
 	const std::string	getMask() const;
 	const std::string&  getHost() const;

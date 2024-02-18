@@ -3,15 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 12:47:08 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/16 11:50:18 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/18 13:59:39 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "IRC_Server.hpp"
 #include "IRC_Exception.hpp"
+#include "unistd.h"
+
+void end()
+{
+	//system("leaks ircserv");
+}
 
 int	main(int argc, char *argv[])
 {
@@ -34,5 +40,6 @@ int	main(int argc, char *argv[])
 		std::cerr << "IRC_Exception: " << ie.what() << std::endl;
 		return (1);
 	}
+	atexit(&end);
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRC_User.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 16:15:01 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/17 16:29:51 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/18 14:55:41 by icastell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,11 @@ int	IRC_User::getAccess() const
 struct pollfd*	IRC_User::getPollPosition()
 {
 	return (this->_pollPosition);
+}
+
+void	IRC_User::setPollPosition(struct pollfd* value)
+{
+	this->_pollPosition = value;
 }
 
 bool	IRC_User::addChannel(IRC_Channel& channel)
