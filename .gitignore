@@ -1,6 +1,7 @@
 *.o
 *.d
 *.a
+*.swp
 trash_*.*
 .vscode
 ircserv
