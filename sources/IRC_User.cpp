@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 16:15:01 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/18 20:34:28 by rnavarre         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:25:51 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,6 @@ bool	IRC_User::isInChannel(IRC_Channel& channel)
 const IRC_User::channelsType IRC_User::getChannels() const
 {
 	return (this->_channels);
-	//return std::set<IRC_Channel*>(this->_channels.begin(), this->_channels.end());
 }
 
 void IRC_User::markForDelete()
@@ -144,47 +143,13 @@ void	IRC_User::send(const std::string& data)
 		this->_outputBuffer += data + "\r\n";
 	}
 	this->_pollPosition->events |= POLLOUT;
-/*
-	std::string bufferToSend = message + "\r\n";
-	int bufferLength = bufferToSend.length();
-	int	numBytes;
-	
-	numBytes = send(this->getFd(), bufferToSend.c_str(), bufferLength, 0);
-	while (bufferLength > 0)
-	{
-		if (numBytes < 0)
-		{
-    	    throw std::runtime_error("Error while sending a message to the user!");
-			return ;
-		}
-		else if (numBytes < bufferLength)
-		{
-			this->_server->userPolloutByFd(this->_pollPosition->fd);
-			break ;
-		}
-		bufferToSend += numBytes;
-		bufferLength -= numBytes;
-	}
-	return ;
-*/
 }
-
-
-/*
-//FIX: Los usuarios pueden enviar reply??? o solo los servidores?
-void	IRC_User::reply(const IRC_User& user, const std::string& data)
-{
-	this->send(":" + user.getMask() + " " + data);
-}
-*/
 
 void	IRC_User::reply(const IRC_Server& server, const std::string& data)
 {
 	std::string preparedMsg = ":" + server.getServerName() + " " + data;
 	
 	this->sendLimitedMessage(preparedMsg);
-	
-	//this->send(":" + server.getServerName() + " " + data);
 }
 
 IRC_User::usersType* IRC_User::getCommonUsers()
@@ -272,36 +237,14 @@ void IRC_User::send(const IRC_User& user, const std::string& data, const std::st
 	else
 		this->send(":" + user.getMask() + " " + data + " :" + lastParam);
 }
-/*
-const IRC_User::channelsSetType IRC_User::getCommonUsers() const {
-
-	//IRC_Channel::usersSetType allUsers;
-	IRC_Channel::usersSetIterator users;
-	const IRC_Channel::usersSetIterator channelUsers;
-
-	for (IRC_User::channelsSetConstIterator it = this->_channels.begin(); it != this->_channels.end(); ++it) {
-		// Convertir el puntero a un conjunto constante
-		//allUsers = *(*it)->getUsers();
-
-		(*channelUsers)-> = (*it)->;
-		(*users).insert
-		insert((*it)->getUsers());
-		//users.insert(it->getUsers());  //<-pregunta
-	}
-	// que tipo de contenido set tiene que generar channel, un * o un []
-}*/
 
 void IRC_User::addReceiveData(char* buffer)
 {
-	// std::cout << this->_inputBuffer.size() << std::endl;
-	// std::cout << buffer << std::endl;
 	this->_inputBuffer += buffer;
 	if (this->_inputBuffer.size() > 4096)
 	{
-		//desconectar al cliente por exceso de información recibida
 		std::cout << "desconexion necesaria" << std::endl;
 	}
-	// std::cout << this->_inputBuffer << std::endl;
 }
 
 time_t IRC_User::getPingTimeout()
@@ -314,7 +257,6 @@ void IRC_User::setPingTimeout(time_t myTimeOut)
 	this->_pingTimeout = time(NULL) + myTimeOut;
 }
 
-// reseting time of user commands for server controls
 void IRC_User::resetIdle(void)
 {
 	this->_idleTime = time(NULL) + IDLETOUT;
@@ -384,41 +326,31 @@ void    IRC_User::sendLimitedMessage(const std::string& data)
 {
 	std::string message;
 	std::size_t dataLength = data.size();
-    //size_t i = 1;
 
     if (dataLength <= MSGLENGTH)
 	{
-        // La cadena es corta, imprímela completa
         this->send(data);
-        //std::cout << data << std::endl;
     }
 	else
 	{
 		std::size_t secondColonIndex = secondColonPosition(data);
-        //std::cout << "secondColonIndex: " << secondColonIndex << std::endl;
         std::string header = data.substr(0, secondColonIndex + 1);
         size_t		headerLength = header.size();
-        //std::cout << "headerLength: " << headerLength << std::endl;
 
-        // Imprime bloques de 510 caracteres sin cortar palabras con la cabecera
         std::size_t initIndex = header.size();
         while (initIndex < dataLength)
 		{
             message = "";
 			std::size_t endIndex = std::min(initIndex + MSGLENGTH - headerLength, dataLength);
-            // Retrocede hasta encontrar un espacio si estamos en medio de una palabra
             while (endIndex < dataLength && endIndex > initIndex && data[endIndex] != ' ') {
                 --endIndex;
             }
 
             std::size_t blockLength = endIndex - initIndex;
             message = header + data.substr(initIndex, blockLength);
-			//std::cout << "Mensaje " << i << ": &" << message << "&, longitud = " << message.size() << std::endl;
             this->send(message);
 
-            // Avanza al siguiente bloque
             initIndex = endIndex + 1;
-            //i++;
         }
     }
 }

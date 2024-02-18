@@ -6,16 +6,11 @@
 /*   By: icastell <icastell@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 13:01:17 by irodrigo          #+#    #+#             */
-/*   Updated: 2023/10/26 20:09:39 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:21:49 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/IRC_Headers.hpp"
-
-/* el nivel de error se distribuye de la siguiente forma*/
-/* 1 nivel SEJODIODELTO (ERR_COMPLETELY_SCREWED)
-   2 nivel ENTOAVIASESALVA (ERR_STILL_SAVED)
-   3 nivel CURASANA (ERR_CURA_SANA)*/
 
 int	ft_err_msg(std::string const &msg, int err_lvl, int err_n)
 {

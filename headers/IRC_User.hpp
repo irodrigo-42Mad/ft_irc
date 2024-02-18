@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 12:05:44 by irodrigo          #+#    #+#             */
-/*   Updated: 2024/02/18 14:50:23 by icastell         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:18:24 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ struct IRC_User
 	const std::string&	getName() const;
 	const std::string	getMask() const;
 	const std::string&  getHost() const;
-	//const std::string	getUsers() const;  // habrá que crearlas
 	const std::string&	getIdent() const;
 	const std::string&	getRealName() const;
 	const std::string&	getPass() const;
@@ -85,7 +84,6 @@ struct IRC_User
 	void sendCommonUsers(const std::string& data);
 	void sendCommonUsersExceptMe(const IRC_User& user, const std::string& data);
 	void sendCommonUsersExceptMe(const IRC_User& user, const std::string& data, const std::string& lastParam);
-	//void reply(const IRC_User& user, const std::string& data);
 	void 	reply(const IRC_Server& server, const std::string& data);
 	void	sendLimitedMessage(const std::string& data);
 
@@ -93,8 +91,6 @@ struct IRC_User
 	void disablePingTimeout(void);
 	void markForDelete();
 	bool deleteMarked() const;
-//	void	errorReply(const std::string& reply);
-	//void	send(IRC_Message& message);
 
 private:
 	struct pollfd*		_pollPosition;
@@ -107,9 +103,9 @@ private:
 	channelsType		_channels;
 	std::string			_inputBuffer;
 	std::string			_outputBuffer;
-	time_t				_pingTimeout;					// calculate timeout
-	time_t				_idleTime;						// check last command time
-	time_t				_loginTime;				// moment that user has registered in server
+	time_t				_pingTimeout;
+	time_t				_idleTime;
+	time_t				_loginTime;
 	bool				_deleteMarked;
 	std::string			_pingText;
 	

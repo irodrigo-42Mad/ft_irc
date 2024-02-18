@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 11:11:34 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/17 13:15:11 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:22:18 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,33 +37,21 @@ IRC_Message::IRC_Message(IRC_User* user, IRC_Server* server, const std::string& 
 	, _server(*server)
 {
 	this->_processCommand(data);
-	//print_command(this);
-	//aquí el parseo del mensaje del cliente
 }
 
 void IRC_Message::_processCommand(std::string buffer)
 {
 	size_t position;
 
-    /*
-        :prefix comando parámetros -> FORMATO MENSAJE IRC
-        
-        :prefix       comando         parámetros -> FORMATO ERRONEO MENSAJE IRC: solo un espacio entre
-                                                    partes del comando según estándar 2812 (pag. 5)
-    */
-   
-    // search for prefix
     position = buffer.find(':');
-    // delete prefix from command to correct parse
     if (position == 0)
     {
         position = buffer.find(" ");
         if (position == std::string::npos)
-            return ;  //error de comando
+            return ;
         position = buffer.find_first_not_of(' ', position);
         buffer.erase(0, position);
     }
-    // take command
     
     if ((position = buffer.find_first_not_of(' ', 0)) > 0)
         buffer.erase(0, position);
@@ -73,13 +61,12 @@ void IRC_Message::_processCommand(std::string buffer)
         this->_cmd = buffer.substr(0, position);
         position = buffer.find_first_not_of(' ', position);
         buffer.erase(0, position);
-        // get params
         std::stringstream line(buffer);
         std::string myparam;
         while (line >> myparam && this->_params.size() < 15)
         {
             position = myparam.find(":");
-            if (position == 0) //std::string::npos)
+            if (position == 0)
             {
                 buffer.erase(0, 1);
                 this->_params.push_back(buffer.erase(buffer.length(), 2));
@@ -90,7 +77,6 @@ void IRC_Message::_processCommand(std::string buffer)
             position = buffer.find_first_not_of(' ', position);
             buffer.erase(0, position);
         }
-        //std::cout << "num params: " << this->_params.size() << std::endl;
     }
     else
         this->_cmd = buffer.erase(buffer.length(), 2);
@@ -141,7 +127,6 @@ std::string IRC_Message::_lTrim(std::string data)
     if (position > 0 && position != std::string::npos)
         data.erase(0,position);
     position = data.find_last_not_of(SPACE);
-    //int cmdlen = data.length();
     if (position != std::string::npos)
     {
         buffer = data.substr(0, position + 1);

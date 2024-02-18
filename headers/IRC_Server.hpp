@@ -6,7 +6,7 @@
 /*   By: icastell <icastell@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:07:19 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/18 20:34:00 by rnavarre         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:17:56 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,19 @@ struct IRC_Message;
 
 struct IRC_Server
 {
-		typedef std::map<std::string, IRC_User*>			usersNameType;				//map<nick, user*>
+		typedef std::map<std::string, IRC_User*>			usersNameType;>
 		typedef usersNameType::iterator						usersNameIterator;
 		typedef usersNameType::const_iterator				usersNameConstIterator;
 
-		typedef std::map<int, IRC_User*>					usersFdType;				//map<fd, user*>
+		typedef std::map<int, IRC_User*>					usersFdType;
 		typedef usersFdType::iterator						usersFdIterator;
 		typedef usersFdType::const_iterator					usersFdConstIterator;
 
-		typedef std::map<std::string, IRC_Channel*>			channelsNameType;			//map<channelName, channel*>
+		typedef std::map<std::string, IRC_Channel*>			channelsNameType;
 		typedef channelsNameType::iterator					channelsNameIterator;
 		typedef channelsNameType::const_iterator			channelsNameConstIterator;
 
-		typedef std::multimap<IRC_User*, IRC_Channel*>		invitedChannelsNameType;	//multimap<user*, channel*>
+		typedef std::multimap<IRC_User*, IRC_Channel*>		invitedChannelsNameType;
 		typedef invitedChannelsNameType::iterator			invitedChannelsNameIterator;
 		typedef invitedChannelsNameType::const_iterator		invitedChannelsNameConstIterator;
 
@@ -156,9 +156,9 @@ struct IRC_Server
 		bool					_die;
 		static bool				_forceDie;
 		
-		IRC_Server();										// can not be instantiated without a port and password
-		IRC_Server(const IRC_Server& copy);					// can not be instantiated by copy
-		IRC_Server &operator = (const IRC_Server& copy);	// can not be instantiated using = operator
+		IRC_Server();
+		IRC_Server(const IRC_Server& copy);
+		IRC_Server &operator = (const IRC_Server& copy);
 
 		void					_createPoll();
 		struct pollfd*			_addToPfds(int newfd);

@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 14:51:12 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/17 16:06:59 by irodrigo         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:27:11 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,22 +34,19 @@ bool	checkChannelName(std::string const &name)
 {
 	for (std::size_t i = 0; i < name.length(); ++i)
 	{
-        // Comprobar si hay espacio, coma o ASCII 7 en el string
         if (name[i] == ' ' || name[i] == ',' || name[i] == 7)
-            return (false);  // El string no cumple con los requisitos
+            return (false);
     }
-    return (true);  // El string cumple con los requisitos
+    return (true);
 }
 
 void	deleteUnwantedChars(std::string &name)
 {
 	for (std::size_t i = 0; i < name.length(); ++i) {
-				//std::cout << tempName[i] << std::endl;
         if (name[i] == ' ' || name[i] == ',' || name[i] == 7)
 		{
-			//std::cout << tempName[i] << std::endl;
             name.erase(i, 1);
-            --i;  // Ajustar el índice después de eliminar el carácter
+            --i;
         }
     }
 }
@@ -58,7 +55,6 @@ std::string	channelName(std::string const &name)
 {
 	std::string	tempName = name;
 	bool		modifiedName = false;
-	//tempName += 7; //para probar a insertar un carácter 7 ASCII
 	
 	if (!checkChannelName(tempName))
 	{
@@ -79,22 +75,19 @@ std::string	channelName(std::string const &name)
 
 bool	checkHostName(std::string &name)
 {
-	//std::cout << "el hostname es: " << name << std::endl;
 	if (name.length() > 63)
 		name.erase(name.begin()+63, name.end());
-	//std::cout << "el nuevo hostname es: " << name << std::endl;
-    for (std::size_t i = 0; i < name.length(); ++i)	// Verificar los letteres permitidos
+    for (std::size_t i = 0; i < name.length(); ++i)
 	{
         char currentChar = name[i];
-        // Permitir a-z, A-Z, 0-9, y '-' (excepto en la primera y última posición)
         if (!((currentChar >= 'a' && currentChar <= 'z') ||
               (currentChar >= 'A' && currentChar <= 'Z') ||
               (currentChar >= '0' && currentChar <= '9') ||
               (currentChar == '-' && i > 0 && i < name.length() - 1))) {
-            return (false);  // letter no permitido
+            return (false);
         }
     }
-    return (true);  // El string cumple con los requisitos
+    return (true);
 }
 
 bool	checkNickname(const std::string &name)
@@ -112,14 +105,13 @@ bool	checkNickname(const std::string &name)
 							  (allowedChar.find(currentChar) != std::string::npos)))
 							return (false);
 				}
-        // Permitir letras (mayúsculas y minúsculas), dígitos y letteres definidos en SPECIALCHAR
         if (!((currentChar >= 'a' && currentChar <= 'z') ||
 				      (currentChar >= 'A' && currentChar <= 'Z') ||
               (currentChar >= '0' && currentChar <= '9') ||
               (allowedChar.find(currentChar) != std::string::npos)))
-            return (false);  // letter no permitido
+            return (false);
     }
-    return (true);  // El string cumple con los requisitos
+    return (true);
 }
 
 std::string	toUpper(const std::string &str)
@@ -187,7 +179,7 @@ void	rightTrim(std::string & str)
 	str.erase(i, elNum);
 }
 
-std::string	strReplace(std::string str, std::string strFind, std::string strReplace) // posible & pendiente
+std::string	strReplace(std::string str, std::string strFind, std::string strReplace)
 {
 	return (str.replace(str.find(strFind), strFind.size(), strReplace));
 }
@@ -239,13 +231,11 @@ std::string	maxBufferTrim(std::string &rawLine, int maxSize)
 
 std::string tmToString(const std::tm& datetime)
 {
-    const int bufferSize = 20;  // Tamaño suficiente para almacenar la fecha y hora en formato común
+    const int bufferSize = 20;
     char buffer[bufferSize];
 
-    // Formatear el std::tm como una cadena utilizando strftime
     if (std::strftime(buffer, bufferSize, "%Y-%m-%d %H:%M:%S", &datetime) == 0) {
-        // Error al formatear
-        return "";  // O puedes manejar el error de alguna manera
+        return "";
     }
     return std::string(buffer);
 }
@@ -254,7 +244,6 @@ std::string generateRandomText()
 {
     std::string asciiString;
 	
-	// Inicializar la semilla para obtener valores diferentes en cada ejecución
     std::srand(std::time(0));
     for (int i = 0; i < 10; ++i) 
 	{
@@ -274,16 +263,12 @@ size_t  secondColonPosition(const std::string& data)
     
     if (firstColonPosition != std::string::npos)
     {
-        // Buscar la segunda ocurrencia del carácter después de la primera posición
         std::size_t secondColonPosition = data.find(":", firstColonPosition + 1);
 
         if (secondColonPosition != std::string::npos)
         {
-            // Se encontró la segunda ocurrencia, devuelve la posición
             return (secondColonPosition);
         }
     }
-
-    // Si no se encuentra la segunda ocurrencia, devuelve -1
     return (-1);
 }

@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 19:07:35 by icastell          #+#    #+#             */
-/*   Updated: 2024/02/18 20:52:05 by rnavarre         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:21:42 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,11 @@ IRC_Channel::IRC_Channel(std::string const &name, IRC_User& creator)
   , _invite(false)
   , _topicProtection(false)
 {
-    // Inicializar el modo del canal y otras propiedades del canal, según sea necesario.
-   // this->_topic = "Bienvenido al canal " + name;
-    //this->_key = ""; // Puedes establecer una clave si es necesario.
-    this->addUser(creator);			// Agrega el creador como miembro del canal
-    this->addOperator(creator); // y le otorga @
-
-    // También puedes configurar otros modos de canal, como invitaciones, si es necesario.
+    this->addUser(creator);
+    this->addOperator(creator);
 }
 
-IRC_Channel::~IRC_Channel() // destructor de canal, veremos a ver que debemos hacer aqui.
+IRC_Channel::~IRC_Channel()
 {
 }
 
@@ -53,20 +48,6 @@ bool    IRC_Channel::addUser(IRC_User& userToAdd)
 void    IRC_Channel::removeUser(IRC_User& userToDelete)
 {	
     this->_users.erase(&userToDelete);
-
-  	/** problema, si no queda nadie más en el canal, necesítaríamos avisar al servidor
-  	 ** para que borre el canal de su lista. Eso no ocurrirá, por tanto, por el
-  	 ** principio de responsabilidad única, quien crea, destruye.
-  	 **
-  	// Resto del código de eliminación del usuario...
-    if (this->_usersSet.empty())  // there are not users in channel
-    {
-        // erase channel
-        //this->_server.getChannelsMap().erase(this->_server.getChannelsMap().find(getName()));
-        std::cout << "Channel " << getName() << " deleted" << std::endl;
-        delete this;
-    }
-    */
 }
 
 bool IRC_Channel::hasUser(const IRC_User& user) const
@@ -79,21 +60,6 @@ bool IRC_Channel::empty() const
 	return (this->_users.empty());
 }
 
-/*
-const IRC_User& IRC_Channel::getCreator() const
-{
-	return (this->_creator);
-}
-*/
-
-
-/*
-*  Para cuando veais esta función. De lo que se trata es de no tener que generar
-*  un listado de usuarios verificando uno a uno si ese usuario es el que queremos omitir
-*  porque tendríamos que iterar todos los elementos así que se me ocurrió eliminar
-*  el usuario que quiero omitir, proceder al envio masivo de la informacion y volver
-*  a incluir al usuario para que todo quede tal como estaba.
-*/
 void IRC_Channel::sendExcept(const IRC_User* exceptUser, const std::string &data)
 {
 	if (exceptUser)
@@ -161,24 +127,6 @@ void IRC_Channel::sendExcept(const IRC_User* exceptUser, const IRC_Server& serve
 	this->sendExcept(exceptUser, ":" + server.getServerName() + " " + data + " :" + lastParameter);
 }
 
-//FIX: La entidad mínima con la que deberíais trabajar es "IRC_User" ya que ella contiene el fd de cada usuarios.
-// void    IRC_Channel::sendMessage(const std::string& str, int userFd)
-// {
-//     // Enviar un mensaje a todos los usuarios del canal excepto el que lo envió (si se proporciona userFd)
-//     for (_usersInChannelIterator it = _usersSet.begin(); it != _usersSet.end(); it++)
-//     {
-//         if (!userFd || userFd != (*it)->getFd())
-//             this->send_all(*it, str.c_str()); // Asegúrate de que esta función esté definida adecuadamente.
-//     }
-// }
-
-// void IRC_Channel::setTopic(std::string newTopic)
-// {
-//     // se debe comprobar que el nombre de canal es correcto.
-//     // y no existe en la lista de canales.
-//     this->_topic = newTopic;
-// }
-
 time_t	IRC_Channel::getCreationTime() const
 {
 	return (this->_creationTime);
@@ -199,22 +147,6 @@ time_t IRC_Channel::getTopicTime() const
 	return (this->_topicTime);
 }
 
-//FIX: Si queréis evitar tener que pasar por referencia la instancia IRC_Server
-//os recomiendo que toda la lógica de comprobación tanto de nicks como de canales
-//la realice IRC_Server.
-// void IRC_Channel::setName(std::string chName)
-// {
-//     // se debe comprobar que el nombre de canal es correcto.
-//     // y no existe en la lista de canales.
-//     this->_channelName = chName;
-// }
-
-//FIX: Os he cambiado todo lo que devolvéis a referencia constante. Si no usáis una referencia o un puntero
-//estaréis haciendo copias una y otra vez cada vez que devolváis cualquier valor. Esto es importante puesto que no es lo mismo devolver
-//8 bytes, que sería la dirección de memoria, que devolver el contenido completo de todo el string, que eso incluye los 3 punteros que definen
-//el tamaño de la cadena internamente y la propia cadena de caracteres.
-//El motivo de que sea constante es que si devuelves una referencia en lugar de una copia, si esta se modifica, modificaríais también
-//this->_channelName e intuyo que eso es algo que sólo debería hacerse a través de los métodos destinados a esa operación.
 const std::string& IRC_Channel::getName() const
 {
     return (this->_channelName);
@@ -237,43 +169,30 @@ void IRC_Channel::setTopic(const IRC_User& user, const std::string& topic)
 	this->_topicTime = time(NULL);
 }
 
-/*const IRC_Channel::_usersInChannelType* IRC_Channel::getUsers() const
-{
-    return (&this->_usersSet);
-}*/
-
 static bool matchWildcard(const std::string& mask, const std::string& nick) {
-    // Índices para recorrer la máscara y el nick
     size_t maskIndex = 0, nickIndex = 0;
     size_t maskLength = mask.length(), nickLength = nick.length();
     
-    // Iteramos sobre la máscara y el nick
     while (maskIndex < maskLength && nickIndex < nickLength) {
-        // Si encontramos un '*', avanzamos la máscara hasta el próximo carácter
         if (mask[maskIndex] == '*') {
             while (maskIndex < maskLength && mask[maskIndex] == '*') {
                 ++maskIndex;
             }
-            // Si el '*' es el último carácter de la máscara, lo consideramos como una coincidencia
             if (maskIndex == maskLength) {
                 return true;
             }
             
-            // Buscamos el siguiente carácter de la máscara en el nick
             while (nickIndex < nickLength && nick[nickIndex] != mask[maskIndex]) {
                 ++nickIndex;
             }
         } else if (mask[maskIndex] == '?' || mask[maskIndex] == nick[nickIndex]) {
-            // Si encontramos un '?' o los caracteres coinciden, avanzamos ambos índices
             ++maskIndex;
             ++nickIndex;
         } else {
-            // Si los caracteres no coinciden y no hay '*', la máscara no coincide con el nick
             return false;
         }
     }
     
-    // Si hemos llegado al final tanto de la máscara como del nick, la máscara coincide con el nick
     return maskIndex == maskLength && nickIndex == nickLength;
 }
 

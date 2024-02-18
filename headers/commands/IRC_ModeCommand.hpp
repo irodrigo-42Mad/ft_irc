@@ -6,7 +6,7 @@
 /*   By: pcosta-j <pcosta-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 19:04:17 by pcosta-j          #+#    #+#             */
-/*   Updated: 2024/02/18 19:04:18 by pcosta-j         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:19:35 by pcosta-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ struct IRC_ModeCommand : IRC_ACommand {
 
 private:
 	void _executeChannel(IRC_Message& );
-	void _executeUser(IRC_Message& );
 };
 
 #endif
